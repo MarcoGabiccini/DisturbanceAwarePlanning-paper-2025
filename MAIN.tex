@@ -1,0 +1,167 @@
+% interactnlmsample.tex
+% v1.05 - August 2017
+
+\documentclass[]{interact}
+\usepackage{epstopdf}% To incorporate .eps illustrations using PDFLaTeX, etc.
+\usepackage[caption=false]{subfig}% Support for small, `sub' figures and tables
+\usepackage[overload]{empheq}
+%\usepackage[nolists,tablesfirst]{endfloat}% To `separate' figures and tables from text if required
+%\usepackage[doublespacing]{setspace}% To produce a `double spaced' document if required
+%\setlength\parindent{24pt}% To increase paragraph indentation when line spacing is doubled
+
+\usepackage[numbers,sort&compress]{natbib}% Citation support using natbib.sty
+\bibpunct[, ]{[}{]}{,}{n}{,}{,}% Citation support using natbib.sty
+\renewcommand\bibfont{\fontsize{10}{12}\selectfont}% Bibliography support using natbib.sty
+\makeatletter% @ becomes a letter
+\def\NAT@def@citea{\def\@citea{\NAT@separator}}% Suppress spaces between citations using natbib.sty
+\makeatother% @ becomes a symbol again
+
+\theoremstyle{plain}% Theorem-like structures provided by amsthm.sty
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+\newtheorem{notation}{Notation}
+
+
+\usepackage{setspace}
+%\usepackage[latin1]{inputenc}
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{float}
+\usepackage{siunitx}
+%\usepackage{units}
+\usepackage{listings}
+\usepackage{pdfpages}
+\usepackage{keyval}
+\usepackage{eso-pic}
+\usepackage{atbegshi}
+\usepackage{pdflscape}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage{url}
+\usepackage{array}
+\usepackage{fancyhdr}
+
+\usepackage[np]{numprint}
+\npdecimalsign{\ensuremath{.}}
+
+\usepackage{caption}
+
+\captionsetup[figure]{labelfont={bf},name={Fig.},labelsep=space}
+\captionsetup[table]{labelfont={bf},name={Table},labelsep=space}
+
+\newcommand {\fncyblank }{\fancyhf{}}
+
+\newcommand{\cedpage}{\newpage{\thispagestyle{empty}\cleardoublepage}}
+\usepackage{algorithm,algpseudocode}
+\usepackage{tikz,tikz-3dplot}\usetikzlibrary{arrows.meta,angles}
+
+\DeclareMathOperator{\mf}{F_{\text{MF}}}
+
+%\usepackage{hyperref}
+
+%%% Local definitions %%%%%%
+\input{mymacros}
+%%% End Local definitions %%
+
+\begin{document}
+
+%\articletype{ARTICLE TEMPLATE}% Specify the article type or omit as appropriate
+
+\title{Disturbance-aware minimum-time planning strategies for motorsport vehicles with probabilistic safety certificates}
+
+\author{Martino Gulisano\textsuperscript{a}, Matteo Masoni\textsuperscript{a}, and \name{Marco Gabiccini,\textsuperscript{a,*}
+\thanks{* Contact: Marco Gabiccini. Email: marco.gabiccini@unipi.it}
+}\affil{
+\textsuperscript{a} Dipartimento di Ingegneria Civile e Industriale,	Universit\`{a} di Pisa, Pisa, Italy.}
+}
+
+\maketitle
+
+\begin{abstract}
+This paper analyzes ...
+\end{abstract}
+
+\begin{keywords}
+Minimum lap-time trajectory planning; stochastic vehicle dynamics; probabilistic safety certificates.
+\end{keywords}
+
+
+
+%\tableofcontents
+\input{intro}
+\input{stochastic_vehicle_dynamics}
+\input{open_loop_planning}
+%for back-off calculations
+\input{closed_loop_planning}
+\input{performance_comparison}
+\input{conclusions}
+
+\section*{Acknowledgement(s)}
+
+The authors would like to thank Dr. Lorenzo Bartali for his significant contributions to the initial version of the optimization framework developed and utilized in this paper.
+
+
+\section*{Disclosure statement}
+
+No potential conflict of interest was reported by the author(s).
+
+\section*{Funding}
+
+This work is supported by project PRIN 2022 PNRR ``Global Stability of road vehicle motion - STAVE'' CUP I53D23005670001.
+
+
+
+%\section*{Notes on contributor(s)}
+%
+%An unnumbered section, e.g.\ \verb"\section*{Notes on contributors}", may be included \emph{in the non-anonymous version} if required. A photograph may be added if requested.
+%
+%
+%\section*{Nomenclature/Notation}
+%
+%An unnumbered section, e.g.\ \verb"\section*{Nomenclature}" (or \verb"\section*{Notation}"), may be included if required, before any Notes or References.
+%
+%
+%\section*{Notes}
+%
+%An unnumbered `Notes' section may be included before the References (if using the \verb"endnotes" package, use the command \verb"\theendnotes" where the notes are to appear, instead of creating a \verb"\section*").
+
+
+\bibliographystyle{tfnlm}
+\bibliography{biblio}
+
+
+%\bigskip
+%
+%
+%\section{Appendices}
+%
+%\input{Appendices}
+
+%\section{Troubleshooting}
+
+
+
+
+%\section{Obtaining the template and class file}
+%
+%\subsection{Via the Taylor \& Francis website}
+%
+%...
+%
+%
+%\subsection{Via e-mail}
+
+\end{document}
