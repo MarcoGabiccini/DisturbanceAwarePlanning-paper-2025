@@ -1,182 +1,34 @@
 \section{Stochastic vehicle dynamics}
-\label{sec:stochastic_vehicle_dynamics}
+\label{sec:stochastic_vehicle_dynamics} 
 
-Some text of a previous paper left for reference on equation and pseudo-code formatting. 
+We model the \emph{perturbed vehicle dynamics} as the following nonlinear continuous-time random dynamical system
+\begin{align}
+\dbx(t) = f(\bx(t), \bu(t)) + \bw(t),
+\end{align}
+where $\bu(t)$ are the deterministic control inputs, $\bw(t)$ is additive Gaussian white noise with zero mean and known covariance $\bQ(t)$, i.e. $\bw(t) \sim \calN(\bzero, \bQ(t))$, and the state $\bx(t)$ results in a Gaussian distribution with mean $\bmu(t)$ and covariance $\bP(t)$, so that $\bx(t) \sim \calN(\bmu(t), \bP(t))$.
 
-%% CHANGE THESE SECTIONS TO MERGE BOTH MODELS DESCRIPTIONS
-\subsection{Kinematic Tree Structure of the Vehicle}
-\begin{figure}[b]\centering
-	\begin{tikzpicture}[scale=1.2]\small
-		\node[fill,circle,minimum size=3pt,inner sep=0pt,draw,gray](g)at(-0.1,-0.1){};
-		\node[fill,circle,minimum size=3pt,inner sep=0pt,draw](b)at(0,2){};
-		\node[fill,circle,minimum size=3pt,inner sep=0pt,draw](h11)at(-0.9,2.9){};
-		\node[fill,circle,minimum size=3pt,inner sep=0pt,draw](h12)at(0.9,2.95){};
-		\node[fill,circle,minimum size=3pt,inner sep=0pt,draw](h21)at(-1,1){};
-		\node[fill,circle,minimum size=3pt,inner sep=0pt,draw](h22)at(0.95,1){};
-		\node[fill,circle,minimum size=3pt,inner sep=0pt,draw](k11)at(-2.0,3){};
-		\node[fill,circle,minimum size=3pt,inner sep=0pt,draw](k12)at(2.0,3){};
-		\node[fill,circle,minimum size=3pt,inner sep=0pt,draw](k21)at(-2.1,1.1){};
-		\node[fill,circle,minimum size=3pt,inner sep=0pt,draw](k22)at(2.0,1.05){};
-		\node[fill,circle,minimum size=3pt,inner sep=0pt,draw](w11)at(-3.0,2.9){};
-		\node[fill,circle,minimum size=3pt,inner sep=0pt,draw](w12)at(3.0,2.9){};
-		\node[fill,circle,minimum size=3pt,inner sep=0pt,draw](w21)at(-3.1,1.){};
-		\node[fill,circle,minimum size=3pt,inner sep=0pt,draw](w22)at(3.0,.95){};
-		\draw[gray](g)to node(2){}(b);
-		\draw(b)to node(4){}(h11);
-		\draw(b)to(h12);
-		\draw(b)to(h21);
-		\draw(b)to(h22);
-		\draw(h11)to node(8){}(k11);
-		\draw(h12)to(k12);
-		\draw(h21)to(k21);
-		\draw(h22)to(k22);
-		\draw(k11)to node(6){}(w11);
-		\draw(k12)to(w12);
-		\draw(k21)to(w21);
-		\draw(k22)to(w22);
-		\draw(g)node[below,gray](1){$\{G\}$}(b)+(0,0.1)node[above](3){$\{B\}$}(h11)node[above](5){$\{H_1\}$}(h12)node[above]{$\{H_2\}$}(h21)node[below]{$\{H_3\}$}(h22)node[below]{$\{H_4\}$}
-		(k11)node[above](9){$\{K_1\}$}(k12)node[above]{$\{K_2\}$}(k21)node[below]{$\{K_3\}$}(k22)node[below]{$\{K_4\}$}
-		(w11)node[above](7){$\{W_1\}$}(w12)node[above]{$\{W_2\}$}(w21)node[below]{$\{W_3\}$}(w22)node[below]{$\{W_4\}$};
-		\node[gray,inner sep=1pt](world)at(1,-0.3){world};
-		\node[gray,inner sep=0pt,align=center](6DoF)at(-1.25,0.15){floating base\\(virtual 6-DoF)};
-		\node[inner sep=1pt](chassis)at(0.05,3){chassis};
-		\node[inner sep=0pt,align=center](susp)at(-2.2,1.6){suspension linkages\\(generalized 1-DoF)};
-		\node[inner sep=1pt](knuckle1)at(-.4,3.7){knuckles 1};
-		\node[inner sep=1pt](knuckle2)at(-2.05,3.8){knuckles 2};
-		\node[inner sep=0pt,align=center](hub)at(-4.5,2.25){hub bearings\\(revolute 1-DoF)};
-		\node[inner sep=0pt,align=center](camber)at(-2.,2.4){camber joint\\(revolute 1-DoF)};
-		\node[inner sep=1pt](rim)at(-3.4,3.65){rims};
-		\draw[gray](world.west)to(1.east);
-		\draw[gray](6DoF.north east)to(2);
-		\draw(chassis.south)to(3);
-		\draw(susp.north east)to(4);
-		\draw(knuckle1.south)to(5);
-		\draw(knuckle2.south)to(9);
-		\draw(hub.east)to(6);
-		\draw(camber.north)to(8);
-		\draw(rim.south east)to(7);
-	\end{tikzpicture}
-	\caption{Kinematic tree representing the interconnections between bodies. Bodies are referred to by their attached frame.}
-	\label{fig:tree}
-\end{figure}
-The vehicle is modeled as an articulated rigid-body system with chassis, knuckles, and wheels as rigid bodies. The chassis represents all sprung masses rigidly connected, while the knuckles (zero-mass bodies) decouple steering and vertical suspension motion from the wheel spindle. In the second model, knuckles are split into two zero-mass bodies, introducing an additional degree of freedom per wheel to simulate dynamic camber control (DCC). Wheels include all rotating unsprung masses, with non-rotating parts (e.g., brake calipers) incorporated into the wheel-tire mass.
+Due to the symmetry of the probability density function (pdf) with respect to $\bmu(t)$, it is possible to represent the time evolution of the pdf as: i) the deterministic evolution of the mean $\bmu(t)$
+\begin{align}
+\dbmu(t) = f(\bmu(t), \bu(t)),
+\end{align}
+and ii) the time evolution of the state covariance matrix $\bP(t)$ along $\bmu(t)$, which can be expressed as
+\begin{align}
+\dbP(t) = \bA(t) \bP(t) + \bP(t) \bA^T(t) + \bQ(t),\quad \bP(0) = \bP_0.
+\end{align}
+The \emph{initial} state covariance $\bP_0$ is assumed known and $\bA(t)$ is the classical shorthand for the Jacobian along the mean trajectory $\bmu(t)$, that is $\bA(t)=\bJ(\bmu(t),\bu(t))$, where $\bJ(\bx, \bu) = \frac{\pd f(\bx, \bu)}{\pd \bx}$.
 
-Each body has a right-handed barycentric frame: $\sref{B}$ (chassis), $\sref{H}$ and $\sref{K}$ (knuckles), and $\sref{W}$ (wheels). Additional frames $\sref{G}$ (ground) and $\sref{S}$ (centerline) are defined, with \(x\)-axis of $\sref{S}$ tangent to the centerline, pointing forward. Frame relationships are described by homogeneous transformation matrices $ g(d, \vPhi) \in SE(3) $, with $ d $ as position and \(\vPhi\) (Euler angles) parameterizing the rotation.
-
-As shown in Fig.~\ref{fig:tree}, bodies are connected by joints in a kinematic tree. The second model generalizes the first, where $\sref{H}$ and $\sref{K}$ coincide, so only the second model's kinematic tree is shown for brevity.
-%% START ORIGINAL
-%The vehicle is modeled as an articulated rigid-body system, with chassis, knuckles, and wheels treated as rigid bodies. The chassis includes all sprung masses, rigidly connected, while the knuckles (modeled as zero-mass bodies) decouple steering and vertical suspension motion from the wheel spindle. In the second model, the knuckles are split into two zero-mass bodies, adding one degree of freedom per wheel to simulate dynamic camber control (DCC). The wheels encompass all rotating unsprung masses, with non-rotating parts (e.g., brake calipers) included in the wheel-tire mass.
-%
-%Each body has a right-handed barycentric frame: $\sref{B}$ for the chassis, $\sref{H}$ (and $\sref{K}$ in the second model) for the knuckles, and $\sref{W}$ for the wheels. Two additional frames, $\sref{G}$ (ground) and $\sref{S}$ (attached to the vehicle's centerline), are also defined. The frame $\sref{S}$ lies in the tangent plane, with its $x$-axis tangent to the centerline, pointing forward.
-%
-%Relative positions and orientations between frames are described by homogeneous transformation matrices \( g(d, \vPhi) \in SE(3) \), where \( d \in \mathbb{R}^3 \) is the Cartesian position and \( \vPhi \in \mathbb{R}^3 \) are the Euler angles parameterizing the rotation matrix \( R \in SO(3) \).
-%
-%The bodies are connected by joints, forming the kinematic tree shown in Fig.~\ref{fig:tree}. The first model is a special case of the second, where $\sref{H}$ and $\sref{K}$ are always coincident, so only the kinematic tree for the second model is presented to avoid redundancy.
-
-%% END ORIGINAL
-
-%The vehicle is modeled as an articulated rigid-body system. In particular, chassis, knuckles and wheels are considered as rigid bodies. The chassis comprises all the sprung masses, including the driver, which are rigidly attached to one another. The knuckles are assumed here as zero-mass bodies, and their function is to decouple the motion of the suspension due to steering and vertical travel to the wheel spindle. In the second model, the knuckles are split into two zero-mass bodies, introducing one additional degree of freedom (DoF) for each wheel that allows to simulate the active camber variation system, here named dynamic camber control (DCC). The wheels include all the rotating unsprung masses, while all non-rotating parts of the unsprung masses, such as the brake calipers are included in the wheel-tire mass.
-%
-%Each body has a right-handed barycentral reference frame attached. The frames are denoted as $\sref{B}$, $\sref{H}$ (and $\sref{K}$) and $\sref{W}$ for the chassis, knuckles and wheels, respectively, where $\sref{K}$ is present only in the second model. Two additional frames are introduced: $\sref{G}$, fixed to the ground, and $\sref{S}$, that follows the vehicle on the ground. More precisely, $\sref{S}$ is attached to the centerline curve with its $x$ and $y$ axes lying in the tangent plane, and the $x$ axis also tangent to the centerline curve pointing forward.
-%
-%The relative positions and orientations between reference frames are described by homogeneous transformation matrices $g(d,\vPhi)\in SE(3)$, where $d\in \bbR^3$ is the relative Cartesian coordinates vector and $\vPhi \in \bbR^3$ are the three Euler angles that parameterize the rotation matrix $R\in SO(3)$.
-%
-%The bodies are connected by joints and the kinematic tree of the second model is shown in Figure \ref{fig:tree}. It is worth noting that the first model can be seen as a particular case of the second, in which the reference frames $\sref{H}$ and $\sref{K}$ are constrained to be always overlapping. For this reason, and to avoid cluttering the document, has been chosen to show the kinematic tree only for the second model.
-
-\begin{figure}[t]
-	\centering
-	\includegraphics[scale = 0.8]{Images/vehicle_frames}
-	\caption{Reference frames: $\sref{G}$ is a fixed inertial reference frame with the $z$-axis antiparallel to the gravity vector; $\sref{S}$ is a reference frame following the vehicle on track; $\sref{B}$ and $\sref{K}$ are FLU (Forward Left Up) reference frames aligned with the principal axes of inertia of the chassis and wheel, respectively; $\sref{H}$ is an auxiliary reference frame necessary to add the camber DoF; and $\sref{W}$ rotates about the $y$-axis with respect to $\sref{K}$ by the wheel rotation angle.}
-	\label{fig:frames}
-\end{figure}
-
-The joints modeled are: hub bearings, connecting the rims $\sref{W}$ to the knuckles $\sref{H}$ (or $\sref{K}$ for the second model), and the suspension linkages, connecting the knuckles $\sref{H}$ to the chassis $\sref{B}$. For the second model a 1 DoF revolute joint connecting the two parts of the knuckles is also present. The chassis is a floating-base and its position and orientation with respect to the ground are unconstrained. This situations is conveniently encoded by a virtual six-DoF joint connecting $\{B\}$ to $\{G\}$. The resulting systems have 4+4+6=14 and 4+4+4+6=18 degrees of freedom, respectively.
-%After defining the system's topology, a set of suitable state variables needs to be defined to describe the configuration and motion of each body.
-
-%To fully describe the position and orientation of the frame $\sref{B}$ w.r.t. $\sref{G}$ we define vector $q_{gb}=(d_{gb};\varPhi_{gb})$.
-%Its first-order kinematics is encoded in twist $V_{gb}^b = (v_{gb};\omega_{gb})$. In general, a twist $V_{ij}^k$ represents the motion of the frame $\sref{J}$ w.r.t. the frame $\sref{I}$ in $\sref{K}$ components. Unless otherwise specified, we employ \emph{body} coordinates, therefore $k=j$; this choice aligns to ABA convention~\cite{Featherstone:book:2008}. For each of the 4 DoF's associated to the suspension motion, a variable $z$ (and its derivative $\dot{z}$) is defined representing spring's length variation with respect to the nominal value. With these definitions, along with variables $\delta$ and its derivatives, defined in Sec.\ref{sec:suspanal}, one can find the six-component vector $q_{bh}$ representing the pose of $\sref{H}$ w.r.t. $\sref{B}$ and the twist $V_{bh}$. Assuming the wheel is an axis-symmetrical rigid body, and given that the relative orientation of the frame $\sref{W}$ w.r.t. $\sref{H}$ (or $\sref{K}$) is not relevant for the scope, only the angular velocity $\omega$ is introduced. For the second model, it is also necessary to introduce the variable $q_{hk}$ to describe the relative position of the frame $\sref{K}$ w.r.t. $\sref{H}$.
-\subsection{Suspension Analysis}
-\label{sec:suspanal}
-The suspensions connect the chassis to the unsprung masses. This connection cannot be described by an elementary joint, such as prismatic or revolute. Therefore, a set of six variables $q_{bh}$, that parameterize a homogeneous transformation matrix, is necessary. The transformation can be realized by composing three translations and three rotations (the ZXY Euler sequence was selected) using the global Product of Exponentials (PoE) formula~\cite{Murray:book:1994}, which reads: \begin{equation}\label{eqn:PoE}
-	g_{bh}=e^{\hat{Y}_1q_{bh,1}}\cdots e^{\hat{Y}_6q_{bh,6}} g_{bh}(0),
-\end{equation}
-where the offset $g_{bh(0)}=I$ and $Y_i=e_i$, with $e_i\in\bbR^6$ are the six normalized screw vectors (canonical basis elements in $\bbR^6$) associated with the Cartesian coordinates and the Euler ZXY angles in $q_{bh}$.
-Clearly, the six components of $q_{bh}$ are not independent; the modeled suspension is, in fact, a double wishbone that has: 2 DoFs for wheels that can steer, and 1 DoF otherwise.
-In this case, both axles have wheels that can steer; hence, a pair of independent variables ($z;\delta $) is associated with each wheel.
-A detailed analysis is omitted here for the sake of brevity. The interested reader is referred to~\cite{Domenighini:Designs:2023} for a similar treatment using the PoE formalism.
-
-%As mentioned in the previous sections, $z$ represents the variation of the distance between the two attachment points of the spring-damper system, positive when the distance increases and negative when it decreases, while $\delta$ represents the motion of the steering rod attachment point to the chassis along its local $y$ axis (frame $\sref{B}$). Considering that the type of the suspension is known, six scalar equations of constraints can be expressed implicitly as $F(q_{bh};z,\delta)=0\in \bbR^6$.
-%
-%To find an explicit relation between inputs $(z,\delta)$ and outputs $q_{bh}$, the constraint equations are solved on a grid of pairs $(z^{(p)},\delta^{(l)})$, where $p = 1,\dots,N$ and $l = 1,\dots,M$. Then, the data are fitted (in the least-squares sense) with a 2D regression polynomial $q_{bh}(z,\delta)$ as follows:
-%\begin{equation}\label{eqn:poly}
-%	q_{bh,i}(z,\delta)=\sum_{r=0}^{3} \sum_{s=0}^{3-r} a_{{rs},i} z^r \delta^s.
-%\end{equation}
-%For the purpose a polynomial of degree three is sufficiently accurate. Now is possible to express the homogeneous transformation $g_{bh}\bigl(q_{bh}(z,\delta)\bigr)$ and to compute the twist $V_{bh}$ and $\dot{V}_{bh}$ as functions of $(z,\delta)$ and their derivatives. We start from:
-%\begin{equation}\label{eqn:Jbh}
-%	V_{bh}=\sum_{i=1}^6J_{bh,i}\dot{q}_{bh,i},
-%\end{equation}
-%where $J_{bh}$ is the \emph{geometric Jacobian} of the suspension joint relative to $q_{bh}$. Then, following the procedure thoroughly described in~\cite[Sec. 2.2]{Domenighini:Designs:2023}, it is possible to obtain %
-%assumed with independent components. Each column of $J_{bh}$ can be computed based on the PoE formula \eqref{eqn:PoE}. For the $i$-th column, we have $J_{bh,i}=A_i^{-1}Y_i$, with $A_6 = I_{6\times 6}$ and $A_i=\Ad_{e^{\hat{Y}_{i}q_{bh,i}}\cdots e^{\hat{Y}_6q_{bh,6}}}$, $i = 1, \dots, 5$. The \emph{Adjoint operator} $\Ad_g$ has been defined as the $6\times6$ matrix satisfying $Y=\Ad_gX$ whenever $\hat{Y}=g\hat{X}g^{-1}$, so that, if $g=\left[\begin{smallmatrix}R&d\\0^T&1\end{smallmatrix}\right]$, then $\Ad_g=\left[\begin{smallmatrix}R&\hat{d}R\\0&R\end{smallmatrix}\right]$.\\
-%As a function of $(z,\delta)$, $\dot{q}_{bh,i}$ can be expressed as follows:
-%\begin{equation}\label{eqn:dt_qbh}
-%	\dot{q}_{bh,i}=\frac{\partial}{\partial z}q_{bh,i}\dot{z}+\frac{\partial}{\partial\delta}q_{bh,i}\dot{\delta},
-%\end{equation}
-%where the (geometric) partial derivatives $\frac{\partial}{\partial z}q_{bh,i}$ and $\frac{\partial}{\partial\delta}q_{bh,i}$ are obtained by differentiating Eq.~\eqref{eqn:poly}.
-%Then, by defining the Jacobians with respect to the true independent variables $z$ and $\delta$ as follows
-%\begin{align}\label{eqn:Jbh,z}
-%	J_{bh,z}=\sum_{i=1}^6J_{bh,i}\frac{\partial}{\partial z}q_{bh,i}\quad \textrm{and}\quad J_{bh,\delta}=\sum_{i=1}^6J_{bh,i}\frac{\partial}{\partial\delta}q_{bh,i},
-%\end{align}
-%it possible to obtain the rigid-body velocity $V_{bh}$ of the constrained motion from Eq.~\eqref{eqn:Jbh}, in terms of $\dot{z}$ and $\dot{\delta}$, as follows
-%\begin{equation}\label{eqn:Vbh}
-%	V_{bh}=J_{bh,z}\dot{z}+J_{bh,\delta}\dot{\delta}.
-%\end{equation}
-%
-%To write the dynamic equations the time derivative $\dot{V}_{bh}$ of the twist $V_{bh}$ is necessary. To this sake, it is sufficient to differentiate Eqs.~\eqref{eqn:Jbh}--\eqref{eqn:Vbh}.
-%\begin{equation}\label{eqn:dt_Jbh}
-%	\dot{V}_{bh}=\sum_{i=1}^6\dot{J}_{bh,i}\dot{q}_{bh,i}+\sum_{i=1}^6J_{bh,i}\ddot{q}_{bh,i}.
-%\end{equation}
-%
-%Here, following~\cite{Gabiccini:ICRA:2012}, the derivatives $\dot{J}_{bh,i}$ can computed using the formula
-%\begin{align}\label{eqn:dt_Jbhi}
-%	\dot{J}_{bh,i}=-\sum\limits_{i < j \leq 6}\ad_{J_{bh,j}\dot{q}_{bh,j}} J_{bh,i}
-%\end{align}
-%using Lie derivatives. In the matrix case, the Lie derivative $\hat{Z}$ of the vector field $\hat{X}$ with respect to vector field $\hat{Y}$ is calculated by as a commutator operation $\hat{Z}=\hat{Y}\hat{X}-\hat{X}\hat{Y}$; in the vector case, the $6\times6$ matrix $\ad_Y$ is used, defined such that $Z=\ad_Y X$. If $v$ and $\omega$ are the translational and rotational component of $V$, then $\ad_V=\left[\begin{smallmatrix}\hat{\omega}&\hat{v}\\0&\hat{\omega}\end{smallmatrix}\right]$.
-%
-%In Eq.~\eqref{eqn:dt_Jbh}, the accelerations $\ddot{q}_{bh,i}$ are obtained by differentiating the velocities in Eq.~\eqref{eqn:dt_qbh}:
-%\begin{equation}\label{eqn:dt_dt_qbh}
-%	\ddot{q}_{bh,i}=\frac{\partial^2}{\partial z^2}q_{bh,i}\dot{z}^2+2\frac{\partial^2}{\partial z\partial\delta}q_{bh,i}\dot{z}\dot{\delta}+\frac{\partial^2}{\partial\delta^2}q_{bh,i}\dot{\delta}^2+\frac{\partial}{\partial z}q_{bh,i}\ddot{z}+\frac{\partial}{\partial\delta}q_{bh,i}\ddot{\delta},
-%\end{equation}
-%where the partial derivatives are computed by differentiating the regression polynomials~in~\eqref{eqn:poly}.
-%After simple but tedious calculations, the explicit expression for the derivatives of the Jacobians in \eqref{eqn:Jbh,z} appear as follows:
-%\begin{align}
-%	\dot{J}_{bh,z}&=\sum_{i=1}^6\dot{J}_{bh,i}\frac{\partial}{\partial z}q_{bh,i}+\sum_{i=1}^6J_{bh,i}\Bigl(\frac{\partial^2}{\partial z^2}q_{bh,i}\dot{z}+\frac{\partial^2}{\partial z\partial\delta}q_{bh,i}\dot{\delta}\Bigr)\label{eqn:dt_Jbh,z}\quad\textrm{and}\\\dot{J}_{bh,\delta}&=\sum_{i=1}^6\dot{J}_{bh,i}\frac{\partial}{\partial\delta}q_{bh,i}+\sum_{i=1}^6J_{bh,i}\Bigl(\frac{\partial^2}{\partial z\partial\delta}q_{bh,i}\dot{\delta}+\frac{\partial^2}{\partial\delta^2}q_{bh,i}\dot{\delta}\Bigr)\label{eqn:dt_Jbh,d}.
-%\end{align}
-%Substituting Eqs.~\eqref{eqn:dt_Jbhi} and~\eqref{eqn:dt_dt_qbh} in Eqs.~\eqref{eqn:dt_Jbh}, and casting some intermediate results as~\eqref{eqn:dt_Jbh,z} and~\eqref{eqn:dt_Jbh,d},
-%the constrained rigid-body acceleration $\dot{V}_{bh}$ in the following form:
-%\begin{equation}\label{eqn:dt_Vbh}
-%	\dot{V}_{bh}=\dot{J}_{bh,z}\dot{z}+\dot{J}_{bh,\delta}\dot{\delta}+J_{bh,z}\ddot{z}+J_{bh,\delta}\ddot{\delta}.
-%\end{equation}
-%The explicit expressions for auxiliary Jacobians $J_{bh,z}$, $J_{bh,\delta}$, $\dot{J}_{bh,z}$ and $\dot{J}_{bh,\delta}$ are omitted here for brevity. The interested reader can find the detailed analytical derivation in~\cite[Eqs. (5)--(8)]{Domenighini:Designs:2023}.
-%
-%A generalized force $\tau\in\bbR$ is introduced that depends only on the independent variable $z\in\bbR$. $\tau$ is assumed to be generated only by the spring and the damper, considered aligned along the same axis. It is worth noting that, using the defined $z$, we are allowed to compute the force of the suspension without calculate the associated $q_{bh}$ nor using the Principle of Virtual Works. In this expression, also the contribution of the anti-roll bar is considered, which depends on the difference between the left and right trim, and the contribution of the bump-stops, which activate when the trim reaches its lower or upper limits. The intensity of $\tau$, for each wheel, is expressed as follow:
-%\begin{equation}
-%	\tau_{ij}=k_{s,i}(l_{c,i}-l_{0,i}+z_{ij})+c_{d,i}\dot{z}_{ij}+(-1)^j k_{a,i}(z_{i,1}-z_{i,2}) + \left(\frac{2z-z_{\text{max}}-z_{\text{min}}}{|z_{\text{max}}-z_{\text{min}}|}\right)^{b},
-%\end{equation}
-%where $l_{c,i}$ is the spring's length in the reference position, $l_{0,i}$ is the spring's length at rest, $k_{s,i}$ and $c_{d,i}$ are the stiffness and the damping coefficients, $k_{a,i}$ is the anti-roll bar stiffness, $b$ influences the stiffness of the bump-stops, and $z_{\text{min}}$ and $z_{\text{max}}$ are the knees of the bump-stops' force characteristics.
-\section{Tire Model}
-\label{sec:tyremodel}
-\begin{figure}[t]\centering
-	\tdplotsetmaincoords{0}{0}
-	\begin{tikzpicture}[tdplot_main_coords,scale=3.5]\small
-		\tdplotsetrotatedcoords{-166.5322}{-65.2292}{-166.5322}\draw[tdplot_rotated_coords,dashed,gray!75,fill=gray!10](-0.6,0,0)--(-0.6,1.1,0)--(0.6,1.1,0)--(0.6,0,0);\draw[tdplot_rotated_coords,very thick,fill=white](0,0)coordinate(C)..controls(0.25,0)and(0.5,0)..(0.5,0.45)arc(0:180:0.5)..controls(-0.5,0)and(-0.25,0)..(0,0);\draw[tdplot_rotated_coords,very thick,fill=gray!25](0,0.45)coordinate(O)circle(0.25);\draw[tdplot_rotated_coords,very thick,dashed](0.5,0.45)arc(0:-180:0.5);\draw[tdplot_rotated_coords,very thin,dashed](0,0,0)--(0,0.2,0)(0,0.7,0)--(0,0.95,0)(-0.5,0.45,0)--(-0.25,0.45,0)(0.25,0.45,0)--(0.5,0.45,0);\draw[tdplot_rotated_coords,very thin](0,0.2,0)--(0,0.7,0)(0,0.95,0)--(0,1.25,0)(-1,0.45,0)--(-0.5,0.45,0)(-0.25,0.45,0)--(0.25,0.45,0)(0.5,0.45,0)--(1,0.45,0);\draw[tdplot_rotated_coords,{Stealth[inset=0pt]}-{Stealth[inset=0pt]},very thin](0.75,0,0)--node[right]{$r$}(0.75,0.45,0);\tdplotsetrotatedcoordsorigin{(O)}\tdplotsetrotatedcoords{-166.5322}{-65.2292}{-146.5322}\draw[tdplot_rotated_coords,dashed](-0.25,0,0)--(-0.5,0,0);\draw[tdplot_rotated_coords,dashed](0,0.25,0)--(0,0.5,0);\draw[tdplot_rotated_coords,->](0,0,0)--(-0.25,0,0)(-0.5,0,0)--(-1,0,0)node[below left]{$x_h$};\draw[tdplot_rotated_coords,->](0,0,0)--(0,0.25,0)(0,0.5,0)--(0,0.8,0)node[above left]{$z_h$};\draw[tdplot_rotated_coords,->](0,0,0)--(0,0,0.8)node[right]{$y_h$};\draw[tdplot_rotated_coords,{Stealth[inset=0pt]}-{Stealth[inset=0pt]},very thin](-0.8,0)arc(180:160:0.8)node[midway,left]{$\sigma$};\tdplotsetrotatedcoordsorigin{(C)}\tdplotsetrotatedcoords{43.2192}{-27.9909}{-46.7808}\draw[tdplot_rotated_coords,dashed,gray!75,fill=gray!25](0,0,-0.6)--(0.6,0,-0.6)--(0.6,0,0.6)--(0,0,0.6);\draw[tdplot_rotated_coords,->](0,0,0)--(0.8,0,0)node[right]{$y_n$};\draw[tdplot_rotated_coords,->](0,0,0)node[circle,fill=black,inner sep=0pt,minimum size=3pt,draw]{}--(0,1.25,0)node[above]{$z_n$};\draw[tdplot_rotated_coords,->](0,0,-1)--(0,0,1)node[below left]{$x_n$};\draw[tdplot_rotated_coords,{Stealth[inset=0pt]}-{Stealth[inset=0pt]},very thin](0,1.1)arc(90:110:1.1)node[midway,above]{$\gamma$};\draw(0,-0.02)..controls(0,-0.3)and(0.3,-0.1)..(0.3,-0.3)node[below]{contact point};\draw(-0.5,0.7)..controls(-0.35,0.55)and(-0.6,0.7)..(-0.55,0.5)node[below,align=center]{wheel\\plane};\draw(0.4,0.15)..controls(0.3,0.25)and(0.55,0.2)..(0.5,0.3)node[above,align=center]{road\\plane};\draw(O)node[below right]{$O_h$}(C)node[below right]{$O_n$};\draw[tdplot_rotated_coords,thick,-{Stealth[inset=0pt]}](C)--+(0,0,0.8)node[below right]{$F_x$};\draw[tdplot_rotated_coords,thick,-{Stealth[inset=0pt]}](C)--+(0.5,0,0)node[above]{$F_y$};\draw[tdplot_rotated_coords,thick,-{Stealth[inset=0pt]}](C)--+(0,1,0)node[right]{$F_z$};
-	\end{tikzpicture}
-	\hfill
-	\begin{tikzpicture}[scale=4.25]\small
-		\coordinate(C)at(0,0);\coordinate(-)at(-0.375,0);\coordinate(+)at(0.325,0);\draw[->](-0.7,0)--(0.6,0)node[right]{$y_n$};\draw[->](0,0)node[circle,fill=black,inner sep=0pt,minimum size=3pt,draw]{}--(0,1.25)node[above]{$z_n$};\tdplotsetrotatedcoords{10}{0}{0}\draw[tdplot_rotated_coords,dash dot](0,-0.15)--(0,1.25)(-0.35,0.45)--(0.6,0.45);\draw[tdplot_rotated_coords,very thick](-0.25,0.2)--(-0.25,0.7)..controls(-0.25,0.95)and(-0.25,0.95)..(0,0.95)..controls(0.25,0.95)and(0.25,0.95)..(0.25,0.7)--(0.25,0.2)(-0.25,0.2)..controls(-0.25,0.025)and(-)..(C)..controls(+)and(0.25,-0.025)..(0.25,0.2);\draw[tdplot_rotated_coords,very thick,dashed](-0.25,0.2)..controls(-0.25,-0.05)and(-0.25,-0.05)..(0,-0.05)node(B){}..controls(0.25,-0.05)and(0.25,-0.05)..(0.25,0.2);\node[tdplot_rotated_coords](O)at(0,0.45){};\draw[very thin](O)--({(-0.55,0)}|-O);\draw[very thin,{Stealth[inset=0pt]}-{Stealth[inset=0pt]}](-0.475,0)--node[left]{$h$}({(-0.475,0)}|-O);\draw[very thin](B)--({(-0.7,0)}|-B);\draw[very thin,-{Stealth[inset=0pt]}](-0.625,0.3)--node[left]{$d$}(-0.625,0);\draw[very thin](-0.625,0)--({(-0.625,0)}|-B);\draw[very thin,-{Stealth[inset=0pt]}](-0.625,-0.15)--({(-0.625,0)}|-B);\draw[tdplot_rotated_coords,very thin](0.05,0)--(0.45,0);\draw[tdplot_rotated_coords,very thin](0.05,-0.05)--(0.6,-0.05);\draw[tdplot_rotated_coords,very thin,{Stealth[inset=0pt]}-{Stealth[inset=0pt]}](0.375,0)--node[right]{$r$}(0.375,0.45);\draw[tdplot_rotated_coords,very thin,{Stealth[inset=0pt]}-{Stealth[inset=0pt]}](0.525,-0.05)--node[right]{$r_0$}(0.525,0.45);\draw[very thin,{Stealth[inset=0pt]}-{Stealth[inset=0pt]}](0,1.125)arc(90:100:1.125)node[midway,above]{$\gamma$};\draw(0,-0.4);
-	\end{tikzpicture}
-	\caption{Decomposition of the tyre forces along the axes of the auxiliary frame $\{N\}$. The frame $\{N\}$ is such that: $x_n$ lies along the intersection between the wheel plane ($x_hz_h$-plane) and the road plane ($x_s y_s$-plane), pointing forward; $y_n$ points left (w.r.t. the driver) along the intersection line between the road plane ($x_s y_s$-plane) and the transverse plane ($y_h z_s$-plane) through the wheel center $O_h$; $z_n$ is normal to the road surface. The contact point is estimated in correspondence to the origin $O_n$. On the right, we report a detail of the tyre vertical deformation.}
-	\label{fig:tyre_wheel}
-\end{figure}
+\begin{align}
+\dbx = \begin{bmatrix}
+              \dot{\bq}\\
+              \dot{\bq}_v
+             \end{bmatrix} =
+             \begin{bmatrix}
+              \bq_v\\
+              \text{ABA}\text{dyn}(\bq, \bq_v, f_{xa}, f_{xb}, \delta, \bw),
+             \end{bmatrix} = F(\bx).
+	\label{eq:ABA_dyn}
+\end{align}
+               
 
 The tangential forces exchanged between the tire and road are computed using \mbox{Pacejka's} \emph{Magic Formula}:
 \begin{equation}\label{eqn_mf}
