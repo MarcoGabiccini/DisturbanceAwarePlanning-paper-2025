@@ -8,15 +8,24 @@ We model the \emph{perturbed vehicle dynamics} as the following nonlinear contin
 where $\bu(t)$ are the deterministic control inputs, $\bw(t)$ is additive Gaussian white noise with zero mean and known covariance $\bQ(t)$, i.e. $\bw(t) \sim \calN(\bzero, \bQ(t))$, and the state $\bx(t)$ results in a Gaussian distribution with mean $\bmu(t)$ and covariance $\bP(t)$, so that $\bx(t) \sim \calN(\bmu(t), \bP(t))$.
 
 Due to the symmetry of the probability density function (pdf) with respect to $\bmu(t)$, it is possible to represent the time evolution of the pdf as: i) the deterministic evolution of the mean $\bmu(t)$
-\begin{align}
+\begin{align}\label{eq:meandynamics}
 \dbmu(t) = f(\bmu(t), \bu(t)),
 \end{align}
-and ii) the time evolution of the state covariance matrix $\bP(t)$ along $\bmu(t)$, which can be expressed as
-\begin{align}
-\dbP(t) = \bA(t) \bP(t) + \bP(t) \bA^T(t) + \bQ(t),\quad \bP(0) = \bP_0.
+and ii) the time evolution of the state covariance matrix $\bP(t)$ along $\bmu(t)$, which can be expressed by the Lyapunov matrix differential equation
+\begin{align}\label{eq:dP}
+\dbP(t) = \bA(t) \bP(t) + \bP(t) \bA^T(t) + \bQ(t),\quad \bP(0) = \bP_0 = \bP_0^T.
 \end{align}
-The \emph{initial} state covariance $\bP_0$ is assumed known and $\bA(t)$ is the classical shorthand for the Jacobian along the mean trajectory $\bmu(t)$, that is $\bA(t)=\bJ(\bmu(t),\bu(t))$, where $\bJ(\bx, \bu) = \frac{\pd f(\bx, \bu)}{\pd \bx}$.
+In~\eqref{eq:dP}, $\bP_0$ is the \emph{initial} state covariance and $\bA(t)$ is the usual shorthand notation for the Jacobian along the mean trajectory $\bmu(t)$, that is $\bA(t)=\bJ(\bmu(t),\bu(t))$, where $\bJ(\bx, \bu) = \frac{\pd f(\bx, \bu)}{\pd \bx}$.
 
+As can be readily verified by differentiation~\cite{Gajic:LyapunovMatrixEquation:2010}, the analytical solution of~\eqref{eq:dP} has the form
+\begin{align}\label{eq:P_STM}
+\bP(t) = \bPhi(t,t_0) \bP_0 \bPhi(t,t_0)+\int_{t_0}^{t} \bPhi(t,\tau) \bQ(\tau) \bPhi^T(t,\tau) \dd \tau \quad \bP(0)=\bP_0,
+\end{align}
+where $\bPhi(t,t_0)$ is the \emph{state transition matrix}. This matrix encodes the evolution from $t_0$ to $t$ of a perturbation w.r.t. to a fiducial trajectory, the mean $\bmu(t)$. In symbols, $\de \bx(t) = \bPhi(t,t_0) \de \bx(t_0)$, with $\de \bx(\bullet) =\bx(\bullet) - \bmu(\bullet) $. In turn, the evolution of $\bPhi(t,t_k)$ from a generic $t_k$ to $t$ is driven by the following differential equation
+\begin{align}\label{eq:STM}
+\dbPhi(t,t_k) = \bA(t)\bPhi(t,t_k), \quad \bPhi(t_k, t_k) = \bI.
+\end{align}
+Even if in geometric mechanic and orbital mechanic books, see e.g.~\cite{Maruskin:DynamicalSystemsGeometric:2018} or~\cite{Tapley:StatisticalOrbitDetermination:2004}, the usual choice for a statistical trajectory determination is to employ~\eqref{eq:meandynamics} along with~\eqref{eq:P_STM} and~\eqref{eq:STM}, in view of using collocation integrators in stochastic trajectory planning, we proceed more directly using~\eqref{eq:meandynamics} and~\eqref{eq:dP}.
 \begin{align}
 \dbx = \begin{bmatrix}
               \dot{\bq}\\
