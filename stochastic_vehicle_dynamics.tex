@@ -11,7 +11,7 @@ Due to the symmetry of the probability density function (pdf) with respect to $\
 \begin{align}\label{eq:meandynamics}
 \dbmu(t) = f(\bmu(t), \bu(t)),
 \end{align}
-and ii) the time evolution of the state covariance matrix $\bP(t)$ along $\bmu(t)$, which can be expressed by the Lyapunov matrix differential equation
+and ii) the time evolution of the state covariance matrix $\bP(t)$ along $\bmu(t)$, which can be expressed by the \emph{Lyapunov matrix differential equation}
 \begin{align}\label{eq:dP}
 \dbP(t) = \bA(t) \bP(t) + \bP(t) \bA^T(t) + \bQ(t),\quad \bP(0) = \bP_0 = \bP_0^T.
 \end{align}
@@ -21,11 +21,11 @@ As can be readily verified by differentiation~\cite{Gajic:LyapunovMatrixEquation
 \begin{align}\label{eq:P_STM}
 \bP(t) = \bPhi(t,t_0) \bP_0 \bPhi(t,t_0)+\int_{t_0}^{t} \bPhi(t,\tau) \bQ(\tau) \bPhi^T(t,\tau) \dd \tau \quad \bP(0)=\bP_0,
 \end{align}
-where $\bPhi(t,t_0)$ is the \emph{state transition matrix}. This matrix encodes the evolution from $t_0$ to $t$ of a perturbation w.r.t. to a fiducial trajectory, the mean $\bmu(t)$. In symbols, $\de \bx(t) = \bPhi(t,t_0) \de \bx(t_0)$, with $\de \bx(\bullet) =\bx(\bullet) - \bmu(\bullet) $. In turn, the evolution of $\bPhi(t,t_k)$ from a generic $t_k$ to $t$ is driven by the following differential equation
+where $\bPhi(t,t_0)$ is the \emph{state transition matrix}. This matrix encodes the evolution from $t_0$ to $t$ of a perturbation w.r.t. to a fiducial trajectory -- the mean $\bmu(t)$. In symbols, $\barbx(t) = \bPhi(t,t_0) \barbx(t_0)$, with $\barbx(\bullet) =\bx(\bullet) - \bmu(\bullet) $. In turn, the evolution of $\bPhi(t,t_k)$ from a generic $t_k$ to $t$ is driven by the following differential equation
 \begin{align}\label{eq:STM}
 \dbPhi(t,t_k) = \bA(t)\bPhi(t,t_k), \quad \bPhi(t_k, t_k) = \bI.
 \end{align}
-Even if in geometric mechanic and orbital mechanic books, see e.g.~\cite{Maruskin:DynamicalSystemsGeometric:2018} or~\cite{Tapley:StatisticalOrbitDetermination:2004}, the usual choice for a statistical trajectory determination is to employ~\eqref{eq:meandynamics} along with~\eqref{eq:P_STM} and~\eqref{eq:STM}, in view of using collocation integrators in stochastic trajectory planning, we proceed more directly using~\eqref{eq:meandynamics} and~\eqref{eq:dP}.
+In geometric mechanics and orbital mechanics books, see e.g.~\cite{Maruskin:DynamicalSystemsGeometric:2018} or~\cite{Tapley:StatisticalOrbitDetermination:2004}, the usual choice for statistical trajectory determination is to employ~\eqref{eq:meandynamics} along with~\eqref{eq:P_STM} and~\eqref{eq:STM}. In our case, since we use collocation integrators for stochastic trajectory planning, we follow a more direct approach -- motivated by~\cite{Gillis:PracticalMethodsApproximate:2015} -- by directly employing~\eqref{eq:meandynamics} and~\eqref{eq:dP}.
 \begin{align}
 \dbx = \begin{bmatrix}
               \dot{\bq}\\
