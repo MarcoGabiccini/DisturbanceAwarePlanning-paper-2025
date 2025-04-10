@@ -1,5 +1,5 @@
 \section{Stochastic vehicle dynamics}
-\label{sec:stochastic_vehicle_dynamics} 
+\label{sec:stochastic_vehicle_dynamics}
 
 We model the \emph{perturbed vehicle dynamics} as the following nonlinear continuous-time random dynamical system
 \begin{align}
@@ -21,34 +21,27 @@ As can be readily verified by differentiation~\cite{Gajic:LyapunovMatrixEquation
 \begin{align}\label{eq:P_STM}
 \bP(t) = \bPhi(t,t_0) \bP_0 \bPhi(t,t_0)+\int_{t_0}^{t} \bPhi(t,\tau) \bQ(\tau) \bPhi^T(t,\tau) \dd \tau \quad \bP(0)=\bP_0,
 \end{align}
-where $\bPhi(t,t_0)$ is the \emph{state transition matrix}. This matrix encodes the evolution from $t_0$ to $t$ of a perturbation w.r.t. to a fiducial trajectory -- the mean $\bmu(t)$. In symbols, $\barbx(t) = \bPhi(t,t_0) \barbx(t_0)$, with $\barbx(\bullet) =\bx(\bullet) - \bmu(\bullet) $. In turn, the evolution of $\bPhi(t,t_k)$ from a generic $t_k$ to $t$ is driven by the following differential equation
+where $\bPhi(t,t_0)$ is the \emph{state transition matrix}. This matrix encodes the evolution from $t_0$ to $t$ of a perturbation w.r.t. to a fiducial trajectory -- the mean $\bmu(t)$. In symbols, $\barbx(t) = \bPhi(t,t_0) \barbx(t_0)$, with $\barbx(\cdot) =\bx(\cdot) - \bmu(\cdot) $. In turn, the evolution of $\bPhi(t,t_k)$ from a generic $t_k$ to $t$ is driven by the following differential equation
 \begin{align}\label{eq:STM}
 \dbPhi(t,t_k) = \bA(t)\bPhi(t,t_k), \quad \bPhi(t_k, t_k) = \bI.
 \end{align}
-In geometric mechanics and orbital mechanics books, see e.g.~\cite{Maruskin:DynamicalSystemsGeometric:2018} or~\cite{Tapley:StatisticalOrbitDetermination:2004}, the usual choice for statistical trajectory determination is to employ~\eqref{eq:meandynamics} along with~\eqref{eq:P_STM} and~\eqref{eq:STM}. In our case, since we use collocation integrators for stochastic trajectory planning, we follow a more direct approach -- motivated by~\cite{Gillis:PracticalMethodsApproximate:2015} -- by directly employing~\eqref{eq:meandynamics} and~\eqref{eq:dP}.
-\begin{align}
-\dbx = \begin{bmatrix}
-              \dot{\bq}\\
-              \dot{\bq}_v
-             \end{bmatrix} =
-             \begin{bmatrix}
-              \bq_v\\
-              \text{ABA}\text{dyn}(\bq, \bq_v, f_{xa}, f_{xb}, \delta, \bw),
-             \end{bmatrix} = F(\bx).
-	\label{eq:ABA_dyn}
-\end{align}
-               
+In geometric mechanics and orbital mechanics, see e.g.~\cite{Maruskin:DynamicalSystemsGeometric:2018} or~\cite{Tapley:StatisticalOrbitDetermination:2004}, the usual choice for statistical trajectory determination is to employ~\eqref{eq:meandynamics} along with~\eqref{eq:P_STM} and~\eqref{eq:STM}. In our case, since we use collocation integrators for stochastic trajectory planning, we follow a more direct approach -- motivated by~\cite{Gillis:PracticalMethodsApproximate:2015} -- by directly employing~\eqref{eq:meandynamics} and~\eqref{eq:dP}.
 
-The tangential forces exchanged between the tire and road are computed using \mbox{Pacejka's} \emph{Magic Formula}:
-\begin{equation}\label{eqn_mf}
-	[F_x,F_y]=\mf(\kappa,\alpha,F_z,\gamma),
-\end{equation}
-where $ F_x, F_y $ are the longitudinal and lateral forces, dependent on tire slips $( \kappa, \alpha )$, vertical load $( F_z )$, and camber angle $( \gamma )$.
-As shown in Fig.~\ref{fig:tyre_wheel}, an auxiliary frame $\sref{N}$ is introduced to calculate $ F_z $. This depends upon the interpenetration $ d $ of the tire into the ground, following a penalty-based compliant tire model. This model treats the wheel as a radial spring-damper system with constant stiffness $ k_t $ and damping $ c_t $. The vertical force is expressed as:
-\begin{equation}\label{eqn_Fz}
-	F_z= F_0\log_2\left(1 + 2^{\frac{k_t d + c_t \dot{d}}{F_0}}\right)
-\end{equation}
-which is differentiable for $ d = 0 $ and $\dot{d} = 0$, improving numerical stability. The model ensures $ F_z $ approaches zero when the tire loses contact with the ground, while maintaining a non-zero gradient to guide optimization algorithms in scenarios where the tire detaches from the ground or encounters sudden changes.
+The continuous-time stochastic trajectory planning can be framed as the following nonlinear optimal control problem
+\begin{align}
+& \underset{\bmu(t), \bu(t), \bP(t)}{\text{minimize}} \quad J(\bmu(t), \bu(t), \bP(t)) \label{eq:OCPcost} \\
+& \text{s.t.} \quad \dbmu(t)           = f(\bmu(t), \bu(t)) \label{eq:OCPdyn} \\
+& \phantom{\text{s.t.} \quad} \bmu(0)  = \bmu_0 \label{eq:OCPdynIC} \\
+& \phantom{\text{s.t.} \quad} \dbP(t) = \bA(t) \bP(t) + \bP(t) \bA^T(t) + \bQ(t) \label{eq:OCPdP} \\
+& \phantom{\text{s.t.} \quad} \bP(0)  = \bP_0 \succeq 0 \label{eq:OCPdPIC} \\ %& \phantom{\text{s.t.} \qquad} 0       \geq h_i(\bmu(t), \bu(t))
+%+ \overbrace{\gamma \bigg[\underbrace{\na^T_{\bx} h_i \bP(t) \na_{\bx} h_i}_{\text{variance of $h_i(\bx)$}}\bigg]^{\frac{1}{2}}}^{\text{safety margin}},
+&\phantom{\text{s.t.} \qquad} 0       \geq h_i(\bmu(t), \bu(t))
++ \be_i(\bmu(t), \bu(t), \bP(t)),
+\quad i = 1, \ldots, p \label{eq:OCPconstraints}
+\end{align}
+The cost function $J$ in~\eqref{eq:OCPcost} depends on the mean $\bmu(t)$, the controls $\bu(t)$ and the state covariance $\bP(t)$. The mean dynamics is expressed by~\eqref{eq:OCPdyn} with~\eqref{eq:OCPdynIC}, and the covariance dynamics is expressed by~\eqref{eq:OCPdP} with~\eqref{eq:OCPdPIC}. In eq.~\eqref{eq:OCPconstraints} the \emph{backoff terms} $\be_i$ account for the disturbances and serve the purpose of obtaining deterministic safety-margin types of constraint directly on $\bmu(t)$. This is equivalent to a linearization around the mean of the original \emph{chance constraint} on $\bx(t)$ expressed by $\Prob \{h_i(\bx) \leq 0\}\geq p$, where $p$ is the confidence level of constraint satisfaction. The backoff terms are given by
+$\be_i = \gamma \sig_i$. The coefficient $\gamma = \Phi^{-1}(p)$ is the quantile function, where $\Phi(z)=\Prob \{Z\leq z\}$ is the cdf of a standard normal distribution $Z \sim \calN(0,1)$, and acts as a \emph{tuning knob}: the greater the confidence level $p$ required, the higher the gain $\ga$\footnote{For example, with $p=0.84$ $\ga = 1.0$, with $p=0.97$ $\ga = 2.0$, with $p=0.99$ $\ga = 3.0$}. The term $\sig_i = \big[\na^T_{\bx} h_i(\bmu) \bP(t) \na_{\bx} h_i(\bmu)\big]^{\frac{1}{2}}$ represents the standard deviation of the constraint $h_i(\bx)$ linearized around the mean, i.e. of random variable $h_i(\bmu)+\na^T_{\bx} h_i(\bmu) (\bx - \bmu)$, and follows immediately from the propagation rule of covariance.
+
 
 %To compute the tangential components of the force exchanged by tyre and road, a formulation of the Pacejka's \emph{Magic Formula} ~\cite[Section~4.3.2]{Pacejka:book:2012} is used, which reads:
 %\begin{equation}\label{eqn_mf}
