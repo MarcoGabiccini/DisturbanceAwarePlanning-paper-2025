@@ -27,8 +27,8 @@ where $\bPhi(t,t_0)$ is the \emph{state transition matrix}. This matrix encodes 
 \end{align}
 In geometric mechanics and orbital mechanics, see e.g.~\cite{Maruskin:DynamicalSystemsGeometric:2018} or~\cite{Tapley:StatisticalOrbitDetermination:2004}, the usual choice for statistical trajectory determination is to employ~\eqref{eq:meandynamics} along with~\eqref{eq:P_STM} and~\eqref{eq:STM}. In our case, since we use collocation integrators for stochastic trajectory planning, we follow a more direct approach -- motivated by~\cite{Gillis:PracticalMethodsApproximate:2015} -- by directly employing~\eqref{eq:meandynamics} and~\eqref{eq:dP}.
 
-The continuous-time stochastic trajectory planning can be framed as the following nonlinear optimal control problem
-\begin{align}
+Accordingly, the continuous-time stochastic trajectory planning can be framed as the following nonlinear optimal control problem
+\begin{align} 
 & \underset{\bmu(t), \bu(t), \bP(t)}{\text{minimize}} \quad J(\bmu(t), \bu(t), \bP(t)) \label{eq:OCPcost} \\
 & \text{s.t.} \quad \dbmu(t)           = f(\bmu(t), \bu(t)) \label{eq:OCPdyn} \\
 & \phantom{\text{s.t.} \quad} \bmu(0)  = \bmu_0 \label{eq:OCPdynIC} \\
@@ -37,9 +37,9 @@ The continuous-time stochastic trajectory planning can be framed as the followin
 %+ \overbrace{\gamma \bigg[\underbrace{\na^T_{\bx} h_i \bP(t) \na_{\bx} h_i}_{\text{variance of $h_i(\bx)$}}\bigg]^{\frac{1}{2}}}^{\text{safety margin}},
 &\phantom{\text{s.t.} \qquad} 0       \geq h_i(\bmu(t), \bu(t))
 + \be_i(\bmu(t), \bu(t), \bP(t)),
-\quad i = 1, \ldots, p \label{eq:OCPconstraints}
+\quad i \in \calI \label{eq:OCPconstraints}
 \end{align}
-The cost function $J$ in~\eqref{eq:OCPcost} depends on the mean $\bmu(t)$, the controls $\bu(t)$ and the state covariance $\bP(t)$. The mean dynamics is expressed by~\eqref{eq:OCPdyn} with~\eqref{eq:OCPdynIC}, and the covariance dynamics is expressed by~\eqref{eq:OCPdP} with~\eqref{eq:OCPdPIC}. In eq.~\eqref{eq:OCPconstraints} the \emph{backoff terms} $\be_i$ account for the disturbances and serve the purpose of obtaining deterministic safety-margin types of constraint directly on $\bmu(t)$. This is equivalent to a linearization around the mean of the original \emph{chance constraint} on $\bx(t)$ expressed by $\Prob \{h_i(\bx) \leq 0\}\geq p$, where $p$ is the confidence level of constraint satisfaction. The backoff terms are given by
+The cost function $J$ in~\eqref{eq:OCPcost} depends on the mean $\bmu(t)$, the controls $\bu(t)$ and the state covariance $\bP(t)$. The mean dynamics is expressed by~\eqref{eq:OCPdyn} with~\eqref{eq:OCPdynIC}, and the covariance dynamics is expressed by~\eqref{eq:OCPdP} with~\eqref{eq:OCPdPIC}. In eq.~\eqref{eq:OCPconstraints} the \emph{backoff terms} $\be_i$ account for the disturbances and serve the purpose of obtaining deterministic safety-margin types of constraint directly on $\bmu(t)$. $\calI$ is the set of indices defining the inequality constraints. This is equivalent to a linearization around the mean of the original \emph{chance constraint} on $\bx(t)$ expressed by $\Prob \{h_i(\bx) \leq 0\}\geq p$, where $p$ is the confidence level of constraint satisfaction. The backoff terms are given by
 $\be_i = \gamma \sig_i$. The coefficient $\gamma = \Phi^{-1}(p)$ is the quantile function, where $\Phi(z)=\Prob \{Z\leq z\}$ is the cdf of a standard normal distribution $Z \sim \calN(0,1)$, and acts as a \emph{tuning knob}: the greater the confidence level $p$ required, the higher the gain $\ga$\footnote{For example, with $p=0.84$ $\ga = 1.0$, with $p=0.97$ $\ga = 2.0$, with $p=0.99$ $\ga = 3.0$}. The term $\sig_i = \big[\na^T_{\bx} h_i(\bmu) \bP(t) \na_{\bx} h_i(\bmu)\big]^{\frac{1}{2}}$ represents the standard deviation of the constraint $h_i(\bx)$ linearized around the mean, i.e. of random variable $h_i(\bmu)+\na^T_{\bx} h_i(\bmu) (\bx - \bmu)$, and follows immediately from the propagation rule of covariance.
 
 
@@ -56,29 +56,29 @@ $\be_i = \gamma \sig_i$. The coefficient $\gamma = \Phi^{-1}(p)$ is the quantile
 %\end{equation}
 %This function, with $F_0$ tuned to be negligible, is differentiable for $d=0$ and $\dot{d}=0$, enhancing numerical performance, and behaves as a spring-damper system, as requested, when the tyre is in contact with the ground. When the tyre detaches completely from the ground, the resultant vertical forces tends to zero. However, since its gradient is not zero, this formulation helps the optimization algorithm to figure out proper search directions. This allows to deal with jumps and other situations in which the tyre may lose contact with the ground.
 
-\subsection{Camber System Modeling}
-\label{sec:cambersystemmodeling}
-The dynamic camber control (DCC) system is modeled as a simplified actuated revolute joint connecting the two virtual halves of the knuckle, though a real implementation might require a more complex 1-DoF joint. While this simplification may influence joint values from the optimizer, it results in nearly the same optimal wheel posture. The choice was driven by the limited literature on such systems for FSAE vehicles, which is the vehicle type employed in our analysis. A realistic model, if available, could be characterized using the same process applied to the suspension. During the design phase of the actual joint, some parameters could be treated as time-invariant optimization variables, constrained within dimensional bounds, to achieve the best performance configuration.
-%The dynamic camber control (DCC) system is modeled here as a simple actuated revolute joint connecting the two virtual halves of the knuckle. A real implementation could require a more complex generalized 1-DoF joint. Changing the joint characteristics might affect the joint values obtained from the optimizer but would result in approximately the same optimal wheel posture. This simplification was necessary due to the limited open literature on such systems for FSAE vehicles. If a realistic model of the system were available, the process used for the suspension could easily be repeated to characterize this joint. It is worth observing that, in the design phase of the actual controlled joint, some model parameters could be treated as time-invariant optimization variables, appropriately constrained to meet dimensional bounds, and optimized to find the best performance configuration.
+\subsection{Discretization via direct collocation}
+\label{sec:discretization}
 
-In Table~\ref{tab:camber_prop}, we report the range of variation of function $q_{hk}(t)$ and its first and second derivatives. Considering the scarcity of open literature available, reasonable values have been selected. In Figure~\ref{fig:camber_showing} the wheel is shown in a general posture with zero camber (shaded black) and with maximum positive camber (solid black). Due to the convention adopted for rotations, this posture corresponds to the minimum value of $q_{hk}$.
-\begin{table}[h]
-	\centering
-	\begin{tabular}{|c|c|c|}
-		\hline
-		$q_{hk}$ (rad) & $\dot{q}_{hk}$ (rad/s)& $\ddot{q}_{hk}$ (rad/s$^2$)\\\hline
-		$\pm \pi/20$ & $\pm \pi/20$ & $\pm \pi/10$ \\\hline
-	\end{tabular}
-	\caption{Upper and lower bounds for camber angle value $q_{hk}(t)$ and its derivatives.}
-	\label{tab:camber_prop}
-\end{table}
+The nonlinear optimal control problem~\eqref{eq:OCPcost} can be discretized by applying a suitable collocation integrator obtaining 
+\begin{alignat}{3}
+\underset{\bmu_k,\bxi_k, \bu_k, \bP_k,\bz_k}{\text{minimize}} \,
+& & & J_k(\bmu_k,\bxi_k, \bu_k, \bP_k) & & \label{eq:DOCPcost} \\
+\hspace*{-2.0 cm}\text{s.t.} \quad
+& \bzero      & = & \; \bPsimu_k(\bmu_{k-1},\bmu_k,\bxi_k, \bu_k,\bz_k),
+& \quad & k = 1,\ldots, N \label{eq:DOCPdyn} \\
+& \bmu_0      & = & \; \bar{\bmu}_0
+& & \label{eq:DOCPdynIC} \\
+& \bzero      & = & \; \bPsiP_k(\bmu_k,\bxi_k, \bu_k, \bP_{k-1},\bP_k,\bSi_k,\bz_k),
+& \quad & k = 1,\ldots, N \label{eq:DOCPdP} \\
+& \bP_0       & = & \; \bar{\bP}_0 \succeq 0
+& & \label{eq:DOCPdPIC} \\
+& \bzero      & = & \; \bOm_k(\bmu_k,\bxi_k, \bu_k,\bz_k),
+& \quad & k = 0,\ldots, N \label{eq:DOCPpath} \\
+& 0           & \geq & \; h_i(\bmu_k, \bu_k, \bz_k) + \be_i(\bmu_k, \bu_k, \bP_k, \bz_k),
+& \quad & k = 1,\ldots, N;\; i \in \calI \label{eq:DOCPconstraints}
+\end{alignat}
 
-\begin{figure}[h]
-	\centering
-	\includegraphics[scale = .6]{Images/camber_showing}
-	\caption{Real scale representation of the wheel in two configurations: $q_{hk}=0$ (shaded surface) and $q_{hk}=-\pi/20$ (solid surface).}
-	\label{fig:camber_showing}
-\end{figure}
+
 \subsection{External Wrenches}
 \label{sec:extwren}
 The external wrenches acting on each body, from wheels to chassis, are expressed in body-fixed components. Only gravity, aerodynamic forces, and road-tyre interactions are considered. Following~\cite{Guiggiani:book:2023}, the aerodynamic wrench in frame $\{B\}$ is $W_a=-\frac{1}{2}\rho S v_{gb,1}^2 [C_x, 0, C_z, 0, -h_0 C_x - a_f C_{zf} + a_r C_{zr}, 0]^T$, where $\rho$ is air density, $S$ is the frontal area, $v_{gb,1}$ the forward velocity (component of \emph{distal rigid-body twist} $V_{gb}$, see~\cite[p.~4]{Domenighini:Designs:2023}), and $C_x, C_z$ are drag/lift coefficients. $C_z$ is split into $C_{zf}=k_a C_z$ and $C_{zr}=(1-k_a)C_z$ by the aerodynamic balance coefficient $k_a$.
