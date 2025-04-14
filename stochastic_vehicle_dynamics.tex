@@ -25,7 +25,7 @@ where $\bPhi(t,t_0)$ is the \emph{state transition matrix}. This matrix encodes 
 \begin{align}\label{eq:STM}
 \dbPhi(t,t_k) = \bA(t)\bPhi(t,t_k), \quad \bPhi(t_k, t_k) = \bI.
 \end{align}
-In geometric mechanics and orbital mechanics, see e.g.~\cite{Maruskin:DynamicalSystemsGeometric:2018} or~\cite{Tapley:StatisticalOrbitDetermination:2004}, the usual choice for statistical trajectory determination is to employ~\eqref{eq:meandynamics} along with~\eqref{eq:P_STM} and~\eqref{eq:STM}. In our case, since we use collocation integrators for stochastic trajectory planning, we follow a more direct approach -- motivated by~\cite{Gillis:PracticalMethodsApproximate:2015} -- by directly employing~\eqref{eq:meandynamics} and~\eqref{eq:dP}.
+In geometric and orbital mechanics, see e.g.~\cite{Maruskin:DynamicalSystemsGeometric:2018} or~\cite{Tapley:StatisticalOrbitDetermination:2004}, the usual choice for statistical trajectory determination is to employ~\eqref{eq:meandynamics} along with~\eqref{eq:P_STM} and~\eqref{eq:STM}. In our case, since we use collocation integrators for stochastic trajectory planning, we follow a more direct approach -- motivated by~\cite{Gillis:PracticalMethodsApproximate:2015} -- by directly employing~\eqref{eq:meandynamics} and~\eqref{eq:dP}.
 
 Accordingly, the continuous-time stochastic trajectory planning can be framed as the following nonlinear optimal control problem
 \begin{align} 
@@ -59,10 +59,10 @@ $\be_i = \gamma \sig_i$. The coefficient $\gamma = \Phi^{-1}(p)$ is the quantile
 \subsection{Discretization via direct collocation}
 \label{sec:discretization}
 
-The nonlinear optimal control problem~\eqref{eq:OCPcost} can be discretized by applying a suitable collocation integrator obtaining 
+The nonlinear optimal control problem~\eqref{eq:OCPcost} can be discretized by applying a suitable collocation integrator obtaining the following nonlinear program (NLP) 
 \begin{alignat}{3}
 \underset{\bmu_k,\bxi_k, \bu_k, \bP_k,\bz_k}{\text{minimize}} \,
-& & & J_k(\bmu_k,\bxi_k, \bu_k, \bP_k) & & \label{eq:DOCPcost} \\
+& & & J_k(\bmu_k,\bxi_k, \bu_k) & & \label{eq:DOCPcost} \\
 \hspace*{-2.0 cm}\text{s.t.} \quad
 & \bzero      & = & \; \bPsimu_k(\bmu_{k-1},\bmu_k,\bxi_k, \bu_k,\bz_k),
 & \quad & k = 1,\ldots, N \label{eq:DOCPdyn} \\
@@ -77,8 +77,13 @@ The nonlinear optimal control problem~\eqref{eq:OCPcost} can be discretized by a
 & 0           & \geq & \; h_i(\bmu_k, \bu_k, \bz_k) + \be_i(\bmu_k, \bu_k, \bP_k, \bz_k),
 & \quad & k = 1,\ldots, N;\; i \in \calI \label{eq:DOCPconstraints}
 \end{alignat}
+To perform the discretization, the track centerline is parameterized using a curvilinear abscissa $\alpha \in [0,1]$, and uniformly sampled at $N+1$ points $\alpha_0, \ldots, \alpha_N$.
+Accordingly, $\bmu_k$ denotes the mean state at grid node $\alpha_k$, while $\bu_k$ and $\bz_k$ are assumed to be piecewise constant over each interval $[\al_k, \al_{k+1}]$.
+These represent the controls and the algebraic variables, respectively. The $\bz_k$'s are introduced as direct handles for physically meaningful quantities such contact forces. Similarly, $\bP_k$ represents the covariance matrix at the $k$-th node.
+Following the direct collocation approach, both the mean and covariance state trajectories are approximated, in the $k$-th interval, with polynomials $\pi_k(\tau)$, defined on the unit interval $\tau\in[0,1]$, and then scaled to match the width $h_k$ of the corresponding time step. On the unit interval, we select $d$ collocation points $\tau_1, \ldots, \tau_d$, associated with as many collocation states. Accordingly, we define $\bxi_k$ and $\bSi_k$ as the mean states and covariance matrices at the $d$ collocation points within each interval $[\al_k, \al_{k+1}]$, respectively. Therefore, $\bxi_k =
+(\bxi_{k,1}, \ldots, \bxi_{k,d})$, and similarly $\bSi_k=(\bSi_{k,1}, \ldots, \bSi_{k,d})$. Equations~\eqref{eq:DOCPdyn} and~\eqref{eq:DOCPdP} represent the collocation and continuity equations for mean and covariance, respectively, with initial conditions represented by~\eqref{eq:DOCPdynIC} and~\eqref{eq:DOCPdPIC}. Eqs.~\eqref{eq:DOCPpath} are path equality constraints and~\eqref{eq:DOCPconstraints} are the robustified inequality constraints. 
 
-
+In certain cases~\cite{Gillis:PracticalMethodsApproximate:2015}, positive-definiteness-preserving Lyapunov discretization schemes are used in~\eqref{eq:DOCPdP}. However, for sufficiently fine discretization, we found that integrating only the lower triangular part of $\bP(t)$ in~\eqref{eq:OCPdPIC}  (and reconstructing its strictly upper part accordingly), ensures that all $\bP_k$ remain symmetric and positive definite when the initial $\bP_0$ is symmetric and positive definite. In all our tests we used direct collocation with a cubic polynomial and Gauss-Legendre collocation points.
 \subsection{External Wrenches}
 \label{sec:extwren}
 The external wrenches acting on each body, from wheels to chassis, are expressed in body-fixed components. Only gravity, aerodynamic forces, and road-tyre interactions are considered. Following~\cite{Guiggiani:book:2023}, the aerodynamic wrench in frame $\{B\}$ is $W_a=-\frac{1}{2}\rho S v_{gb,1}^2 [C_x, 0, C_z, 0, -h_0 C_x - a_f C_{zf} + a_r C_{zr}, 0]^T$, where $\rho$ is air density, $S$ is the frontal area, $v_{gb,1}$ the forward velocity (component of \emph{distal rigid-body twist} $V_{gb}$, see~\cite[p.~4]{Domenighini:Designs:2023}), and $C_x, C_z$ are drag/lift coefficients. $C_z$ is split into $C_{zf}=k_a C_z$ and $C_{zr}=(1-k_a)C_z$ by the aerodynamic balance coefficient $k_a$.
