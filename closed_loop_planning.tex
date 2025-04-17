@@ -12,7 +12,7 @@ The approach is based on the three following steps: i) A nominal time-optimal tr
 
 Given the nominal trajectory $(\hbmu_k, \hbu_k)$ over $k=0,\ldots, N$, and introduced the deviation variables $\bbmu_k=\bmu_k - \hbmu_k$ and $\bbu = \bu_k - \hbu_k$, we design a linear state-feedback law $\bbu_k= -\hbK_k \bbmu_k$, or equivalently $\bu_k = \hbu_k - \hbK_k (\bmu_k - \hbmu_k)$, to stabilize the deviations along the nominal trajectory. To compute the state-feedback matrices $\hbK_k$, we linearize the system around $(\hbmu_k, \hbu_k)$, such that $\bbmu_{k+1} \approx \hbA_{k}\bbmu_k + \hbB_k \bbu_k$, where $\hbA_k = f_{,\bmu}(\hbmu_k,\hbu_k)$ and $\hbB_k = f_{,\bu}(\hbmu_k,\hbu_k)$, and define the quadratic regulator (tracking) cost function
 \begin{align}
-J = \sum_{k=0}^{N-1} \big( \bbmu_k^{T} \bW_k \bbmu_k + \bbu_k^T \bR_k \bbu_k \big) + \bbmu_N^T \bW_N \bbmu_N,
+J = \bbmu_N^T \bW_N \bbmu_N + \sum_{k=0}^{N-1} \big( \bbmu_k^{T} \bW_k \bbmu_k + \bbu_k^T \bR_k \bbu_k \big),
 \end{align}
 where $\bW_N=\bW_N^T \succ 0$, $\bW_k=\bW_k^T \succeq 0$, $\bR_k=\bR_k^T \succ 0$. It can be shown that the optimal cost-to-go is given by $J_k^*(\bbmu_k) = \bbmu_k^T \bS_k \bbmu_k$, with $\bS_k = \bS_k^T \succ 0$, where $\bS_k$ can be computed through the (backward) Riccati recursion for $k=N-1,\ldots, 0$
 \begin{align}
@@ -23,8 +23,30 @@ where  $\hbK_k =\big( \bR_k+\hbB_k^T \bS_{k+1} \hbB_k \big)^{-1} \hbB_k^T \bS_{k
 
 \subsection{Step 3 -- Closed-loop robustified planning}
 \label{sec:CLrobustified}
- 
 
+%\begin{align}
+%    \underset{\bmu_k,\bxi_k, \bu_k, \bP_k,\bz_k, \bK_k}{\text{minimize}} \quad & J_k(\bmu_k,\bxi_k, \bu_k) \label{eq:ROCPcost}\\
+%       \text{s.t.}\notag\\
+%          & f_0(x) - t \le 0 \quad \phantom{i=1, \dots, m}\\
+%          & f_i(x) \le 0, \quad i=1, \dots, m \quad i=1, \dots, m\\
+%          & h_i(x) = 0,   \quad i=1, \dots, p,
+%\end{align}
+
+\begin{alignat}{3}
+\underset{\bmu_k,\bxi_k, \bu_k, \bP_k,\bz_k, \bK_k}{\text{minimize}}
+    & \quad J_k(\bmu_k,\bxi_k, \bu_k) & & \label{eq:ROCPcost} \\
+\text{s.t.}\notag\\
+\bzero      & = \; \bPsimu_k(\bmu_{k-1},\bmu_k,\bxi_k, \bu_k,\bz_k),
+\quad k = 1,\ldots, N \label{eq:ROCPdyn} \\
+\bmu_0      & = \; \bar{\bmu}_0 \label{eq:ROCPdynIC} \\
+\bzero      & = \; \bPsiPCL_k(\bmu_k,\bxi_k, \bu_k, \tbP_{k-1},\tbP_k,\bSi_k,\bz_k, \bK_k),
+\quad k = 1,\ldots, N \label{eq:ROCPdP} \\
+\tbP_0       & = \; \bar{\bP}_0 \succeq 0 \label{eq:ROCPdPIC} \\
+\bzero      & = \; \bOm_k(\bmu_k,\bxi_k, \bu_k,\bz_k), \quad k = 0,\ldots, N \label{eq:ROCPpath} \\
+0    & \geq  h_i(\bmu_k, \bu_k, \bz_k) + \be_i(\bmu_k, \bu_k, \tbP_k, \bz_k), \quad k = 1,\ldots, N;\; \quad i \in \calI \label{eq:ROCPconstraints}\\
+-\de \bK   & \leq \bK_k - \hbK_k \leq  \de \bK \label{eq:ROCPdeltaK}, \quad k = 0,\ldots, N
+\end{alignat} 
+where~\eqref{eq:ROCPdP} denotes the discretized form for time evolution of the covariance matrix under a stabilizing controller of the form $\bbu_k=-\bK_k \bbmu_k$. As apposed to~\eqref{eq:OCPdP}, $\tbP$ would evolve, in continuous time, according to $\dot{\tbP}(t) = (\bA(t)-\bB(t) \bK(t)) \tbP(t) + \tbP(t) (\bA(t)-\bB(t) \bK(t))^T + \bQ(t)$. To be continued...
 \section{Tire Model}
 \label{sec:tyremodel}
 \begin{figure}[t]\centering
