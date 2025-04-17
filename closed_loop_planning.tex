@@ -4,74 +4,27 @@
 The second approach plans over the full horizon while incorporating a feedback policy that mimics the driver's closed-loop behavior. This enables a more realistic propagation of the uncertainty encoded in the covariance matrix $\bP$, preventing its uncontrolled growth through the stabilizing effect of the driver's feedback.
 
 The approach is based on the three following steps: i) A nominal time-optimal trajectory is planned: this will be referred to as nominal feed-forward optimal trajectory. This is the trajectory a driver should follow in the ideal situation of a world without uncertainty. Therefore, in this step the mean trajectory is the actual trajectory a deterministic vehicle dynamics would trace. ii) A closed-loop controller mimicking the driver's action is computed which stabilizes the nominal feed-forward optimal trajectory computed at step i). We assume a discrete time-varying Linear Quadratic Regulator (LQR) controller is a good approximation of how an expert driver can track a prescribed trajectory. iii) In the last step the stochastic framework is reintroduced and the time-optimal planning problem is robustified using the Lyapunov framework. The main idea is to \emph{re-plan} a mean trajectory of a stochastic system such that, a time-varying LQR controller that aims at stabilizing it, is able to properly tame the propagation of the uncertainty. This amounts to ensuring that the robustified path constraints are satisfied. More specifically, this implies two key aspects: first, that the covariance matrix is propagated accounting explicitly for the controlled system dynamics; and second, that the path constraints are robustly satisfied by incorporating the covariance estimation propagated through the closed-loop controlled system. Some aspects that may initially appear technical are in fact essential. In this third step, not only are states and controls re-planned, but also the time-varying LQR gains. In fact, they need to explicitly account for the changed requirements associated with stabilizing a trajectory different from the nominal one, which must now satisfy the robustified constraints.
-\subsection{Suspension Analysis}
-\label{sec:suspanal}
-The suspensions connect the chassis to the unsprung masses. This connection cannot be described by an elementary joint, such as prismatic or revolute. Therefore, a set of six variables $q_{bh}$, that parameterize a homogeneous transformation matrix, is necessary. The transformation can be realized by composing three translations and three rotations (the ZXY Euler sequence was selected) using the global Product of Exponentials (PoE) formula~\cite{Murray:book:1994}, which reads: \begin{equation}\label{eqn:PoE}
-	g_{bh}=e^{\hat{Y}_1q_{bh,1}}\cdots e^{\hat{Y}_6q_{bh,6}} g_{bh}(0),
-\end{equation}
-where the offset $g_{bh(0)}=I$ and $Y_i=e_i$, with $e_i\in\bbR^6$ are the six normalized screw vectors (canonical basis elements in $\bbR^6$) associated with the Cartesian coordinates and the Euler ZXY angles in $q_{bh}$.
-Clearly, the six components of $q_{bh}$ are not independent; the modeled suspension is, in fact, a double wishbone that has: 2 DoFs for wheels that can steer, and 1 DoF otherwise.
-In this case, both axles have wheels that can steer; hence, a pair of independent variables ($z;\delta $) is associated with each wheel.
-A detailed analysis is omitted here for the sake of brevity. The interested reader is referred to~\cite{Domenighini:Designs:2023} for a similar treatment using the PoE formalism.
+\subsection{Step 1 -- Nominal feed-forward time-optimal trajectory planning}
+\label{sec:nominalFF}
 
-%As mentioned in the previous sections, $z$ represents the variation of the distance between the two attachment points of the spring-damper system, positive when the distance increases and negative when it decreases, while $\delta$ represents the motion of the steering rod attachment point to the chassis along its local $y$ axis (frame $\sref{B}$). Considering that the type of the suspension is known, six scalar equations of constraints can be expressed implicitly as $F(q_{bh};z,\delta)=0\in \bbR^6$.
-%
-%To find an explicit relation between inputs $(z,\delta)$ and outputs $q_{bh}$, the constraint equations are solved on a grid of pairs $(z^{(p)},\delta^{(l)})$, where $p = 1,\dots,N$ and $l = 1,\dots,M$. Then, the data are fitted (in the least-squares sense) with a 2D regression polynomial $q_{bh}(z,\delta)$ as follows:
-%\begin{equation}\label{eqn:poly}
-%	q_{bh,i}(z,\delta)=\sum_{r=0}^{3} \sum_{s=0}^{3-r} a_{{rs},i} z^r \delta^s.
-%\end{equation}
-%For the purpose a polynomial of degree three is sufficiently accurate. Now is possible to express the homogeneous transformation $g_{bh}\bigl(q_{bh}(z,\delta)\bigr)$ and to compute the twist $V_{bh}$ and $\dot{V}_{bh}$ as functions of $(z,\delta)$ and their derivatives. We start from:
-%\begin{equation}\label{eqn:Jbh}
-%	V_{bh}=\sum_{i=1}^6J_{bh,i}\dot{q}_{bh,i},
-%\end{equation}
-%where $J_{bh}$ is the \emph{geometric Jacobian} of the suspension joint relative to $q_{bh}$. Then, following the procedure thoroughly described in~\cite[Sec. 2.2]{Domenighini:Designs:2023}, it is possible to obtain %
-%assumed with independent components. Each column of $J_{bh}$ can be computed based on the PoE formula \eqref{eqn:PoE}. For the $i$-th column, we have $J_{bh,i}=A_i^{-1}Y_i$, with $A_6 = I_{6\times 6}$ and $A_i=\Ad_{e^{\hat{Y}_{i}q_{bh,i}}\cdots e^{\hat{Y}_6q_{bh,6}}}$, $i = 1, \dots, 5$. The \emph{Adjoint operator} $\Ad_g$ has been defined as the $6\times6$ matrix satisfying $Y=\Ad_gX$ whenever $\hat{Y}=g\hat{X}g^{-1}$, so that, if $g=\left[\begin{smallmatrix}R&d\\0^T&1\end{smallmatrix}\right]$, then $\Ad_g=\left[\begin{smallmatrix}R&\hat{d}R\\0&R\end{smallmatrix}\right]$.\\
-%As a function of $(z,\delta)$, $\dot{q}_{bh,i}$ can be expressed as follows:
-%\begin{equation}\label{eqn:dt_qbh}
-%	\dot{q}_{bh,i}=\frac{\partial}{\partial z}q_{bh,i}\dot{z}+\frac{\partial}{\partial\delta}q_{bh,i}\dot{\delta},
-%\end{equation}
-%where the (geometric) partial derivatives $\frac{\partial}{\partial z}q_{bh,i}$ and $\frac{\partial}{\partial\delta}q_{bh,i}$ are obtained by differentiating Eq.~\eqref{eqn:poly}.
-%Then, by defining the Jacobians with respect to the true independent variables $z$ and $\delta$ as follows
-%\begin{align}\label{eqn:Jbh,z}
-%	J_{bh,z}=\sum_{i=1}^6J_{bh,i}\frac{\partial}{\partial z}q_{bh,i}\quad \textrm{and}\quad J_{bh,\delta}=\sum_{i=1}^6J_{bh,i}\frac{\partial}{\partial\delta}q_{bh,i},
-%\end{align}
-%it possible to obtain the rigid-body velocity $V_{bh}$ of the constrained motion from Eq.~\eqref{eqn:Jbh}, in terms of $\dot{z}$ and $\dot{\delta}$, as follows
-%\begin{equation}\label{eqn:Vbh}
-%	V_{bh}=J_{bh,z}\dot{z}+J_{bh,\delta}\dot{\delta}.
-%\end{equation}
-%
-%To write the dynamic equations the time derivative $\dot{V}_{bh}$ of the twist $V_{bh}$ is necessary. To this sake, it is sufficient to differentiate Eqs.~\eqref{eqn:Jbh}--\eqref{eqn:Vbh}.
-%\begin{equation}\label{eqn:dt_Jbh}
-%	\dot{V}_{bh}=\sum_{i=1}^6\dot{J}_{bh,i}\dot{q}_{bh,i}+\sum_{i=1}^6J_{bh,i}\ddot{q}_{bh,i}.
-%\end{equation}
-%
-%Here, following~\cite{Gabiccini:ICRA:2012}, the derivatives $\dot{J}_{bh,i}$ can computed using the formula
-%\begin{align}\label{eqn:dt_Jbhi}
-%	\dot{J}_{bh,i}=-\sum\limits_{i < j \leq 6}\ad_{J_{bh,j}\dot{q}_{bh,j}} J_{bh,i}
-%\end{align}
-%using Lie derivatives. In the matrix case, the Lie derivative $\hat{Z}$ of the vector field $\hat{X}$ with respect to vector field $\hat{Y}$ is calculated by as a commutator operation $\hat{Z}=\hat{Y}\hat{X}-\hat{X}\hat{Y}$; in the vector case, the $6\times6$ matrix $\ad_Y$ is used, defined such that $Z=\ad_Y X$. If $v$ and $\omega$ are the translational and rotational component of $V$, then $\ad_V=\left[\begin{smallmatrix}\hat{\omega}&\hat{v}\\0&\hat{\omega}\end{smallmatrix}\right]$.
-%
-%In Eq.~\eqref{eqn:dt_Jbh}, the accelerations $\ddot{q}_{bh,i}$ are obtained by differentiating the velocities in Eq.~\eqref{eqn:dt_qbh}:
-%\begin{equation}\label{eqn:dt_dt_qbh}
-%	\ddot{q}_{bh,i}=\frac{\partial^2}{\partial z^2}q_{bh,i}\dot{z}^2+2\frac{\partial^2}{\partial z\partial\delta}q_{bh,i}\dot{z}\dot{\delta}+\frac{\partial^2}{\partial\delta^2}q_{bh,i}\dot{\delta}^2+\frac{\partial}{\partial z}q_{bh,i}\ddot{z}+\frac{\partial}{\partial\delta}q_{bh,i}\ddot{\delta},
-%\end{equation}
-%where the partial derivatives are computed by differentiating the regression polynomials~in~\eqref{eqn:poly}.
-%After simple but tedious calculations, the explicit expression for the derivatives of the Jacobians in \eqref{eqn:Jbh,z} appear as follows:
-%\begin{align}
-%	\dot{J}_{bh,z}&=\sum_{i=1}^6\dot{J}_{bh,i}\frac{\partial}{\partial z}q_{bh,i}+\sum_{i=1}^6J_{bh,i}\Bigl(\frac{\partial^2}{\partial z^2}q_{bh,i}\dot{z}+\frac{\partial^2}{\partial z\partial\delta}q_{bh,i}\dot{\delta}\Bigr)\label{eqn:dt_Jbh,z}\quad\textrm{and}\\\dot{J}_{bh,\delta}&=\sum_{i=1}^6\dot{J}_{bh,i}\frac{\partial}{\partial\delta}q_{bh,i}+\sum_{i=1}^6J_{bh,i}\Bigl(\frac{\partial^2}{\partial z\partial\delta}q_{bh,i}\dot{\delta}+\frac{\partial^2}{\partial\delta^2}q_{bh,i}\dot{\delta}\Bigr)\label{eqn:dt_Jbh,d}.
-%\end{align}
-%Substituting Eqs.~\eqref{eqn:dt_Jbhi} and~\eqref{eqn:dt_dt_qbh} in Eqs.~\eqref{eqn:dt_Jbh}, and casting some intermediate results as~\eqref{eqn:dt_Jbh,z} and~\eqref{eqn:dt_Jbh,d},
-%the constrained rigid-body acceleration $\dot{V}_{bh}$ in the following form:
-%\begin{equation}\label{eqn:dt_Vbh}
-%	\dot{V}_{bh}=\dot{J}_{bh,z}\dot{z}+\dot{J}_{bh,\delta}\dot{\delta}+J_{bh,z}\ddot{z}+J_{bh,\delta}\ddot{\delta}.
-%\end{equation}
-%The explicit expressions for auxiliary Jacobians $J_{bh,z}$, $J_{bh,\delta}$, $\dot{J}_{bh,z}$ and $\dot{J}_{bh,\delta}$ are omitted here for brevity. The interested reader can find the detailed analytical derivation in~\cite[Eqs. (5)--(8)]{Domenighini:Designs:2023}.
-%
-%A generalized force $\tau\in\bbR$ is introduced that depends only on the independent variable $z\in\bbR$. $\tau$ is assumed to be generated only by the spring and the damper, considered aligned along the same axis. It is worth noting that, using the defined $z$, we are allowed to compute the force of the suspension without calculate the associated $q_{bh}$ nor using the Principle of Virtual Works. In this expression, also the contribution of the anti-roll bar is considered, which depends on the difference between the left and right trim, and the contribution of the bump-stops, which activate when the trim reaches its lower or upper limits. The intensity of $\tau$, for each wheel, is expressed as follow:
-%\begin{equation}
-%	\tau_{ij}=k_{s,i}(l_{c,i}-l_{0,i}+z_{ij})+c_{d,i}\dot{z}_{ij}+(-1)^j k_{a,i}(z_{i,1}-z_{i,2}) + \left(\frac{2z-z_{\text{max}}-z_{\text{min}}}{|z_{\text{max}}-z_{\text{min}}|}\right)^{b},
-%\end{equation}
-%where $l_{c,i}$ is the spring's length in the reference position, $l_{0,i}$ is the spring's length at rest, $k_{s,i}$ and $c_{d,i}$ are the stiffness and the damping coefficients, $k_{a,i}$ is the anti-roll bar stiffness, $b$ influences the stiffness of the bump-stops, and $z_{\text{min}}$ and $z_{\text{max}}$ are the knees of the bump-stops' force characteristics.
+\subsection{Step 2 -- Time-varying LQR stabilizing controller}
+\label{sec:LQR}
+
+Given the nominal trajectory $(\hbmu_k, \hbu_k)$ over $k=0,\ldots, N$, and introduced the deviation variables $\bbmu_k=\bmu_k - \hbmu_k$ and $\bbu = \bu_k - \hbu_k$, we design a linear state-feedback law $\bbu_k= -\hbK_k \bbmu_k$, or equivalently $\bu_k = \hbu_k - \hbK_k (\bmu_k - \hbmu_k)$, to stabilize the deviations along the nominal trajectory. To compute the state-feedback matrices $\hbK_k$, we linearize the system around $(\hbmu_k, \hbu_k)$, such that $\bbmu_{k+1} \approx \hbA_{k}\bbmu_k + \hbB_k \bbu_k$, where $\hbA_k = f_{,\bmu}(\hbmu_k,\hbu_k)$ and $\hbB_k = f_{,\bu}(\hbmu_k,\hbu_k)$, and define the quadratic regulator (tracking) cost function
+\begin{align}
+J = \sum_{k=0}^{N-1} \big( \bbmu_k^{T} \bW_k \bbmu_k + \bbu_k^T \bR_k \bbu_k \big) + \bbmu_N^T \bW_N \bbmu_N,
+\end{align}
+where $\bW_N=\bW_N^T \succ 0$, $\bW_k=\bW_k^T \succeq 0$, $\bR_k=\bR_k^T \succ 0$. It can be shown that the optimal cost-to-go is given by $J_k^*(\bbmu_k) = \bbmu_k^T \bS_k \bbmu_k$, with $\bS_k = \bS_k^T \succ 0$, where $\bS_k$ can be computed through the (backward) Riccati recursion for $k=N-1,\ldots, 0$
+\begin{align}
+\bS_N &= \bW_N,\\ 
+\bS_{k} &= \bW_k + \hbA_k^T \bS_{k+1} \hbA_k - \hbA_k^T \bS_{k+1}\hbB_k \hbK_k,\quad k={N-1, \ldots, 0}
+\end{align}
+where  $\hbK_k =\big( \bR_k+\hbB_k^T \bS_{k+1} \hbB_k \big)^{-1} \hbB_k^T \bS_{k+1} \hbA_k$. The optimal (stabilizing) feedback policy is given by $\bbu_k=-\hbK_k \bbmu_k$. We assume that the gain sequence $\{\hbK_k\}$, $k=0,\ldots, N$ represents the control strategy that an expert driver would employ to optimally stabilize the system along the nominal trajectory.
+
+\subsection{Step 3 -- Closed-loop robustified planning}
+\label{sec:CLrobustified}
+ 
+
 \section{Tire Model}
 \label{sec:tyremodel}
 \begin{figure}[t]\centering
