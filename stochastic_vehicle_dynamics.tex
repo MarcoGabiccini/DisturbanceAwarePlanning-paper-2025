@@ -42,31 +42,31 @@ Accordingly, the continuous-time stochastic trajectory planning can be framed as
 The cost function $J$ in~\eqref{eq:OCPcost} depends on the mean $\bmu(t)$, the controls $\bu(t)$ and the state covariance $\bP(t)$. The mean dynamics is expressed by~\eqref{eq:OCPdyn} with~\eqref{eq:OCPdynIC}, and the covariance dynamics is expressed by~\eqref{eq:OCPdP} with~\eqref{eq:OCPdPIC}. In eq.~\eqref{eq:OCPconstraints} the \emph{backoff terms} $\be_i$ account for the disturbances and serve the purpose of obtaining deterministic safety-margins directly on $\bmu(t)$. $\calI$ is the set of indices defining the inequality constraints. This is equivalent to a linearization around the mean of the original \emph{chance constraint} on $\bx(t)$ expressed by $\Prob \{h_i(\bx) \leq 0\}\geq p$, where $p$ is the confidence level of constraint satisfaction. The backoff terms are given by
 $\be_i = \gamma \sig_i$. The coefficient $\gamma = \Phi^{-1}(p)$ is the quantile function, where $\Phi(z)=\Prob \{Z\leq z\}$ is the cdf of a standard normal distribution $Z \sim \calN(0,1)$, and acts as a \emph{tuning knob}: the greater the confidence level $p$ required, the higher the gain $\ga$\footnote{For example, with $p=0.84$ $\ga = 1.0$, with $p=0.97$ $\ga = 2.0$, with $p=0.99$ $\ga = 3.0$}. The term $\sig_i = \big[\na^T_{\bx} h_i(\bmu) \bP(t) \na_{\bx} h_i(\bmu)\big]^{\frac{1}{2}}$ represents the standard deviation of the constraint $h_i(\bx)$ linearized around the mean, i.e. of random variable $h_i(\bmu)+\na^T_{\bx} h_i(\bmu) (\bx - \bmu)$, and follows immediately from the propagation rule of covariance.
 
-\subsection{Discretization via direct collocation}
-\label{sec:discretization}
-
-The nonlinear optimal control problem~\eqref{eq:OCPcost} can be discretized by applying a suitable collocation integrator obtaining the following nonlinear program (NLP) 
-\begin{alignat}{3}
-\underset{\bmu_k,\bxi_k, \bu_k, \bP_k,\bz_k}{\text{minimize}} \,
-& & & J_k(\bmu_k,\bxi_k, \bu_k) & & \label{eq:DOCPcost} \\
-\hspace*{-2.0 cm}\text{s.t.} \quad
-& \bzero      & = & \; \bPsimu_k(\bmu_{k-1},\bmu_k,\bxi_k, \bu_k,\bz_k),
-& \quad & k = 1,\ldots, N \label{eq:DOCPdyn} \\
-& \bmu_0      & = & \; \bar{\bmu}_0
-& & \label{eq:DOCPdynIC} \\
-& \bzero      & = & \; \bPsiP_k(\bmu_k,\bxi_k, \bu_k, \bP_{k-1},\bP_k,\bSi_k,\bz_k),
-& \quad & k = 1,\ldots, N \label{eq:DOCPdP} \\
-& \bP_0       & = & \; \bar{\bP}_0 \succeq 0
-& & \label{eq:DOCPdPIC} \\
-& \bzero      & = & \; \bOm_k(\bmu_k,\bxi_k, \bu_k,\bz_k),
-& \quad & k = 0,\ldots, N \label{eq:DOCPpath} \\
-& 0           & \geq & \; h_i(\bmu_k, \bu_k, \bz_k) + \be_i(\bmu_k, \bu_k, \bP_k, \bz_k),
-& \quad & k = 1,\ldots, N;\; i \in \calI \label{eq:DOCPconstraints}
-\end{alignat}
-To perform the discretization, the track centerline is parameterized using a curvilinear abscissa $\alpha \in [0,1]$, and uniformly sampled at $N+1$ points $\alpha_0, \ldots, \alpha_N$.
-Accordingly, $\bmu_k$ denotes the mean state at grid node $\alpha_k$, while $\bu_k$ and $\bz_k$ are assumed to be piecewise constant over each interval $[\al_k, \al_{k+1}]$.
-These represent the controls and the algebraic variables, respectively. The $\bz_k$'s are introduced as direct handles for physically meaningful quantities such contact forces. Similarly, $\bP_k$ represents the covariance matrix at the $k$-th node.
-Following the direct collocation approach, both the mean and covariance state trajectories are approximated, in the $k$-th interval, with polynomials $\pi_k(\tau)$, defined on the unit interval $\tau\in[0,1]$, and then scaled to match the width $h_k$ of the corresponding time step. On the unit interval, we select $d$ collocation points $\tau_1, \ldots, \tau_d$, associated with as many collocation states. Accordingly, we define $\bxi_k$ and $\bSi_k$ as the mean states and covariance matrices at the $d$ collocation points within each interval $[\al_k, \al_{k+1}]$, respectively. Therefore, $\bxi_k =
-(\bxi_{k,1}, \ldots, \bxi_{k,d})$, and similarly $\bSi_k=(\bSi_{k,1}, \ldots, \bSi_{k,d})$. Equations~\eqref{eq:DOCPdyn} and~\eqref{eq:DOCPdP} represent the collocation and continuity equations for mean and covariance, respectively, with initial conditions represented by~\eqref{eq:DOCPdynIC} and~\eqref{eq:DOCPdPIC}. Eqs.~\eqref{eq:DOCPpath} are path equality constraints and~\eqref{eq:DOCPconstraints} are the robustified inequality constraints. 
-
-In certain cases~\cite{Gillis:PracticalMethodsApproximate:2015}, positive-definiteness-preserving Lyapunov discretization schemes are used in~\eqref{eq:DOCPdP}. However, for sufficiently fine discretization, we found that integrating only the lower triangular part of $\bP(t)$ in~\eqref{eq:OCPdPIC}  (and reconstructing its strictly upper part accordingly), ensures that all $\bP_k$ remain symmetric and positive definite when the initial $\bP_0$ is symmetric and positive definite. In all our tests direct collocation with cubic polynomial state representations and Gauss-Legendre collocation points were used.
+%\subsection{Discretization via direct collocation}
+%\label{sec:discretization}
+%
+%The nonlinear optimal control problem~\eqref{eq:OCPcost} can be discretized by applying a suitable collocation integrator obtaining the following nonlinear program (NLP) 
+%\begin{alignat}{3}
+%\underset{\bmu_k,\bxi_k, \bu_k, \bP_k,\bz_k}{\text{minimize}} \,
+%& & & J_k(\bmu_k,\bxi_k, \bu_k) & & \label{eq:DOCPcost} \\
+%\hspace*{-2.0 cm}\text{s.t.} \quad
+%& \bzero      & = & \; \bPsimu_k(\bmu_{k-1},\bmu_k,\bxi_k, \bu_k,\bz_k),
+%& \quad & k = 1,\ldots, N \label{eq:DOCPdyn} \\
+%& \bmu_0      & = & \; \bar{\bmu}_0
+%& & \label{eq:DOCPdynIC} \\
+%& \bzero      & = & \; \bPsiP_k(\bmu_k,\bxi_k, \bu_k, \bP_{k-1},\bP_k,\bSi_k,\bz_k),
+%& \quad & k = 1,\ldots, N \label{eq:DOCPdP} \\
+%& \bP_0       & = & \; \bar{\bP}_0 \succeq 0
+%& & \label{eq:DOCPdPIC} \\
+%& \bzero      & = & \; \bOm_k(\bmu_k,\bxi_k, \bu_k,\bz_k),
+%& \quad & k = 0,\ldots, N \label{eq:DOCPpath} \\
+%& 0           & \geq & \; h_i(\bmu_k, \bu_k, \bz_k) + \be_i(\bmu_k, \bu_k, \bP_k, \bz_k),
+%& \quad & k = 1,\ldots, N;\; i \in \calI \label{eq:DOCPconstraints}
+%\end{alignat}
+%To perform the discretization, the track centerline is parameterized using a curvilinear abscissa $\alpha \in [0,1]$, and uniformly sampled at $N+1$ points $\alpha_0, \ldots, \alpha_N$.
+%Accordingly, $\bmu_k$ denotes the mean state at grid node $\alpha_k$, while $\bu_k$ and $\bz_k$ are assumed to be piecewise constant over each interval $[\al_k, \al_{k+1}]$.
+%These represent the controls and the algebraic variables, respectively. The $\bz_k$'s are introduced as direct handles for physically meaningful quantities such contact forces. Similarly, $\bP_k$ represents the covariance matrix at the $k$-th node.
+%Following the direct collocation approach, both the mean and covariance state trajectories are approximated, in the $k$-th interval, with polynomials $\pi_k(\tau)$, defined on the unit interval $\tau\in[0,1]$, and then scaled to match the width $h_k$ of the corresponding time step. On the unit interval, we select $d$ collocation points $\tau_1, \ldots, \tau_d$, associated with as many collocation states. Accordingly, we define $\bxi_k$ and $\bSi_k$ as the mean states and covariance matrices at the $d$ collocation points within each interval $[\al_k, \al_{k+1}]$, respectively. Therefore, $\bxi_k =
+%(\bxi_{k,1}, \ldots, \bxi_{k,d})$, and similarly $\bSi_k=(\bSi_{k,1}, \ldots, \bSi_{k,d})$. Equations~\eqref{eq:DOCPdyn} and~\eqref{eq:DOCPdP} represent the collocation and continuity equations for mean and covariance, respectively, with initial conditions represented by~\eqref{eq:DOCPdynIC} and~\eqref{eq:DOCPdPIC}. Eqs.~\eqref{eq:DOCPpath} are path equality constraints and~\eqref{eq:DOCPconstraints} are the robustified inequality constraints. 
+%
+%In certain cases~\cite{Gillis:PracticalMethodsApproximate:2015}, positive-definiteness-preserving Lyapunov discretization schemes are used in~\eqref{eq:DOCPdP}. However, for sufficiently fine discretization, we found that integrating only the lower triangular part of $\bP(t)$ in~\eqref{eq:OCPdPIC}  (and reconstructing its strictly upper part accordingly), ensures that all $\bP_k$ remain symmetric and positive definite when the initial $\bP_0$ is symmetric and positive definite. In all our tests direct collocation with cubic polynomial state representations and Gauss-Legendre collocation points were used.
