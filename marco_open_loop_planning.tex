@@ -196,41 +196,47 @@ Equation~\eqref{eq:DOCPdPinitopenloop} defines the initialization of the appropr
     smallnode/.style={circle, draw, minimum size=3mm, inner sep=0pt},
     r_smallnode/.style={circle, draw=red, minimum size=3mm, inner sep=0pt},
     g_smallnode/.style={circle, draw=mygreen, minimum size=3mm, inner sep=0pt},
+    r_hatnode/.style={
+    circle, draw=red, pattern=north east lines, pattern color=red,
+    minimum size=3mm, inner sep=0pt},
+    g_hatnode/.style={
+    circle, draw=mygreen, pattern=north east lines, pattern color=mygreen,
+    minimum size=3mm, inner sep=0pt},
     every path/.style={->, thick},
     x=1.4cm, y=1.2cm
 ]
 
 % ROW j = 0 (y=3)
-\node[r_smallnode, label={[label distance=-2pt]above:\(\bP_{k-3}^0\)}] (P00) at (1,3) {};
+\node[r_hatnode, label={[label distance=-2pt]above:\(\bP_{k-3}^0\)}] (P00) at (1,3) {};
 \node[smallnode, label={[label distance=-2pt]above:\(\bP_{k-2}^1\)}] (P11) at (2,3) {};
 \node[smallnode, label={[label distance=-2pt]above:\(\bP_{k-1}^2\)}] (P22) at (3,3) {};
-\node[g_smallnode, label={[label distance=-2pt]above:\(\bP_k^3\)}] (P33) at (4,3) {};
-\node[r_smallnode, label={[label distance=-2pt]above:\(\bP_{k+1}^0\)}] (P44) at (5,3) {};
+\node[g_hatnode, label={[label distance=-2pt]above:\(\bP_k^3\)}] (P33) at (4,3) {};
+\node[r_hatnode, label={[label distance=-2pt]above:\(\bP_{k+1}^0\)}] (P44) at (5,3) {};
 \node[smallnode, label={[label distance=-2pt]above:\(\bP_{k+2}^1\)}] (P55) at (6,3) {};
 
 % ROW j = 1 (y=2)
-\node[r_smallnode, label={[label distance=-2pt]above:\(\bP_{k-2}^0\)}] (P10) at (2,2) {};
+\node[r_hatnode, label={[label distance=-2pt]above:\(\bP_{k-2}^0\)}] (P10) at (2,2) {};
 \node[smallnode, label={[label distance=-2pt]above:\(\bP_{k-1}^1\)}] (P21) at (3,2) {};
 \node[smallnode, label={[label distance=-2pt]above:\(\bP_k^2\)}] (P32) at (4,2) {};
-\node[g_smallnode, label={[label distance=-2pt]above:\(\bP_{k+1}^3\)}] (P43) at (5,2) {};
-\node[r_smallnode, label={[label distance=-2pt]above:\(\bP_{k+2}^0\)}] (P54) at (6,2) {};
+\node[g_hatnode, label={[label distance=-2pt]above:\(\bP_{k+1}^3\)}] (P43) at (5,2) {};
+\node[r_hatnode, label={[label distance=-2pt]above:\(\bP_{k+2}^0\)}] (P54) at (6,2) {};
 \node[smallnode, label={[label distance=-2pt]above:\(\bP_{k+3}^1\)}] (P65) at (7,2) {};
 
 
 % ROW j = 2 (y=1)
-\node[r_smallnode, label={[label distance=-2pt]above:\(\bP_{k-1}^0\)}] (P20) at (3,1) {};
+\node[r_hatnode, label={[label distance=-2pt]above:\(\bP_{k-1}^0\)}] (P20) at (3,1) {};
 \node[smallnode, label={[label distance=-2pt]above:\(\bP_k^1\)}] (P31) at (4,1) {};
 \node[smallnode, label={[label distance=-2pt]above:\(\bP_{k+1}^2\)}] (P42) at (5,1) {};
-\node[g_smallnode, label={[label distance=-2pt]above:\(\bP_{k+2}^3\)}] (P53) at (6,1) {};
-\node[r_smallnode, label={[label distance=-2pt]above:\(\bP_{k+3}^0\)}] (P64) at (7,1) {};
+\node[g_hatnode, label={[label distance=-2pt]above:\(\bP_{k+2}^3\)}] (P53) at (6,1) {};
+\node[r_hatnode, label={[label distance=-2pt]above:\(\bP_{k+3}^0\)}] (P64) at (7,1) {};
 \node[smallnode, label={[label distance=-2pt]above:\(\bP_{k+4}^1\)}] (P75) at (8,1) {};
 
 % ROW j = 3 (y=0)
-\node[r_smallnode, label={[label distance=-2pt]above:\(\bP_k^0\)}] (P30) at (4,0) {};
+\node[r_hatnode, label={[label distance=-2pt]above:\(\bP_k^0\)}] (P30) at (4,0) {};
 \node[smallnode, label={[label distance=-2pt]above:\(\bP_{k+1}^1\)}] (P41) at (5,0) {};
 \node[smallnode, label={[label distance=-2pt]above:\(\bP_{k+2}^2\)}] (P52) at (6,0) {};
-\node[g_smallnode, label={[label distance=-2pt]above:\(\bP_{k+3}^3\)}] (P63) at (7,0) {};
-\node[r_smallnode, label={[label distance=-2pt]above:\(\bP_{k+4}^0\)}] (P74) at (8,0) {};
+\node[g_hatnode, label={[label distance=-2pt]above:\(\bP_{k+3}^3\)}] (P63) at (7,0) {};
+\node[r_hatnode, label={[label distance=-2pt]above:\(\bP_{k+4}^0\)}] (P74) at (8,0) {};
 \node[smallnode, label={[label distance=-2pt]above:\(\bP_{k+5}^1\)}] (P85) at (9,0) {};
 
 
@@ -293,7 +299,7 @@ Equation~\eqref{eq:DOCPdPinitopenloop} defines the initialization of the appropr
 
 \end{tikzpicture}
 
-\caption{Schematic representation of the continuity and initialization equations associated with the $H+1$ propagated instances of the covariance matrix introduced in problem~\eqref{eq:DOCPopenloop}. The dashed rectangle highlights the $k$-th discretization step, at which the robust constraints are enforced. Each node corresponds to a specific covariance matrix, where the subscript denotes the current grid index and the superscript indicates the number of propagation steps since initialization. At each step, two key instances are emphasized: the matrix to be initialized at that step (red node), and the matrix that has been propagated over $H$ steps (green node), which is used in the evaluation of the constraint backoff.}
+\caption{Cartoon representation (depicted for $H=3$) of the continuity and initialization equations associated with the $H+1$ propagated instances of the covariance matrix introduced in problem~\eqref{eq:DOCPopenloop}. The dashed rectangle highlights the $k$-th discretization step, at which the robust constraints are enforced. Each node corresponds to a specific covariance matrix, where the subscript denotes the current grid index and the superscript indicates the number of propagation steps since initialization. At each step, two key instances are emphasized: the matrix to be initialized at that step (red node), and the matrix that has been propagated over $H$ steps (green node), which is used in the evaluation of the constraint backoff.}
 	%\caption{Schematic representation of the continuity and initialization Equations for the $H+1$ versions of the covariance matrix introduced in the discretized OCP. The dashed rectangle indicate the $k$-th step, in which the constraints are formulated. Each node represents a covariance matrix, labeled such that the subscript denotes the current grid step, while the superscript indicates the number of propagation steps it has undergone. At each step, two nodes are highlighted: the covariance matrix to be initialized (red node) and the matrix that has been propagated for $H$ steps (green node), which is used to formulate the robust constraints.}
 	\label{fig:DOCPgrid}
 \end{figure}
