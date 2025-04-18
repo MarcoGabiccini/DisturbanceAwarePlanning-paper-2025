@@ -1,4 +1,105 @@
-\section{Stochastic vehicle dynamics}
+\section{TMP NAME}
+\label{sec:tmp}
+
+\subsection{Vehicle model}
+\label{sec:vehicle_model}
+The vehicle model employed in this study is a Single Track model featuring nonlinear axle characteristics. The lateral forces $Y_1$ and $Y_2$ are computed using a Pacejka's Magic Formula, which depends on the total vertical load acting on the axle and the theoretical lateral slip evaluated at the midpoint of the axle. 
+The longitudinal forces $X_1$ and $X_2$ are provided as inputs to the system. Specifically, the first two components of the input vector $\bu$ correspond to acceleration and braking forces, while the third component represents the steering angle of the front wheels. This input formulation facilitates the distribution of braking forces between the front and rear axles, while assigning acceleration exclusively to the rear axle, consistent with the rear-wheel-drive configuration of the modeled vehicle. 
+
+By treating the longitudinal forces as inputs, the longitudinal dynamics can be explicitly solved, allowing the computation of vertical load transfers prior to their use in the expression of the lateral forces. Consequently, the time derivative of the state becomes an explicit function of the state vector $\bx$ and the input vector $\bu$, as follows:
+\begin{equation}
+	\dbx(t) = f(\bx(t), \bu(t))
+\end{equation}
+
+The state vector $\bx$ has six components and includes the three kinematic quantities $u$, $v$, and $r$, along with the position and orientation of the barycentrical reference frame. As illustrated in Figure~\ref{fig:vehicle_model} $u$ and $v$ represent the longitudinal and lateral velocity of the CoM w.r.t its reference frame, while $r$ represents vehicle's yaw rate.
+
+\begin{figure}
+	\centering
+	\begin{tikzpicture}[scale=2, x = {(0,1cm)}, y = {(-1cm,0)},
+		force/.style={->, thick, red!60!black, >={Latex[length=10pt, width=4pt]}},
+		vec/.style={->, thick, mgreen, >={Latex[length=10pt, width=4pt]}},
+		aux/.style={thin},
+		frame/.style={->,thin,>={Latex}},
+		every node/.style={font=\small, text=black}
+		]
+		\definecolor{mgreen}{RGB}{0,100,0}
+		\begin{scope}[rotate = 25,shift = {(-.3,-2)}]
+			% Coordinates
+			\coordinate (rear) at (0,0);
+			\coordinate (G) at (1.2,0);
+			\coordinate (front) at (2.8,0);
+			
+			% Main body line
+			\draw[blue!50!black, thick] (rear) -- (front);
+			
+			% Rear wheel
+			\draw[fill=black!60!white, draw=black, rounded corners=2pt]
+			($(rear)+(-.2,.1)$) rectangle ($(rear)+(+.2,-.1)$);
+			
+			% Front wheel (rotated around its center)
+			\begin{scope}[shift={(front)}, rotate=25]
+				\draw[fill=black!60!white, draw=black, rounded corners=2pt]
+				(-0.2,.1) rectangle (0.2,-.1);
+			\end{scope}
+			
+			% Local axes at rear
+			\draw[force] (rear) -- ++(.5,0) node[above,right] {$X_2$};
+			\draw[force] (rear) -- ++(0,1.3) node[above] {$Y_2$};
+			
+			% Local axes at front
+			\draw[force] (front) -- ++(-.3,0) node[right] {$X_1$};
+			\draw[force] (front) -- ++(0,1.5) node[above] {$Y_1$};
+			
+			% Velocity vectors at G
+			\draw[vec] (G) -- ++(.6,0) node[left, shift={(-.2,-.1)}] {$u\,\mathbf{i}$};
+			\draw[vec] (G) -- ++(0,.3) node[above] {$v\,\mathbf{j}$};
+			
+			% Angular velocity
+			\begin{scope}[rotate = -115]
+				\draw[vec] 
+				(-.1,.8) arc[start angle=0, end angle=50, radius=1]
+				node[midway, right=2pt] {$r\,\mathbf{k}$};
+			\end{scope}
+			
+			% G point
+			\fill (G) circle (1pt) node[right] {$G$};
+			
+			% Body frame
+			\draw[frame] (G) --++ (1,0) node[right] {$x_b$};
+			\draw[frame] (G) --++ (0,1) node[above] {$y_b$};
+			
+			% Distances
+%			\draw[<->,>={Latex}] (3,-1) -- node[left] {$a_1$} (1.5,-1);
+%			\draw[<->,>={Latex}] (1.5,-1) -- node[left] {$a_2$} (0,-1);
+			
+			% Steering angle (auxiliary vertical line)
+			\draw[aux] (front) -- ++(.4,0);
+			\draw[aux] (front) -- ++({0.4*cos(25)}, {0.4*sin(25)});
+			
+			% Steering angle arc
+			\draw[->,thin,>={Latex}] ([shift={(0.35,0)}]front) arc[start angle=0, end angle=25, radius=0.35];
+			\node[left,shift={(.15,0)}] at ([shift={(0.35,0)}]front) {$\delta$};
+			
+			% Psi angle aux
+			\draw[aux] (G) -- ++({0.4*cos(25)}, {-0.4*sin(25)});
+			
+			% Psi angle
+			\draw[->,thin,>={Latex}] ([shift={({0.35*cos(25)},{-.35*sin(25)})}]G) arc[start angle=-25, end angle=0, radius=0.35];
+			\node[left,shift={(.2,-.05)}] at ([shift={({0.35*cos(25)},{-.35*sin(25)})}]G) {$\psi$};
+			
+		\end{scope}
+		\coordinate (ground) at (0,0);
+		\draw[frame] (ground) --++ (1,0) node[right] {$x$};
+		\draw[frame] (ground) --++ (0,1) node[above] {$y$};
+		\draw[->,thick,>=Latex] (ground) --++ (G);
+%		\draw[->,thick,>=Latex] (ground) --++ (G) node[midway, shift={(0,-.3)}] {$\boldsymbol{p}$};
+		
+	\end{tikzpicture}
+	\caption{Single Track model. The ground force acting on each axle is decomposed into longitudinal and lateral components, indicated by red arrows. The longitudinal components are part of the input vector $\bu$, encompassing both acceleration and braking forces, while the lateral components are computed using Pacejka's Magic Formula based on the vertical load and slip angle at each axle. The figure also depicts the fixed reference frame and the body reference frame, with the origin located at the vehicle's center of mass (CoM). The state variables $u$ and $v$ represent the longitudinal and lateral velocities of the CoM w.r.t. the body frame, while $r$ denotes the yaw rate. The angle $\psi$ is used to describe the orientation of the body frame w.r.t. the fixed frame.}
+	\label{fig:vehicle_model}
+\end{figure}
+
+\subsection{Stochastic vehicle dynamics}
 \label{sec:stochastic_vehicle_dynamics}
 
 We model the \emph{perturbed vehicle dynamics} as the following nonlinear continuous-time random dynamical system
