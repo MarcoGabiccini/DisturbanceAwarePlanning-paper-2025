@@ -1,32 +1,46 @@
 \section{Open-loop planning via H-steps ahead predictions}
 \label{sec:open_loop_planning}
-The proposed approach requires the presence of $H+1$ versions of the matrix $\bP$ at each grid point of the discretized problem. One of these versions is initialized with $\bar{\bP}_0$, while the others represent the evolution of matrices that were initialized at previous grid points, from 1 to $H$ steps earlier. This ensures that at each step it is possible to find a covariance matrix evolved for $H$ steps and use it to robustify the constraints. The initialization of the covariance matrix is necessary due to its divergent dynamics. In fact, without a feedback control, the error on the position and orientation of the body reference frame can only increase along the track, compromising the conditioning of the matrix. 
+In this section, we address the problem of planning under uncertainty for a stochastic system, where the covariance matrix is propagated in a feed-forward fashion for a fixed prediction horizon of $H$ steps at each grid point $k$ of the discretized trajectory. In the planning problem, we conservatively evaluate the maximum propagation of the covariance, that is, the matrix evolved over $H$ steps, to ensure the tightest possible enforcement of constraints. This maximizes the robustness of the resulting solution, as the constraint backoff is evaluated in the worst-case scenario.
 
-%\subsection{Discretization via direct collocation}
-%\label{sec:openloopdiscretization}
-Introducing the versioning of the covariance matrix approach requires a modification of the Equations described in Section~\ref{sec:discretization}. In particular Eqs.~\eqref{eq:DOCPdP}, \eqref{eq:DOCPdPIC}, and \eqref{eq:DOCPconstraints} are replaced by Eqs.~\eqref{eq:DOCPdPopenloop}, \eqref{eq:DOCPdPinitopenloop}, and \eqref{eq:DOCPconstraintsopenloop}. Eq.~\eqref{eq:DOCPdPopenloop} collects the continuity and collocation Equations for all the versions of the covariance matrix that have propagated from the previous step. To account for the evolution of $H$ matrices, it is necessary to introduce $H\times d$ matrices $\bSi_k^j=(\bSi_{k,1}^j, \ldots, \bSi_{k,d}^j)$, which represent the values of each matrix version at the collocation points. 
+To enable this, we associate multiple versions of the covariance matrix with each grid point. Specifically, $H+1$ instances of the matrix $\bP$ are maintained at each step. To this sake we introduce the notation $\bP_k^j$, where $j = 0, \ldots, H$, and $\bP_k^j$ represents the version of the covariance matrix at step $k$ that was initialized $j$ steps earlier. Hence, $\bP_k^0$ originates at node $k$ itself and will be propagated forward and employed in subsequent steps (exactly when evolved as $\bP_{k+H}^H$ ), while $\bP_k^H$ is the instance that originated $H$ steps earlier and is the most propagated one at step $k$. 
+
+The repeated initialization of the covariance matrix at each step is necessary to prevent its unbounded growth, as we assume that the system evolves without feedback control.
+In the absence of feedback, the uncertainty on the position and orientation of the body frame accumulates along the track, which may severely and unrealistically degrade the conditioning of the covariance matrix. 
+For this reason, the propagation horizon in this open-loop setting is a critical design parameter that must be bounded to realistically capture the evolution of disturbances occurring prior to any corrective driver response.
+ 
+This approach requires modifications to the formulation~\eqref{eq:DOCP} introduced in Section~\ref{sec:discretization}. In particular, Eqs.~\eqref{eq:DOCPdP}, \eqref{eq:DOCPdPIC}, and \eqref{eq:DOCPconstraints} are replaced by Eqs.~\eqref{eq:DOCPdPopenloop}, \eqref{eq:DOCPdPinitopenloop}, and \eqref{eq:DOCPconstraintsopenloop}. Equation~\eqref{eq:DOCPdPopenloop} collects the continuity and collocation equations for all versions of the covariance matrix propagated from previous steps. To support the evolution of $H$ versions, we introduce $H \times d$ matrices $\bSi_k^j = (\bSi_{k,1}^j, \ldots, \bSi_{k,d}^j)$, representing the collocation values of each version $j$ of the covariance matrix within interval $k$.
+
+
+%The proposed approach requires the presence of $H+1$ versions of the matrix $\bP$ at each grid point of the discretized problem. One of these versions is initialized with $\bar{\bP}_0$, while the others represent the evolution of matrices that were initialized at previous grid points, from 1 to $H$ steps earlier. This ensures that at each step it is possible to find a covariance matrix evolved for $H$ steps and use it to robustify the constraints. The initialization of the covariance matrix is necessary due to its divergent dynamics. In fact, without a feedback control, the error on the position and orientation of the body reference frame can only increase along the track, compromising the conditioning of the matrix.
+%
+%Introducing the versioning of the covariance matrix approach requires a modification of the Equations described in Section~\ref{sec:discretization}. In particular Eqs.~\eqref{eq:DOCPdP}, \eqref{eq:DOCPdPIC}, and \eqref{eq:DOCPconstraints} are replaced by Eqs.~\eqref{eq:DOCPdPopenloop}, \eqref{eq:DOCPdPinitopenloop}, and \eqref{eq:DOCPconstraintsopenloop}. Eq.~\eqref{eq:DOCPdPopenloop} collects the continuity and collocation Equations for all the versions of the covariance matrix that have propagated from the previous step. To account for the evolution of $H$ matrices, it is necessary to introduce $H\times d$ matrices $\bSi_k^j=(\bSi_{k,1}^j, \ldots, \bSi_{k,d}^j)$, which represent the values of each matrix version at the collocation points.
 
 The specific formulation is expressed as follows:
+\begin{subequations}\label{eq:DOCPopenloop}
 \begin{alignat}{3}
 	\underset{\bmu_k,\bxi_k, \bu_k, \bP_k,\bz_k}{\text{minimize}} \,
-	& & & J_k(\bmu_k,\bxi_k, \bu_k) & & \label{eq:DOCPcost} \\
+	& & & J_k(\bmu_k,\bxi_k, \bu_k) & & \label{eq:DOCPcostopenloop} \\
 	\hspace*{-2.0 cm}\text{s.t.} \quad
 	& \bzero      & = & \; \bPsimu_k(\bmu_{k-1},\bmu_k,\bxi_k, \bu_k,\bz_k),
-	& \quad & k = 1,\ldots, N \label{eq:DOCPdyn} \\
+	& \quad & k = 1,\ldots, N \label{eq:DOCPdynopenloop} \\
 	& \bmu_0      & = & \; \bar{\bmu}_0
-	& & \label{eq:DOCPdynIC} \\
+	& & \label{eq:DOCPdynICopenloop} \\
 	& \bzero      & = & \; \bPsiP_k(\bmu_k,\bxi_k, \bu_k, \bP_{k-1}^{j-1},\bP_k^j,\bSi_k^j,\bz_k),
 	& \quad & \substack{k = 1,\ldots, N; \; \\ j=1,\ldots,H;\;} \label{eq:DOCPdPopenloop} \\
 	& \bP_k^0       & = & \; \bar{\bP}_0 \succeq 0
 	& \quad & k = 1,\ldots, N; \; \label{eq:DOCPdPinitopenloop} \\
 	& \bzero      & = & \; \bOm_k(\bmu_k,\bxi_k, \bu_k,\bz_k),
-	& \quad & k = 0,\ldots, N \label{eq:DOCPpath} \\
+	& \quad & k = 0,\ldots, N \label{eq:DOCPpathopenloop} \\
 	& 0           & \geq & \; h_i(\bmu_k, \bu_k, \bz_k) + \be_i(\bmu_k, \bu_k, \bP_k^H, \bz_k),
 	& \quad & k = 1,\ldots, N;\; i \in \calI \label{eq:DOCPconstraintsopenloop}
 \end{alignat}
+\end{subequations}
+Equation~\eqref{eq:DOCPdPinitopenloop} defines the initialization of the appropriate covariance matrix version at step $k$, while Eq.~\eqref{eq:DOCPconstraintsopenloop} specifies that the back-off term in the constraints is computed using the most propagated version, $\bP^H_k$. A schematic illustration of the management of the $H+1$ covariance matrix instances is provided in Figure~\ref{fig:DOCPgrid}. The dashed rectangle highlights the $k$-th discretization step, where the constraints are evaluated. At each grid point, two particular versions of the covariance matrix are emphasized: $\bP^0_k$ (red node), representing the instance to be initialized at that step, and $\bP^H_k$ (green node), corresponding to the version that has been propagated over the full horizon of $H$ steps and is used to robustify the constraints in Eq.~\eqref{eq:DOCPconstraintsopenloop}.
 
-Eq.~\eqref{eq:DOCPdPinitopenloop} is used to initialize the correct version at the $k$-th step while Eq.~\eqref{eq:DOCPconstraintsopenloop} specify that the back-off term of the constraints is evaluated with the most propagated covariance matrix version, $\bP^H_k$.
-A schematic representation of the approach used to manage the $H+1$ versions of the covariance matrix is shown in Figure \ref{fig:DOCPgrid}, where the dashed rectangle represent the $k$-th step at which the constraints are being formulated. At each grid point, two versions of the covariance matrix are highlighted: $\bP^0_k$ (red node), which is the version to be initialized, and $\bP^H_k$ (green node), which is the most propagated version used to formulate the robust constraints in Eq.~\eqref{eq:DOCPconstraintsopenloop}.
+
+
+%Eq.~\eqref{eq:DOCPdPinitopenloop} is used to initialize the correct version at the $k$-th step while Eq.~\eqref{eq:DOCPconstraintsopenloop} specify that the back-off term of the constraints is evaluated with the most propagated covariance matrix version, $\bP^H_k$.
+%A schematic representation of the approach used to manage the $H+1$ versions of the covariance matrix is shown in Figure \ref{fig:DOCPgrid}, where the dashed rectangle represent the $k$-th step at which the constraints are being formulated. At each grid point, two versions of the covariance matrix are highlighted: $\bP^0_k$ (red node), which is the version to be initialized, and $\bP^H_k$ (green node), which is the most propagated version used to formulate the robust constraints in Eq.~\eqref{eq:DOCPconstraintsopenloop}.
 
 \begin{figure}
 	\centering
@@ -62,14 +76,14 @@ A schematic representation of the approach used to manage the $H+1$ versions of 
 		\node[g_smallnode, label={[label distance=-2pt]above:\(\Plab{k+1}{H}\)}] (Pk+1H) at (4,1) {};
 		\node[r_smallnode, label={[label distance=-2pt]above:\(\Plab{k+2}{0}\)}] (Pk+20) at (5,1) {};
 		
-		% dots row 
+		% dots row
 		\node[label={center,rotate=90:\(\dots\)}] (dots2) at (1, 1.7) {};
 		\node[label={center,rotate=90:\(\dots\)}] (dots3) at (2, 1.7) {};
 		\node[label={center,rotate=90:\(\dots\)}] (dots4) at (3, 1.7) {};
 		\node[label={center,rotate=90:\(\dots\)}] (dots5) at (4, 1.7) {};
 		\node[label={center,rotate=90:\(\dots\)}] (dots6) at (5, 1.7) {};
 		
-		% Third row 
+		% Third row
 		\node[g_smallnode, label={[label distance=-2pt]above:\(\Plab{k-2}{H}\)}] (Pk-2H) at (1,2) {};
 		\node[r_smallnode, label={[label distance=-2pt]above:\(\Plab{k-1}{0}\)}] (Pk-10) at (2,2) {};
 		\node[smallnode, label={[label distance=-2pt]above:\(\Plab{k}{1}\)}] (Pk1) at (3,2) {};
@@ -108,8 +122,7 @@ A schematic representation of the approach used to manage the $H+1$ versions of 
 		\draw[dashed, thick, rounded corners] (2.6,-.25) rectangle (3.4,3.5);
 		
 	\end{tikzpicture}
-	\caption{Schematic representation of the continuity and initialization Equations for the $H+1$ versions of the covariance matrix introduced in the discretized OCP. The dashed rectangle indicate the $k$-th step, in which the constraints are formulated. Each node represents a covariance matrix, labeled such that the subscript denotes the current grid step, while the superscript indicates the number of propagation steps it has undergone. At each step, two nodes are highlighted: the covariance matrix to be initialized (red node) and the matrix that has been propagated for $H$ steps (green node), which is used to formulate the robust constraints.}
+\caption{Schematic representation of the continuity and initialization equations associated with the $H+1$ propagated instances of the covariance matrix introduced in problem~\eqref{eq:DOCPopenloop}. The dashed rectangle highlights the $k$-th discretization step, at which the robust constraints are enforced. Each node corresponds to a specific covariance matrix, where the subscript denotes the current grid index and the superscript indicates the number of propagation steps since initialization. At each step, two key instances are emphasized: the matrix to be initialized at that step (red node), and the matrix that has been propagated over $H$ steps (green node), which is used in the evaluation of the constraint backoff.}
+	%\caption{Schematic representation of the continuity and initialization Equations for the $H+1$ versions of the covariance matrix introduced in the discretized OCP. The dashed rectangle indicate the $k$-th step, in which the constraints are formulated. Each node represents a covariance matrix, labeled such that the subscript denotes the current grid step, while the superscript indicates the number of propagation steps it has undergone. At each step, two nodes are highlighted: the covariance matrix to be initialized (red node) and the matrix that has been propagated for $H$ steps (green node), which is used to formulate the robust constraints.}
 	\label{fig:DOCPgrid}
 \end{figure}
-
-\subsection{Robust adherence constraint}

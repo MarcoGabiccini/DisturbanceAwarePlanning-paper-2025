@@ -3,14 +3,19 @@
 
 The second approach plans over the full horizon while incorporating a feedback policy that mimics the driver's closed-loop behavior. This enables a more realistic propagation of the uncertainty encoded in the covariance matrix $\bP$, preventing its uncontrolled growth through the stabilizing effect of the driver's feedback.
 
-The approach is based on the three following steps: i) A nominal time-optimal trajectory is planned: this will be referred to as nominal feed-forward optimal trajectory. This is the trajectory a driver should follow in the ideal situation of a world without uncertainty. Therefore, in this step the mean trajectory is the actual trajectory a deterministic vehicle dynamics would trace. ii) A closed-loop controller mimicking the driver's action is computed which stabilizes the nominal feed-forward optimal trajectory computed at step i). We assume a discrete time-varying Linear Quadratic Regulator (LQR) controller is a good approximation of how an expert driver can track a prescribed trajectory. iii) In the last step the stochastic framework is reintroduced and the time-optimal planning problem is robustified using the Lyapunov framework. The main idea is to \emph{re-plan} a mean trajectory of a stochastic system such that, a time-varying LQR controller that aims at stabilizing it, is able to properly tame the propagation of the uncertainty. This amounts to ensuring that the robustified path constraints are satisfied. More specifically, this implies two key aspects: first, that the covariance matrix is propagated accounting explicitly for the controlled system dynamics; and second, that the path constraints are robustly satisfied by incorporating the covariance estimation propagated through the closed-loop controlled system. Some aspects that may initially appear technical are in fact essential. In this third step, not only are states and controls re-planned, but also the time-varying LQR gains. In fact, they need to explicitly account for the changed requirements associated with stabilizing a trajectory different from the nominal one, which must now satisfy the robustified constraints.
+The approach is based on the three following steps: i) A nominal time-optimal trajectory is planned: this will be referred to as nominal feed-forward optimal trajectory. This is the trajectory a driver should follow in the ideal situation of a world without uncertainty. In this step the mean trajectory is the actual trajectory a deterministic vehicle dynamics would trace. 
+
+ii) A closed-loop controller mimicking the driver's action is computed which stabilizes the nominal feed-forward optimal trajectory computed at step i). We assume a discrete time-varying Linear Quadratic Regulator (LQR) controller is a good approximation of how an expert driver can track a prescribed trajectory. 
+
+iii) In the last step the stochastic framework is reintroduced and the time-optimal planning problem is robustified using the Lyapunov framework. The main idea is to \emph{re-plan} a mean trajectory of a stochastic system such that, a time-varying LQR controller that aims at stabilizing it, is able to properly tame the propagation of the uncertainty. This amounts to ensuring that the robustified path constraints are satisfied. More specifically, this accounts for two key aspects: firstly, that the covariance matrix is propagated accounting explicitly for the controlled system dynamics; and secondly, that the path constraints are robustly satisfied by incorporating the covariance estimation propagated through the closed-loop controlled system. Some aspects that may appear a bit technical are in fact essential. In this third step, not only are states and controls re-planned, but also the time-varying LQR gains. As a matter of fact, they need to explicitly account for the changed requirements associated with stabilizing a trajectory different from the nominal one, which must now satisfy the robustified constraints.
 \subsection{Step 1 -- Nominal feed-forward time-optimal trajectory planning}
 \label{sec:nominalFF}
+The first step consists in planning a nominal feed-forward trajectory. This assumes deterministic system dynamics, with \( (\hbmu_k, \hbu_k) \) denoting the differential states and controls, and \( \hbz_k \) the algebraic states, for \( k = 0, \ldots, N \). To avoid redundancy, we note that the NLP to be solved is a special case of~\eqref{eq:DOCP}, where~\eqref{eq:DOCPdP},~\eqref{eq:DOCPdPIC}, and the backoff terms are omitted, since the goal is to compute a nominal trajectory.
 
 \subsection{Step 2 -- Time-varying LQR stabilizing controller}
 \label{sec:LQR}
 
-Given the nominal trajectory $(\hbmu_k, \hbu_k)$ over $k=0,\ldots, N$, and introduced the deviation variables $\bbmu_k=\bmu_k - \hbmu_k$ and $\bbu = \bu_k - \hbu_k$, we design a linear state-feedback law $\bbu_k= -\hbK_k \bbmu_k$, or equivalently $\bu_k = \hbu_k - \hbK_k (\bmu_k - \hbmu_k)$, to stabilize the deviations along the nominal trajectory. To compute the state-feedback matrices $\hbK_k$, we linearize the system around $(\hbmu_k, \hbu_k)$, such that $\bbmu_{k+1} \approx \hbA_{k}\bbmu_k + \hbB_k \bbu_k$, where $\hbA_k = f_{,\bmu}(\hbmu_k,\hbu_k)$ and $\hbB_k = f_{,\bu}(\hbmu_k,\hbu_k)$, and define the quadratic regulator (tracking) cost function
+Given the nominal trajectory $(\hbmu_k, \hbu_k)$ over $k=0,\ldots, N$, and introduced the deviation variables $\bbmu_k=\bmu_k - \hbmu_k$ and $\bbu = \bu_k - \hbu_k$, we design a linear state-feedback law $\bbu_k= -\hbK_k \bbmu_k$, or equivalently $\bu_k = \hbu_k - \hbK_k (\bmu_k - \hbmu_k)$, to mitigate disturbances while tracking the nominal trajectory. To compute the state-feedback matrices $\hbK_k$, we linearize the system around $(\hbmu_k, \hbu_k)$, such that $\bbmu_{k+1} \approx \hbA_{k}\bbmu_k + \hbB_k \bbu_k$, where $\hbA_k = f_{,\bmu}(\hbmu_k,\hbu_k)$ and $\hbB_k = f_{,\bu}(\hbmu_k,\hbu_k)$, and define the quadratic regulator (tracking) cost function
 \begin{align}
 J = \bbmu_N^T \bW_N \bbmu_N + \sum_{k=0}^{N-1} \big( \bbmu_k^{T} \bW_k \bbmu_k + \bbu_k^T \bR_k \bbu_k \big),
 \end{align}
@@ -23,7 +28,6 @@ where  $\hbK_k =\big( \bR_k+\hbB_k^T \bS_{k+1} \hbB_k \big)^{-1} \hbB_k^T \bS_{k
 
 \subsection{Step 3 -- Closed-loop robustified planning}
 \label{sec:CLrobustified}
-
 %\begin{align}
 %    \underset{\bmu_k,\bxi_k, \bu_k, \bP_k,\bz_k, \bK_k}{\text{minimize}} \quad & J_k(\bmu_k,\bxi_k, \bu_k) \label{eq:ROCPcost}\\
 %       \text{s.t.}\notag\\
@@ -31,7 +35,8 @@ where  $\hbK_k =\big( \bR_k+\hbB_k^T \bS_{k+1} \hbB_k \big)^{-1} \hbB_k^T \bS_{k
 %          & f_i(x) \le 0, \quad i=1, \dots, m \quad i=1, \dots, m\\
 %          & h_i(x) = 0,   \quad i=1, \dots, p,
 %\end{align}
-
+As the third and last step, a closed-loop robustified planning problem is set up. Its aim is the definition of a mean trajectory of a stochastic system such that, working in tandem with state-feedback controller that aims at stabilizing it, it is able to mitigate the perturbations and reduce the propagation of uncertainty. This helps to guarantee that the robustified path constraints can be satisfied over the entire planning horizon. The discretized version of this problem takes the form of the following NLP:
+\begin{subequations}\label{eq:ROCP}
 \begin{alignat}{3}
 \underset{\bmu_k,\bxi_k, \bu_k, \bP_k,\bz_k, \bK_k}{\text{minimize}}
     & \quad J_k(\bmu_k,\bxi_k, \bu_k) & & \label{eq:ROCPcost} \\
@@ -45,8 +50,9 @@ where  $\hbK_k =\big( \bR_k+\hbB_k^T \bS_{k+1} \hbB_k \big)^{-1} \hbB_k^T \bS_{k
 \bzero      & = \; \bOm_k(\bmu_k,\bxi_k, \bu_k,\bz_k), \quad k = 0,\ldots, N \label{eq:ROCPpath} \\
 0    & \geq  h_i(\bmu_k, \bu_k, \bz_k) + \be_i(\bmu_k, \bu_k, \tbP_k, \bz_k), \quad k = 1,\ldots, N;\; \quad i \in \calI \label{eq:ROCPconstraints}\\
 -\de \bK   & \leq \bK_k - \hbK_k \leq  \de \bK \label{eq:ROCPdeltaK}, \quad k = 0,\ldots, N
-\end{alignat} 
-where~\eqref{eq:ROCPdP} denotes the discretized form for time evolution of the covariance matrix under a stabilizing controller of the form $\bbu_k=-\bK_k \bbmu_k$. As apposed to~\eqref{eq:OCPdP}, $\tbP$ would evolve, in continuous time, according to $\dot{\tbP}(t) = (\bA(t)-\bB(t) \bK(t)) \tbP(t) + \tbP(t) (\bA(t)-\bB(t) \bK(t))^T + \bQ(t)$. To be continued...
+\end{alignat}
+\end{subequations} 
+Here, \eqref{eq:ROCPdP} denotes the discretized form for time evolution of the covariance matrix under a stabilizing controller of the form $\bbu_k=-\bK_k \bbmu_k$. To mark the difference with~\eqref{eq:OCPdP}, a new symbol $\tbP$ is introduced to the denote the covariance matrix in this case. In continuous time, $\tbP$ evolves according to $\dot{\tbP}(t) = (\bA(t)-\bB(t) \bK(t)) \tbP(t) + \tbP(t) (\bA(t)-\bB(t) \bK(t))^T + \bQ(t)$. To be continued...
 \section{Tire Model}
 \label{sec:tyremodel}
 \begin{figure}[t]\centering
