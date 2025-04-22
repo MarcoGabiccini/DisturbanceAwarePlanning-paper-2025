@@ -1,30 +1,32 @@
 \section{Closed-loop uncertainty-aware planning over the full horizon}
 \label{sec:closed_loop_planning}
 
-The second approach plans over the full horizon while incorporating a feedback policy that mimics the driver's closed-loop behavior. This enables a more realistic propagation of the uncertainty encoded in the covariance matrix $\bP$, preventing its uncontrolled growth through the stabilizing effect of the driver's feedback.
+The second approach we propose plans over the full horizon while incorporating a feedback policy that mimics the driver's closed-loop behavior. This enables a more realistic propagation of the uncertainty encoded in the covariance matrix $\bP$, preventing its uncontrolled growth through the stabilizing effect of the driver's feedback.
 
-The approach is based on the three following steps: i) A nominal time-optimal trajectory is planned: this will be referred to as nominal feed-forward optimal trajectory. This is the trajectory a driver should follow in the ideal situation of a world without uncertainty. In this step the mean trajectory is the actual trajectory a deterministic vehicle dynamics would trace. 
+The approach is based on the three following steps: (i) A nominal time-optimal trajectory is planned: this will be referred to as nominal feed-forward optimal trajectory. This represents the trajectory that an expert driver would follow in an ideal scenario without uncertainty. In this step, the mean trajectory coincides with the actual path that the vehicle would follow under deterministic dynamics.
 
-ii) A closed-loop controller mimicking the driver's action is computed which stabilizes the nominal feed-forward optimal trajectory computed at step i). We assume a discrete time-varying Linear Quadratic Regulator (LQR) controller is a good approximation of how an expert driver can track a prescribed trajectory. 
+(ii) A closed-loop controller mimicking the driver's action is computed which stabilizes the nominal feed-forward optimal trajectory computed at step (i). We assume a discrete time-varying Linear Quadratic Regulator (LQR) controller is a good approximation of how an expert driver can track a prescribed trajectory.
 
-iii) In the last step the stochastic framework is reintroduced and the time-optimal planning problem is robustified using the Lyapunov framework. The main idea is to \emph{re-plan} a mean trajectory of a stochastic system such that, a time-varying LQR controller that aims at stabilizing it, is able to properly tame the propagation of the uncertainty. This amounts to ensuring that the robustified path constraints are satisfied. More specifically, this accounts for two key aspects: firstly, that the covariance matrix is propagated accounting explicitly for the controlled system dynamics; and secondly, that the path constraints are robustly satisfied by incorporating the covariance estimation propagated through the closed-loop controlled system. Some aspects that may appear a bit technical are in fact essential. In this third step, not only are states and controls re-planned, but also the time-varying LQR gains. As a matter of fact, they need to explicitly account for the changed requirements associated with stabilizing a trajectory different from the nominal one, which must now satisfy the robustified constraints.
+(iii) In the last step the stochastic framework is reintroduced and the time-optimal planning problem is robustified using the Lyapunov framework. The main idea is to \emph{re-plan} a mean trajectory of a stochastic system such that, a time-varying LQR controller that aims at stabilizing it, is able to properly tame the propagation of the uncertainty. This amounts to ensuring that the robustified path constraints are satisfied. More specifically, this considers two key aspects: firstly, that the covariance matrix is propagated accounting explicitly for the controlled system dynamics; secondly, that the path constraints are robustly satisfied by incorporating the covariance estimation propagated through the closed-loop controlled system. Some aspects that may appear a bit technical are in fact essential. In this third step, not only are states and controls re-planned, but also the time-varying LQR gains. As a matter of fact, they need to explicitly account for the changed requirements associated with stabilizing a trajectory different from the nominal one, which must now satisfy the robustified constraints.
 \subsection{Step 1 -- Nominal feed-forward time-optimal trajectory planning}
 \label{sec:nominalFF}
-The first step consists in planning a nominal feed-forward trajectory. This assumes deterministic system dynamics, with \( (\hbmu_k, \hbu_k) \) denoting the differential states and controls, and \( \hbz_k \) the algebraic states, for \( k = 0, \ldots, N \). To avoid redundancy, we note that the NLP to be solved is a special case of~\eqref{eq:DOCP}, where~\eqref{eq:DOCPdP},~\eqref{eq:DOCPdPIC}, and the backoff terms are omitted, since the goal is to compute a nominal trajectory.
+Step (i) consists in planning a nominal feed-forward trajectory. This assumes deterministic system dynamics, where $\hbmu_k$, $\hbu_k$, and $\hbz_k$ denote differential states, controls, and algebraic states, respectively, for \( k = 0, \ldots, N \). To avoid redundancy, we note that the NLP to be solved is a special case of~\eqref{eq:DOCP}, where~\eqref{eq:DOCPdP},~\eqref{eq:DOCPdPIC}, and the backoff terms are omitted, since the goal is to compute a nominal trajectory.
 
 \subsection{Step 2 -- Time-varying LQR stabilizing controller}
 \label{sec:LQR}
 
-Given the nominal trajectory $(\hbmu_k, \hbu_k)$ over $k=0,\ldots, N$, and introduced the deviation variables $\bbmu_k=\bmu_k - \hbmu_k$ and $\bbu = \bu_k - \hbu_k$, we design a linear state-feedback law $\bbu_k= -\hbK_k \bbmu_k$, or equivalently $\bu_k = \hbu_k - \hbK_k (\bmu_k - \hbmu_k)$, to mitigate disturbances while tracking the nominal trajectory. To compute the state-feedback matrices $\hbK_k$, we linearize the system around $(\hbmu_k, \hbu_k)$, such that $\bbmu_{k+1} \approx \hbA_{k}\bbmu_k + \hbB_k \bbu_k$, where $\hbA_k = f_{,\bmu}(\hbmu_k,\hbu_k)$ and $\hbB_k = f_{,\bu}(\hbmu_k,\hbu_k)$, and define the quadratic regulator (tracking) cost function
+Given the nominal trajectory $(\hbmu_k, \hbu_k)$ over $k=0,\ldots, N$, planned at step (i), and introduced the deviation variables $\bbmu_k=\bmu_k - \hbmu_k$ and $\bbu = \bu_k - \hbu_k$, we design a linear state-feedback law $\bbu_k= -\hbK_k \bbmu_k$, or equivalently $\bu_k = \hbu_k - \hbK_k (\bmu_k - \hbmu_k)$, to mitigate disturbances while tracking the nominal trajectory. 
+
+To compute the state-feedback matrices $\hbK_k$, we linearize the system around $(\hbmu_k, \hbu_k)$, such that $\bbmu_{k+1} \approx \hbA_{k}\bbmu_k + \hbB_k \bbu_k$, where $\hbA_k = f_{,\bmu}(\hbmu_k,\hbu_k)$ and $\hbB_k = f_{,\bu}(\hbmu_k,\hbu_k)$, and define the quadratic regulator (tracking) cost function
 \begin{align}
 J = \bbmu_N^T \bW_N \bbmu_N + \sum_{k=0}^{N-1} \big( \bbmu_k^{T} \bW_k \bbmu_k + \bbu_k^T \bR_k \bbu_k \big),
 \end{align}
 where $\bW_N=\bW_N^T \succ 0$, $\bW_k=\bW_k^T \succeq 0$, $\bR_k=\bR_k^T \succ 0$. It can be shown that the optimal cost-to-go is given by $J_k^*(\bbmu_k) = \bbmu_k^T \bS_k \bbmu_k$, with $\bS_k = \bS_k^T \succ 0$, where $\bS_k$ can be computed through the (backward) Riccati recursion for $k=N-1,\ldots, 0$
 \begin{align}
-\bS_N &= \bW_N,\\ 
+\bS_N &= \bW_N,\\
 \bS_{k} &= \bW_k + \hbA_k^T \bS_{k+1} \hbA_k - \hbA_k^T \bS_{k+1}\hbB_k \hbK_k,\quad k={N-1, \ldots, 0}
 \end{align}
-where  $\hbK_k =\big( \bR_k+\hbB_k^T \bS_{k+1} \hbB_k \big)^{-1} \hbB_k^T \bS_{k+1} \hbA_k$. The optimal (stabilizing) feedback policy is given by $\bbu_k=-\hbK_k \bbmu_k$. We assume that the gain sequence $\{\hbK_k\}$, $k=0,\ldots, N$ represents the control strategy that an expert driver would employ to optimally stabilize the system along the nominal trajectory.
+where  $\hbK_k =\big( \bR_k+\hbB_k^T \bS_{k+1} \hbB_k \big)^{-1} \hbB_k^T \bS_{k+1} \hbA_k$. The optimal (stabilizing) feedback policy is given by $\bbu_k=-\hbK_k \bbmu_k$. We assume that the gain sequence $\{\hbK_k\}$, $k=0,\ldots, N$ represents a reasonable approximation of the control strategy that an expert driver would adopt to optimally stabilize the system along the nominal trajectory.
 
 \subsection{Step 3 -- Closed-loop robustified planning}
 \label{sec:CLrobustified}
@@ -35,7 +37,7 @@ where  $\hbK_k =\big( \bR_k+\hbB_k^T \bS_{k+1} \hbB_k \big)^{-1} \hbB_k^T \bS_{k
 %          & f_i(x) \le 0, \quad i=1, \dots, m \quad i=1, \dots, m\\
 %          & h_i(x) = 0,   \quad i=1, \dots, p,
 %\end{align}
-As the third and last step, a closed-loop robustified planning problem is set up. Its aim is the definition of a mean trajectory of a stochastic system such that, working in tandem with state-feedback controller that aims at stabilizing it, it is able to mitigate the perturbations and reduce the propagation of uncertainty. This helps to guarantee that the robustified path constraints can be satisfied over the entire planning horizon. The discretized version of this problem takes the form of the following NLP:
+As the third and last step, a closed-loop robustified planning problem is set up. Its aim is the definition of a mean trajectory of a stochastic system such that, working in tandem with state-feedback controller that aims at stabilizing it, is able to mitigate the perturbations and reduce the propagation of uncertainty. This helps to guarantee that the robustified path constraints can be satisfied over the entire planning horizon. The discretized version of this problem takes the form of the following NLP:
 \begin{subequations}\label{eq:ROCP}
 \begin{alignat}{3}
 \underset{\bmu_k,\bxi_k, \bu_k, \bP_k,\bz_k, \bK_k}{\text{minimize}}
@@ -49,7 +51,9 @@ As the third and last step, a closed-loop robustified planning problem is set up
 \tbP_0       & = \; \bar{\bP}_0 \succeq 0 \label{eq:ROCPdPIC} \\
 \bzero      & = \; \bOm_k(\bmu_k,\bxi_k, \bu_k,\bz_k), \quad k = 0,\ldots, N \label{eq:ROCPpath} \\
 0    & \geq  h_i(\bmu_k, \bu_k, \bz_k) + \be_i(\bmu_k, \bu_k, \tbP_k, \bz_k), \quad k = 1,\ldots, N;\; \quad i \in \calI \label{eq:ROCPconstraints}\\
--\de \bK   & \leq \bK_k - \hbK_k \leq  \de \bK \label{eq:ROCPdeltaK}, \quad k = 0,\ldots, N
+-\de \bK_k   & \leq \bK_k - \hbK_k \leq  \de \bK_k \label{eq:ROCPdeltaK}, \quad k = 0,\ldots, N
 \end{alignat}
-\end{subequations} 
-Here, \eqref{eq:ROCPdP} denotes the discretized form for time evolution of the covariance matrix under a stabilizing controller of the form $\bbu_k=-\bK_k \bbmu_k$. To mark the difference with~\eqref{eq:OCPdP}, a new symbol $\tbP$ is introduced to the denote the covariance matrix in this case. In continuous time, $\tbP$ evolves according to $\dot{\tbP}(t) = (\bA(t)-\bB(t) \bK(t)) \tbP(t) + \tbP(t) (\bA(t)-\bB(t) \bK(t))^T + \bQ(t)$. To be continued...
+\end{subequations}
+Here,~\eqref{eq:ROCPdP} denotes the discrete-time covariance dynamics under the stabilizing state-feedback controller \( \bbu_k = -\bK_k \bbmu_k \). To distinguish this case from~\eqref{eq:DOCP}, we use the symbol \( \tbP \) to denote the closed-loop (CL) covariance matrix, whose discrete evolution corresponds to a collocation-based approximation of the continuous-time dynamics $\dot{\tbP}(t) = \tbA(t) \tbP(t) + \tbP(t)\tbA(t)^T + \bQ(t)$, with $\tbA(t)=\bA(t)-\bB(t)\bK(t)$. It is worth noting that, accordingly, in equation~\eqref{eq:ROCPconstraints} the backoff term $\be_i$ is a function of closed-loop uncertainty $\tbP_k$. Another key aspect is that the state-feedback matrix $\bK_k$ is also treated as a decision variable. This reflects the fact that the driver may adjust his action to stabilize the new (to-be-planned) nominal trajectory using a policy that differs from the previous $\hbK_k$, computed in step (ii) via LQR. To promote convergence, however, $\bK_k$ is restrained within prescribed bounds ($\de \bK_k$) relative to $\hbK_k$. In our tests $\de \bK_k = 0.1 \hbK_k$.
+
+%To mark the difference with~\eqref{eq:OCPdP}, besides using P,CL to denote closed-loop dynamics, a new symbol $\tbP$ is introduced to the denote the covariance matrix in this case. In continuous time, $\tbP$ evolves according to $\dot{\tbP}(t) = (\bA(t)-\bB(t) \bK(t)) \tbP(t) + \tbP(t) (\bA(t)-\bB(t) \bK(t))^T + \bQ(t)$. To be continued... 
