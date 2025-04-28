@@ -98,6 +98,7 @@ Following the direct collocation approach, both the mean and covariance state tr
 In certain cases~\cite{Gillis:PracticalMethodsApproximate:2015}, positive-definiteness-preserving Lyapunov discretization schemes are used in~\eqref{eq:DOCPdP}. However, for sufficiently fine discretization, we found that integrating only the lower triangular part of $\bP(t)$ in~\eqref{eq:OCPdPIC}  (and reconstructing its strictly upper part accordingly), ensures that $\bP_k$ remain symmetric and positive definite when the initial $\bP_0$ is symmetric and positive definite. In all our tests direct collocation with cubic polynomial state representations and Gauss-Legendre collocation points provided accurate results.
 
 \subsection{Robust adherence limit constraint formulation}
+\label{sec:adherence_constraint}
 The model employs a tire formulation that neglects combined slip effects, i.e., it does not account for the simultaneous utilization of longitudinal and lateral tyre forces. As a result, the optimal control problem must include an additional constraint to ensure that the total ground reaction forces remain within the bounds of the tyre's adherence ellipse. 
 
 The base version of the constraint for each axle can be expressed as a function of $\bx$ and $\bu$, as follows:
@@ -127,3 +128,24 @@ To better clarify the effect of the back-off term on the constraint we can suppo
 	}
 	\label{fig:robust_constraints}
 \end{figure}
+
+\subsection{Stay-on-track constraint}
+\label{sec:stayontrack_constraint}
+A stay-on-track constraint is required to ensure that the vehicle remains within the circuit boundaries. The formulation adopted introduces an algebraic variable $e$, which satisfies the following constraint:
+\begin{equation}
+	\begin{Bmatrix}
+		x\\y
+	\end{Bmatrix}
+	-\boldsymbol{c} - e\bn=\boldsymbol{0} \label{eq:onplane_constraint}
+\end{equation}
+%\begin{equation}
+%	\bp-\boldsymbol{c}_k - e_k\bn_k=\boldsymbol{0} \label{eq:onplane_constraint}
+%\end{equation}
+where $\boldsymbol{c}$ indicates the position of the centerline, and $\bn$ is the unit normal vector to the centerline. Equation~\eqref{eq:onplane_constraint} constraints the CoM of the vehicle to lie on the vertical plane defined by the unit normal vector $\bn$. The previously introduced algebraic variable $e$ is further constrained to take values between $e_\textrm{min}$ and $e_\textrm{max}$, which are determined based on the width of the circuit and the vehicle's front and rear tracks. 
+
+In order to take into account for the back-off terms, the maximum and minimum values are modified coherently, so that:
+\begin{equation}
+	e_\textrm{min} + \be^\textrm{SOT} \leq e \leq e_\textrm{max} - \be^\textrm{SOT}\label{eq:stayontrack_constraint}
+\end{equation}
+where $\be^\textrm{SOT}$ is computed by considering that the gradient of the constraint w.r.t. the state vector $\na_{\bx}h^\textrm{SOT}$ depends solely on $\bn$.
+%Adding a back-off to this constraint produces the same effect as an increase of the front and rear tracks of the vehicle does.
