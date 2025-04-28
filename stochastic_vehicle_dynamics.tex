@@ -15,86 +15,7 @@ The state vector $\bx$ has six components and includes the three kinematic quant
 
 \begin{figure}
 	\centering
-	\begin{tikzpicture}[scale=2, x = {(0,1cm)}, y = {(-1cm,0)},
-		force/.style={->, thick, red!60!black, >={Latex[length=10pt, width=4pt]}},
-		vec/.style={->, thick, mgreen, >={Latex[length=10pt, width=4pt]}},
-		aux/.style={thin},
-		frame/.style={->,thin,>={Latex}},
-		every node/.style={font=\small, text=black}
-		]
-		\definecolor{mgreen}{RGB}{0,100,0}
-		\begin{scope}[rotate = 25,shift = {(-.3,-2)}]
-			% Coordinates
-			\coordinate (rear) at (0,0);
-			\coordinate (G) at (1.2,0);
-			\coordinate (front) at (2.8,0);
-			
-			% Main body line
-			\draw[blue!50!black, thick] (rear) -- (front);
-			
-			% Rear wheel
-			\draw[fill=black!60!white, draw=black, rounded corners=2pt]
-			($(rear)+(-.2,.1)$) rectangle ($(rear)+(+.2,-.1)$);
-			
-			% Front wheel (rotated around its center)
-			\begin{scope}[shift={(front)}, rotate=25]
-				\draw[fill=black!60!white, draw=black, rounded corners=2pt]
-				(-0.2,.1) rectangle (0.2,-.1);
-			\end{scope}
-			
-			% Local axes at rear
-			\draw[force] (rear) -- ++(.5,0) node[above,right] {$X_2$};
-			\draw[force] (rear) -- ++(0,1.3) node[above] {$Y_2$};
-			
-			% Local axes at front
-			\draw[force] (front) -- ++(-.3,0) node[right] {$X_1$};
-			\draw[force] (front) -- ++(0,1.5) node[above] {$Y_1$};
-			
-			% Velocity vectors at G
-			\draw[vec] (G) -- ++(.6,0) node[left, shift={(-.2,-.1)}] {$u\,\mathbf{i}$};
-			\draw[vec] (G) -- ++(0,.3) node[above] {$v\,\mathbf{j}$};
-			
-			% Angular velocity
-			\begin{scope}[rotate = -115]
-				\draw[vec] 
-				(-.1,.8) arc[start angle=0, end angle=50, radius=1]
-				node[midway, right=2pt] {$r\,\mathbf{k}$};
-			\end{scope}
-			
-			% G point
-			\fill (G) circle (1pt) node[right] {$G$};
-			
-			% Body frame
-			\draw[frame] (G) --++ (1,0) node[right] {$x_b$};
-			\draw[frame] (G) --++ (0,1) node[above] {$y_b$};
-			
-			% Distances
-%			\draw[<->,>={Latex}] (3,-1) -- node[left] {$a_1$} (1.5,-1);
-%			\draw[<->,>={Latex}] (1.5,-1) -- node[left] {$a_2$} (0,-1);
-			
-			% Steering angle (auxiliary vertical line)
-			\draw[aux] (front) -- ++(.4,0);
-			\draw[aux] (front) -- ++({0.4*cos(25)}, {0.4*sin(25)});
-			
-			% Steering angle arc
-			\draw[->,thin,>={Latex}] ([shift={(0.35,0)}]front) arc[start angle=0, end angle=25, radius=0.35];
-			\node[left,shift={(.15,0)}] at ([shift={(0.35,0)}]front) {$\delta$};
-			
-			% Psi angle aux
-			\draw[aux] (G) -- ++({0.4*cos(25)}, {-0.4*sin(25)});
-			
-			% Psi angle
-			\draw[->,thin,>={Latex}] ([shift={({0.35*cos(25)},{-.35*sin(25)})}]G) arc[start angle=-25, end angle=0, radius=0.35];
-			\node[left,shift={(.2,-.05)}] at ([shift={({0.35*cos(25)},{-.35*sin(25)})}]G) {$\psi$};
-			
-		\end{scope}
-		\coordinate (ground) at (0,0);
-		\draw[frame] (ground) --++ (1,0) node[right] {$x$};
-		\draw[frame] (ground) --++ (0,1) node[above] {$y$};
-		\draw[->,thick,>=Latex] (ground) --++ (G);
-%		\draw[->,thick,>=Latex] (ground) --++ (G) node[midway, shift={(0,-.3)}] {$\boldsymbol{p}$};
-		
-	\end{tikzpicture}
+	\input{Fig/Tikz_Sources/tikz_vehicle_model.tex}
 	\caption{Single Track model. The ground force acting on each axle is decomposed into longitudinal and lateral components, indicated by red arrows. The longitudinal components are part of the input vector $\bu$, encompassing both acceleration and braking forces, while the lateral components are computed using Pacejka's Magic Formula based on the vertical load and slip angle at each axle. The figure also depicts the fixed reference frame and the body reference frame, with the origin located at the vehicle's center of mass (CoM). The state variables $u$ and $v$ represent the longitudinal and lateral velocities of the CoM w.r.t. the body frame, while $r$ denotes the yaw rate. The angle $\psi$ is used to describe the orientation of the body frame w.r.t. the fixed frame.}
 	\label{fig:vehicle_model}
 \end{figure}
@@ -131,15 +52,15 @@ In geometric and orbital mechanics, see e.g.~\cite{Maruskin:DynamicalSystemsGeom
 Accordingly, the continuous-time stochastic trajectory planning can be framed as the following nonlinear optimal control problem
 \begin{subequations}\label{eq:OCP}
 \begin{align}
-& \underset{\bmu(t), \bu(t), \bP(t)}{\text{minimize}} \quad J(\bmu(t), \bu(t), \bP(t)) \label{eq:OCPcost} \\
-& \text{s.t.} \quad \dbmu(t)           = f(\bmu(t), \bu(t)) \label{eq:OCPdyn} \\
-& \phantom{\text{s.t.} \quad} \bmu(0)  = \bmu_0 \label{eq:OCPdynIC} \\
-& \phantom{\text{s.t.} \quad} \dbP(t) = \bA(t) \bP(t) + \bP(t) \bA^T(t) + \bQ(t) \label{eq:OCPdP} \\
-& \phantom{\text{s.t.} \quad} \bP(0)  = \bP_0 \succeq 0 \label{eq:OCPdPIC} \\ %& \phantom{\text{s.t.} \qquad} 0       \geq h_i(\bmu(t), \bu(t))
-%+ \overbrace{\gamma \bigg[\underbrace{\na^T_{\bx} h_i \bP(t) \na_{\bx} h_i}_{\text{variance of $h_i(\bx)$}}\bigg]^{\frac{1}{2}}}^{\text{safety margin}},
-&\phantom{\text{s.t.} \qquad} 0       \geq h_i(\bmu(t), \bu(t))
-+ \be_i(\bmu(t), \bu(t), \bP(t)),
-\quad i \in \calI \label{eq:OCPconstraints}
+	\underset{\bmu(t), \bu(t), \bP(t)}{\text{minimize}} \quad & J(\bmu(t), \bu(t), \bP(t)) \label{eq:OCPcost} \\
+	\text{s.t.} \quad \dbmu(t)           &= f(\bmu(t), \bu(t)) \label{eq:OCPdyn} \\
+	\phantom{\text{s.t.} \quad} \bmu(0)  &= \bmu_0 \label{eq:OCPdynIC} \\
+	\phantom{\text{s.t.} \quad} \dbP(t) &= \bA(t) \bP(t) + \bP(t) \bA^T(t) + \bQ(t) \label{eq:OCPdP} \\
+	\phantom{\text{s.t.} \quad} \bP(0)  &= \bP_0 \succeq 0 \label{eq:OCPdPIC} \\ %& \phantom{\text{s.t.} \qquad} 0       \geq h_i(\bmu(t), \bu(t))
+	%+ \overbrace{\gamma \bigg[\underbrace{\na^T_{\bx} h_i \bP(t) \na_{\bx} h_i}_{\text{variance of $h_i(\bx)$}}\bigg]^{\frac{1}{2}}}^{\text{safety margin}},
+	\phantom{\text{s.t.} \qquad} 0&       \geq h_i(\bmu(t), \bu(t))
+	+ \be_i(\bmu(t), \bu(t), \bP(t)),
+	\quad i \in \calI \label{eq:OCPconstraints}
 \end{align}
 \end{subequations}
 The cost function $J$ in~\eqref{eq:OCPcost} depends on the mean $\bmu(t)$, the controls $\bu(t)$ and the state covariance $\bP(t)$. The mean dynamics is expressed by~\eqref{eq:OCPdyn} with~\eqref{eq:OCPdynIC}, and the covariance dynamics is expressed by~\eqref{eq:OCPdP} with~\eqref{eq:OCPdPIC}. In eq.~\eqref{eq:OCPconstraints} the \emph{backoff terms} $\be_i$ account for the disturbances and serve the purpose of obtaining deterministic safety margins directly on $\bmu(t)$. $\calI$ is the set of indices defining the inequality constraints. The backoff terms stem for a linearization around the mean of the original \emph{chance constraint} on $\bx(t)$ expressed by $\Prob \{h_i(\bx) \leq 0\}\geq p$, where $p$ is the confidence level of constraint satisfaction. Explicitly the backoff terms are given by
@@ -199,76 +120,9 @@ To better clarify the effect of the back-off term on the constraint we can suppo
 
 \begin{figure}
 	\centering
-	\begin{tikzpicture}[scale = .7]
-		% Parameters
-		\def\outerX{3}   % x radius of outer ellipse
-		\def\outerY{2}   % y radius of outer ellipse
-		\def\gap{0.2}    % distance between outer and inner ellipse
-		\def\innerX{2.68}
-		\def\innerY{1.79}
-		
-		% Draw outer ellipse
-		\draw[] (0,0) ellipse [x radius=\outerX, y radius=\outerY];
-		
-		% Draw inner ellipse filled with color
-		\fill[black!30] (0,0) ellipse [
-		x radius={\innerX},
-		y radius={\innerY}
-		];
-		\draw[dashed] (0,0) ellipse [
-		x radius={\innerX},
-		y radius={\innerY}
-		];
-		
-		% Draw axes
-		\draw[->] (-\outerX-1,0) -- (\outerX+1,0) node[right] {$X_j$};
-		\draw[->] (0,-\outerY-1) -- (0,\outerY+1) node[above] {$Y_j$};
-		
-		% Arrows pointing to the ellipses
-		\draw[->,thin] (1.7,2) -- ({\outerX*cos(60)},{\outerY*sin(60)}) node[midway, above right] {$\beta=0$};
-		\draw[->,thin] (2.3,1.7) -- ({(\innerX)*cos(45)},{(\innerY)*sin(45)}) node[midway, right, shift={(0.05,.2)}] {$\beta=\gap$};
-		
-		% Arrows pointing to the ellipses
-		\draw[->,thin] ({\outerX+.3},.3) -- (\outerX,0) node[midway, above right,shift={(.05,0)}] {$\mu_x Z_j$};
-		\draw[->,thin] (.3,{\outerY+.3}) -- (0,\outerY) node[midway, above right,shift={(.05,0)}] {$\mu_y Z_j$};
-		
-	\end{tikzpicture}
+	\input{Fig/Tikz_Sources/tikz_adherence_constraint.tex}
 	\hfill
-	\begin{tikzpicture}[scale = .7]
-		% Parameters
-		\def\outerX{3}   % x radius of outer ellipse
-		\def\outerY{2}   % y radius of outer ellipse
-		\def\gap{0.2}    % distance between outer and inner ellipse
-		\def\innerX{2.68}
-		\def\innerY{1.79}
-		
-		% Draw outer ellipse
-		\draw[] (0,0) ellipse [x radius=\outerX, y radius=\outerY];
-		
-		% Draw inner ellipse filled with color
-		\fill[black!30] (0,0) ellipse [
-		x radius={\innerX},
-		y radius={\innerY}
-		];
-		\node[above] at (0,0) {PATH CONSTRAINT FIG};
-		\draw[dashed] (0,0) ellipse [
-		x radius={\innerX},
-		y radius={\innerY}
-		];
-		
-		% Draw axes
-		\draw[->] (-\outerX-1,0) -- (\outerX+1,0) node[right] {$X_i$};
-		\draw[->] (0,-\outerY-1) -- (0,\outerY+1) node[above] {$Y_i$};
-		
-		% Arrows pointing to the ellipses
-		\draw[->,thin] (1.7,2) -- ({\outerX*cos(60)},{\outerY*sin(60)}) node[midway, above right] {$\beta=0$};
-		\draw[->,thin] (2.3,1.7) -- ({(\innerX)*cos(45)},{(\innerY)*sin(45)}) node[midway, right, shift={(0.05,.2)}] {$\beta=\gap$};
-		
-		% Arrows pointing to the ellipses
-		\draw[->,thin] ({\outerX+.3},.3) -- (\outerX,0) node[midway, above right,shift={(.05,0)}] {$\mu_x Z_i$};
-		\draw[->,thin] (.3,{\outerY+.3}) -- (0,\outerY) node[midway, above right,shift={(.05,0)}] {$\mu_y Z_i$};
-		
-	\end{tikzpicture}
+	\input{Fig/Tikz_Sources/tikz_stayontrack_constraint.tex}
 	\caption{Graphical representation of the two constraints analyzed in the section. The left panel shows the adherence constraint in the plane $X_j-Y_j$. The ellipse in solid line, whose semi-axes are given by $\mu_{x,j}Z_j$ and $\mu_{y,j}Z_j$, represents the border of the available region for the base constraint, without back-off. The ellipse in dashed line delimits the available region when a back-off $\be^\textrm{A}_j=0.2$ is present. This ellipse has its semi-axes reduced by a factor $\sqrt{1-\be^\textrm{A}_j}$ w.r.t. the one in solid line. 
 	}
 	\label{fig:robust_constraints}
