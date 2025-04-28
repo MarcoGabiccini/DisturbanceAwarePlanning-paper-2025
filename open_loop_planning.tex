@@ -269,23 +269,3 @@ Equation~\eqref{eq:DOCPdPinitopenloop} defines the initialization of the appropr
 	\label{fig:DOCPgrid}
 \end{figure}
 }{}
-
-\subsection{Robust adherence limit constraint formulation}
-The model employs a tire formulation that neglects combined slip effects, i.e., it does not account for the simultaneous utilization of longitudinal and lateral tyre forces. As a result, the optimal control problem must include an additional constraint to ensure that the total ground reaction forces remain within the bounds of the tyre's adherence ellipse. 
-
-The base version of the constraint for each axle can be expressed as a function of $\bx$ and $\bu$, as follows:
-\begin{equation}
-	h(\bx,\bu) = \left[ \left( \frac{X(\bx,\bu)}{\mu_x} \right)^2+ \left( \frac{Y(\bx,\bu)}{\mu_y}\right)^2\right]\frac{1}{Z^2(\bx,\bu)}-1\leq0
-\end{equation}
-Here, $X$ and $Y$ denote the longitudinal and lateral components of the in-plane ground forces, respectively, as illustrated in Figure~\ref{fig:vehicle_model}, while $Z$ represents the total vertical load acting on the axle. 
-
-The gradient of the constraint w.r.t. the state vector $\bx$, denoted by $\na_{\bx}h(\bmu)$, is used to evaluate the standard deviation $\sigma$ associated with the constraint. This gradient can be computed using the chain rule, as follows:
-\begin{equation}
-	\na_{\bx}h(\bmu,\bu) = 
-	\frac{\pd h}{\pd X}\at_{\bmu,\bu}\na_{\bx}X(\bmu,\bu) + 
-	\frac{\pd h}{\pd Y}\at_{\bmu,\bu}\na_{\bx}Y(\bmu,\bu) + 
-	\frac{\pd h}{\pd Z}\at_{\bmu,\bu}\na_{\bx}Z(\bmu,\bu)
-\end{equation}
-where the first element is zero because $X$ is a function of the input vector $\bu$ only. 
-
-For example, introducing a back-off term $\be=0.1$ in the constraint implies that the axle's adherence capacity can be exploited up to 90\% of its limit. This allows the optimizer to determine the most appropriate trade-off between the longitudinal force $X$ and the lateral force $Y$ --- often by reducing both components to some extent --- based on the specific requirements of the manoeuvre.

@@ -175,3 +175,24 @@ Following the direct collocation approach, both the mean and covariance state tr
 (\bxi_{k,1}, \ldots, \bxi_{k,d})$, and similarly $\bSi_k=(\bSi_{k,1}, \ldots, \bSi_{k,d})$. Equations~\eqref{eq:DOCPdyn} and~\eqref{eq:DOCPdP} represent the collocation and continuity equations for mean and covariance, respectively, with initial conditions represented by~\eqref{eq:DOCPdynIC} and~\eqref{eq:DOCPdPIC}. Eqs.~\eqref{eq:DOCPpath} are path equality constraints and~\eqref{eq:DOCPconstraints} are the robustified inequality constraints.
 
 In certain cases~\cite{Gillis:PracticalMethodsApproximate:2015}, positive-definiteness-preserving Lyapunov discretization schemes are used in~\eqref{eq:DOCPdP}. However, for sufficiently fine discretization, we found that integrating only the lower triangular part of $\bP(t)$ in~\eqref{eq:OCPdPIC}  (and reconstructing its strictly upper part accordingly), ensures that $\bP_k$ remain symmetric and positive definite when the initial $\bP_0$ is symmetric and positive definite. In all our tests direct collocation with cubic polynomial state representations and Gauss-Legendre collocation points provided accurate results.
+
+\subsection{Robust adherence limit constraint formulation}
+The model employs a tire formulation that neglects combined slip effects, i.e., it does not account for the simultaneous utilization of longitudinal and lateral tyre forces. As a result, the optimal control problem must include an additional constraint to ensure that the total ground reaction forces remain within the bounds of the tyre's adherence ellipse. 
+
+The base version of the constraint for each axle can be expressed as a function of $\bx$ and $\bu$, as follows:
+\begin{equation}
+	h^\textrm{A}_j(\bx,\bu) = \left[ \left( \frac{X_j(\bx,\bu)}{\mu_{x,j}} \right)^2+ \left( \frac{Y_j(\bx,\bu)}{\mu_{y,j}}\right)^2\right]\frac{1}{Z_j^2(\bx,\bu)}-1\leq0\qquad j=1,2.\label{eq:adherence_constraint}
+\end{equation}
+where the superscript A denotes adherence, and the subscript $j$ indicates the axle index, with $j=1$ referring to the front axle and $j=2$ to the rear axle. Here, $X_j$ and $Y_j$ denote the longitudinal and lateral components of the in-plane ground forces, respectively, as illustrated in Figure~\ref{fig:vehicle_model}, while $Z_j$ represents the total vertical load acting on the axle. 
+As can be seen from~\eqref{eq:adherence_constraint}, the points $\left(X_j,Y_j\right)$ are constrained to lie within an ellipse whose semi-axes are given by $\mu_{x,j}Z_j$ and $\mu_{y,j}Z_j$.
+
+The gradient of the constraint w.r.t. the state vector $\bx$, denoted by $\na_{\bx}h^\textrm{A}_j(\bmu)$, is used to evaluate the standard deviation $\sigma^\textrm{A}_j$ associated with the constraint. This gradient can be computed using the chain rule, as follows:
+\begin{equation}
+	\na_{\bx}h^\textrm{A}_j(\bmu,\bu) = 
+	\frac{\pd h^\textrm{A}_j}{\pd X_j}\at_{\bmu,\bu}\na_{\bx}X_j(\bmu,\bu) + 
+	\frac{\pd h^\textrm{A}_j}{\pd Y_j}\at_{\bmu,\bu}\na_{\bx}Y_j(\bmu,\bu) + 
+	\frac{\pd h^\textrm{A}_j}{\pd Z_j}\at_{\bmu,\bu}\na_{\bx}Z_j(\bmu,\bu)
+\end{equation}
+where the first element is zero because $X_j$ is a function of the input vector $\bu$ only. 
+
+For example, introducing a back-off term $\be=0.1$ in the constraint implies that the axle's adherence capacity can be exploited up to 90\% of its limit. This allows the optimizer to determine the most appropriate trade-off between the longitudinal force $X$ and the lateral force $Y$ --- often by reducing both components to some extent --- based on the specific requirements of the manoeuvre.
