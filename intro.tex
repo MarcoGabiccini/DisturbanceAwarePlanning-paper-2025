@@ -3,11 +3,41 @@
 
 As the automotive industry advances towards higher levels of automation, ...
 
-Some key aspects: The omission of explicit disturbance modeling within the planning framework can critically compromise the satisfaction of operational constraints. In particular, time-optimal planning algorithms frequently yield trajectories that lie in close proximity to constraint boundaries, such as those associated with collision avoidance. Under such conditions, even small perturbations may induce constraint violations, thereby significantly jeopardizing system safety. Although the introduction of fixed, heuristically selected safety margins around constraint sets may offer a nominal safeguard, this strategy does not provide formal assurances of constraint satisfaction under perturbations and often leads to overly conservative and suboptimal solutions.
-  
 \subsection{Related work}
-In recent years, extensive research has been conducted on ...
+In recent years, extensive research has been conducted on minimum-lap-time planning for motorsport vehicles. Cite: Massaro, Biral, noi... with different formulations, vehicle models and solution strategies. 
+
+%We try to fill the gap that the omission of explicit disturbance modeling within the planning framework can critically compromise the satisfaction of operational constraints. In particular, time-optimal planning algorithms frequently yield trajectories that lie in close proximity to constraint boundaries, such as those associated with collision avoidance. Under such conditions, even small perturbations may induce constraint violations, thereby significantly jeopardizing system safety.
+%
+%Although the introduction of fixed, heuristically selected safety margins around constraint sets may offer a nominal safeguard, this strategy does not provide formal assurances of constraint satisfaction under perturbations and often leads to overly conservative and suboptimal solutions.
+%
+%What people do in related fields to consider uncertainty?
+
+%In orbital mechanics, since the state of the system is uncertain, it is important to estimate the collision event between satellites and space debris in probabilistic terms~\cite{Tapley:StatisticalOrbitDetermination:2004}. 
+%
+%In robotics it is important, in the presence of uncertainty, to avoid collisions between autonomous mobile platforms and obstacles. One of the first contribution where a probabilistic representation of uncertainty was proposed, i.e. a chance-constrained approach, is~\cite{Blackmore:ChanceConstrainedOptimalPath:2011}. This approach plans the future probabilistic distribution of the vehicle state so that the probability of failure is below a specified threshold.
+%
+%In Model Predictive Control approaches, strategies to include probabilistic safety with respect to collisions have been proposed~\cite{Gao:CollisionfreeMotionPlanning:2023} (Zo-Ro), \cite{Zhang:RobustifiedTimeoptimalPointtopoint:2025} and~\cite{Zhang:RobustifiedTimeoptimalCollisionfree:2024} (Joris). The latter consider also a trajectory tracking implementation for an autonomous mobile robot under bounded process noise with pre-computed feedback gain. In the Zo-Ro methods, a zero-order based algorithm is presented to also optimize the feedback gain in the OCP for counteracting the growth of state uncertainty.
+%A heuristic MPC-based approach using $n$-steps-ahead uncertainty predictions for constraint-tightening calculations have been proposed in chemical process engineering for the control of an industrial polymerization reactor~\cite{Krog:SimpleFastRobust:2024}.
+%
+%In some cases uncertainty can be attributed to partial knowledge of system parameters. A wealth of research on this topic mainly devoted to trajectory planning of Unmanned Aerial Vehicles (UAVs) with minimal state sensitivity has been presented in~\cite{Brault:RobustTrajectoryPlanning:2021} and~\cite{Giordano:TrajectoryGenerationMinimum:2018} \cite{Brault:TubebasedTrajectoryOptimization:} where also closed-loop and input sensitivity in the nonlinear constraints are considered. Other research deal with the problem of how to combine closed-loop state sensitivity and input sensitivity-based planning with observability-aware planning. This approach is given a multi-step single-objective optimization framework in~\cite{Bohm:COPControlObservabilityaware:2022}.
+
+The omission of explicit disturbance modeling within planning frameworks can critically undermine the satisfaction of operational constraints. In particular, time-optimal planning algorithms often yield trajectories that lie in close proximity to constraint boundaries - such as those associated with collision avoidance - where even small perturbations may result in constraint violations, thereby significantly compromising system safety.
+
+While the use of fixed, heuristically defined safety margins around constraint sets may provide a nominal safeguard, such an approach lacks formal guarantees under uncertainty and typically leads to overly conservative and suboptimal solutions. This motivates the need for planning methods that explicitly account for uncertainty and provide quantifiable safety assurances.
+
+In several related fields, various strategies have been developed to address planning under uncertainty.
+
+\textit{Orbital Mechanics.} In orbital mechanics, uncertainty in the state estimate necessitates a probabilistic treatment of collision events between satellites and space debris. A foundational reference in this context is~\cite{Tapley:StatisticalOrbitDetermination:2004}, where statistical orbit determination techniques are employed to assess and mitigate collision risks.
+
+\textit{Robotics.} In robotic motion planning, uncertainty-aware techniques are crucial to ensure safe navigation in environments populated with obstacles. One of the earliest contributions proposing a probabilistic representation of uncertainty is the chance-constrained framework in~\cite{Blackmore:ChanceConstrainedOptimalPath:2011}, which plans over the predicted probabilistic distribution of the system state to ensure that the probability of constraint violation remains below a specified threshold.
+
+\textit{Model Predictive Control (MPC).} Within the MPC paradigm, recent works have incorporated probabilistic safety guarantees. Notably, the methods presented in~\cite{Gao:CollisionfreeMotionPlanning:2023},~\cite{Zhang:RobustifiedTimeoptimalPointtopoint:2025}, and~\cite{Zhang:RobustifiedTimeoptimalCollisionfree:2024} introduce stochastic MPC frameworks for autonomous mobile platforms, where process noise is explicitly modeled and closed-loop tracking performance is maintained via either pre-computed or optimized feedback gains. The approach in~\cite{Gao:CollisionfreeMotionPlanning:2023} additionally proposes a zero-order optimization scheme to include the feedback gain directly in the optimal control problem, mitigating the growth of uncertainty over the planning horizon.
+
+\textit{Chemical Process Control.} In the domain of chemical engineering, robust MPC approaches have been proposed to address uncertainty in industrial settings. For example,~\cite{Krog:SimpleFastRobust:2024} presents a heuristic method based on $n$-step-ahead uncertainty predictions, which are used to compute constraint tightening margins for the control of a polymerization reactor.
+
+\textit{Planning with Parametric Uncertainty.} In some contexts, uncertainty arises from partial or imprecise knowledge of system parameters. This has led to a significant body of work on robust trajectory planning, particularly for unmanned aerial vehicles (UAVs), with the aim of minimizing sensitivity to state and input variations. For instance,~\cite{Brault:RobustTrajectoryPlanning:2021},~\cite{Giordano:TrajectoryGenerationMinimum:2018}, and~\cite{Brault:TubebasedTrajectoryOptimization:} propose tube-based and sensitivity-aware optimization frameworks that explicitly account for both input and closed-loop state sensitivity in the planning phase. Further developments integrate observability-aware planning into a unified multi-step optimization framework, as demonstrated in~\cite{Bohm:COPControlObservabilityaware:2022}.
 
 
+ 
 \subsection{Paper's contributions}
-In this study, we investigate ... 
+What we propose. Two new robust uncertainty-aware time-optimal planning strategies for motorsport vehicles.  
