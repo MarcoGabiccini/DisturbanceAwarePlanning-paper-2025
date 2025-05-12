@@ -7,7 +7,7 @@ The approach is based on the three following steps: (i) A nominal time-optimal t
 
 (ii) A closed-loop controller mimicking the driver's action is computed which stabilizes the nominal feed-forward optimal trajectory computed at step (i). We assume a discrete time-varying Linear Quadratic Regulator (LQR) controller is a good approximation of how an expert driver can track a prescribed trajectory.
 
-(iii) In the last step the stochastic framework is reintroduced and the time-optimal planning problem is robustified using the Lyapunov framework. The main idea is to \emph{re-plan} a mean trajectory of a stochastic system such that, a time-varying LQR controller that aims at stabilizing it, is able to properly tame the propagation of the uncertainty. This amounts to ensuring that the robustified path constraints are satisfied. More specifically, this considers two key aspects: firstly, that the covariance matrix is propagated accounting explicitly for the controlled system dynamics; secondly, that the path constraints are robustly satisfied by incorporating the covariance estimation propagated through the closed-loop controlled system. Some aspects that may appear a bit technical are in fact essential. In this third step, not only are states and controls re-planned, but also the time-varying LQR gains. As a matter of fact, they need to explicitly account for the changed requirements associated with stabilizing a trajectory different from the nominal one, which must now satisfy the robustified constraints.
+(iii) In the last step the stochastic framework is reintroduced and the time-optimal planning problem is robustified using the Lyapunov framework. The main idea is to \emph{re-plan} a mean trajectory of a stochastic system such that, a time-varying LQR controller that aims at stabilizing it, is able to properly tame the propagation of the uncertainty. This amounts to ensuring that the robustified path constraints are satisfied. More specifically, this considers two key aspects: firstly, that the covariance matrix is propagated accounting explicitly for the controlled system dynamics; secondly, that the path constraints are robustly satisfied by incorporating the covariance estimation propagated through the closed-loop controlled system. Some aspects that may appear a bit technical are in fact essential. In this third step, not only are states and controls re-planned, but also the time-varying LQR gains. As a matter of fact, they need to explicitly account for the changed requirements associated with stabilizing a trajectory different from the nominal one, which must now satisfy the robustified constraints. 
 \subsection{Step 1 -- Nominal feed-forward time-optimal trajectory planning}
 \label{sec:nominalFF}
 Step (i) consists in planning a nominal feed-forward trajectory. This assumes deterministic system dynamics, where $\hbmu_k$, $\hbu_k$, and $\hbz_k$ denote differential states, controls, and algebraic states, respectively, for \( k = 0, \ldots, N \). To avoid redundancy, we note that the NLP to be solved is a special case of~\eqref{eq:DOCP}, where~\eqref{eq:DOCPdP},~\eqref{eq:DOCPdPIC}, and the backoff terms are omitted, since the goal is to compute a nominal trajectory.
@@ -15,7 +15,7 @@ Step (i) consists in planning a nominal feed-forward trajectory. This assumes de
 \subsection{Step 2 -- Time-varying LQR stabilizing controller}
 \label{sec:LQR}
 
-Given the nominal trajectory $(\hbmu_k, \hbu_k)$ over $k=0,\ldots, N$, planned at step (i), and introduced the deviation variables $\bbmu_k=\bmu_k - \hbmu_k$ and $\bbu = \bu_k - \hbu_k$, we design a linear state-feedback law $\bbu_k= -\hbK_k \bbmu_k$, or equivalently $\bu_k = \hbu_k - \hbK_k (\bmu_k - \hbmu_k)$, to mitigate disturbances while tracking the nominal trajectory. 
+Given the nominal trajectory $(\hbmu_k, \hbu_k)$ over $k=0,\ldots, N$, planned at step (i), and introduced the deviation variables $\bbmu_k=\bmu_k - \hbmu_k$ and $\bbu_k = \bu_k - \hbu_k$, we design a linear state-feedback law $\bbu_k= -\hbK_k \bbmu_k$, or equivalently $\bu_k = \hbu_k - \hbK_k (\bmu_k - \hbmu_k)$, to mitigate disturbances while tracking the nominal trajectory.
 
 To compute the state-feedback matrices $\hbK_k$, we linearize the system around $(\hbmu_k, \hbu_k)$, such that $\bbmu_{k+1} \approx \hbA_{k}\bbmu_k + \hbB_k \bbu_k$, where $\hbA_k = f_{,\bmu}(\hbmu_k,\hbu_k)$ and $\hbB_k = f_{,\bu}(\hbmu_k,\hbu_k)$, and define the quadratic regulator (tracking) cost function
 \begin{align}
@@ -55,5 +55,83 @@ As the third and last step, a closed-loop robustified planning problem is set up
 \end{alignat}
 \end{subequations}
 Here,~\eqref{eq:ROCPdP} denotes the discrete-time covariance dynamics under the stabilizing state-feedback controller \( \bbu_k = -\bK_k \bbmu_k \). To distinguish this case from~\eqref{eq:DOCP}, we use the symbol \( \tbP \) to denote the closed-loop (CL) covariance matrix, whose discrete evolution corresponds to a collocation-based approximation of the continuous-time dynamics $\dot{\tbP}(t) = \tbA(t) \tbP(t) + \tbP(t)\tbA(t)^T + \bQ(t)$, with $\tbA(t)=\bA(t)-\bB(t)\bK(t)$. It is worth noting that, accordingly, in equation~\eqref{eq:ROCPconstraints} the backoff term $\be_i$ is a function of closed-loop uncertainty $\tbP_k$. Another key aspect is that the state-feedback matrix $\bK_k$ is also treated as a decision variable. This reflects the fact that the driver may adjust his action to stabilize the new (to-be-planned) nominal trajectory using a policy that differs from the previous $\hbK_k$, computed in step (ii) via LQR. To promote convergence, however, $\bK_k$ is restrained within prescribed bounds ($\de \bK_k$) relative to $\hbK_k$. In our tests $\de \bK_k = 0.1 \hbK_k$.
+
+\subsection{Handling mutually exclusive throttle and braking commands}
+In our formulation, the state vector is defined as $\bx=\big[u\;v\;r\;x_{G}\;y_{G}\;\psi \big]^T\in\bbR^6$, while the control input vector is $\bu=\big[F_x^a\;F_x^b\;\de \big]^T\in\bbR^3$. The longitudinal acceleration and braking forces, $F_x^a \geq 0$ and $F_x^b \leq 0$, respectively, are not independent but are subject to the \emph{complementarity constraint} $F_x^a F_x^b = 0$, which enforces mutual exclusivity between throttle and braking at any instant.
+
+For convenience, we denote $u_1 = F_x^a \geq 0$ and $u_2 = F_x^b \leq 0$, so that the complementarity condition becomes $u_1 u_2 = 0$. Beyond the modeling constraint itself, this condition also imposes structural implications on admissible control variations, particularly relevant in the closed-loop formulation. 
+Specifically, in a nominal \emph{acceleration} phase ($\hat{u}_1 > 0, \hat{u}_2 = 0$), both \(\delta u_1 \lesseqgtr 0\) are permitted, but only variations $\delta u_2 < 0$ are physically meaningful -- since a positive brake increment ($\delta u_2 > 0$) would unphysically contribute to propulsion. Conversely, in a \emph{braking} phase ($\hat{u}_2 < 0$, $\hat{u}_1 = 0$), $\delta u_2 \lesseqgtr 0$ are admissible, but only $\delta u_1 > 0$ should be allowed, as negative throttle increments ($\delta u_1 < 0$) would again introduce non-physical behavior.
+
+To handle this, we introduce a \emph{minimal control vector} \(\tilde{\bu} = [F_x\;\; \delta]^T \in \mathbb{R}^2\), where \(F_x\) represents the net longitudinal force. The full control vector $\bu$ is then recovered via a state-dependent linear transformation $
+\bu = \bH(\tilde{\bu}) \tilde{\bu}$ with
+\begin{equation} \label{eq:minimalcontrol}
+\bH(\tilde{\bu}) =
+\begin{bmatrix}
+\Ipos{F_x} & 0 \\
+\Ineg{F_x} & 0 \\
+0 & 1
+\end{bmatrix}, \quad
+\Ipos{x} :=
+\begin{cases}
+1, & \text{if } x \geq 0 \\
+0, & \text{if } x < 0
+\end{cases}, \quad
+\Ineg{x} :=
+\begin{cases}
+0, & \text{if } x \geq 0 \\
+1, & \text{if } x < 0
+\end{cases}.
+\end{equation}
+
+In this formulation, \(\Ipos{x}\) and \(\Ineg{x}\) denote the \emph{positive-} and \emph{negative-part indicator functions}, respectively. Importantly, control variations also respect this mapping: $\delta\bu = \bH(\tilde{\bu}) \delta\tilde{\bu}$. Consequently, the control input matrix can be expressed as \(\bB \bH = \tilde{\bB}\), and the state-feedback gain as \(\bH \tilde{\bK} = \bK\), such that the resulting feedback law satisfies \(\bB \bK \delta\bx = \tilde{\bB} \tilde{\bK} \delta\bx\) and $\de \tbu = \tbK \de \bx$.
+
+To correctly enforce the mutual exclusivity within the LQR synthesis via Riccati recursion, the state-feedback gain must be computed with respect to the minimal control input. Specifically, the control input matrix $\tbB$ is employed and the gain $\tilde{\bK} \in \mathbb{R}^{2 \times 6}$ is sought for which operates on the independent variation \(\delta\tilde{\bu}\). This is structured as
+\[
+\tilde{\bK} = \begin{bmatrix} \tilde{\bK}_F^T & \tilde{\bK}_\delta^T \end{bmatrix}^T, \quad \tilde{\bK}_F, \tilde{\bK}_\delta \in \mathbb{R}^{1 \times 6}.
+\]
+The extended gain $\bK$ is automatically recovered via $\bK = \bH \tbK$ and, depending on the operating mode, it will result in the following expressions:
+\begin{itemize}
+  \item during \emph{acceleration}: \(\bK = \begin{bmatrix} \tilde{\bK}_F^T & \mathbf{0}^T & \tilde{\bK}_\delta^T \end{bmatrix}^T\),
+  \item during \emph{braking}: \(\bK = \begin{bmatrix} \mathbf{0}^T & \tilde{\bK}_F^T & \tilde{\bK}_\delta^T \end{bmatrix}^T\).
+\end{itemize}
+This construction ensures consistency with the complementarity constraint, while maintaining a tractable structure for controller synthesis.
+
+A similar consideration applies when solving problem~\eqref{eq:ROCP} in Sec.~\ref{sec:CLrobustified}, where the complementarity structure must again be taken into account. In this case, it is sufficient to treat the elements of $\tbK_k$ as the minimal decision variables and reconstruct the full gain matrix $\bK_k$ via the mapping $\bK_k = \bH_k^{\text{S}} \tbK_k$, where
+\begin{equation} \label{eq:minimalcontrolopt}
+\bH^{\text{S}}(\tilde{\bu}) =
+\begin{bmatrix}
+\SIpos{u_1+u_2} & 0 \\
+\SIneg{u_1+u_2} & 0 \\
+0 & 1
+\end{bmatrix}. 
+\end{equation}
+To ensure differentiability and numerical smoothness in the optimization problem~\eqref{eq:ROCP}, we employ smoothed approximations of the indicator functions $\Ipos{x}$ and $\Ineg{x}$, denoted as $\SIpos{x}$ and $\SIneg{x}$ in~\eqref{eq:minimalcontrolopt}, respectively. These are defined as:
+\begin{equation} \label{eq:smoothedindicator}
+\SIpos{x} :=
+\frac{1}{2} \left(1 + \tanh(\chi x)\right), \quad \SIneg{x} := \frac{1}{2}\left(1 - \tanh(\chi x) \right),
+\end{equation}
+where the parameter $\chi>0$ controls the sharpness of the transition. Smaller values of $\chi$ yield smoother, more relaxed approximations, while larger values make the transition steeper and the function increasingly resemble a hard switching indicator.
+ 
+  %However, longitudinal acceleration and braking forces $F_x^a \geq 0$ and $F_x^b \leq 0$ are not independent, but are subjected to the complementarity constraint $F_x^a F_x^b=0$, meaning that are mutually exclusive. Introduced for simplicity $u_1=F_x^a\geq 0$ and $u_2 = F_x^b\leq 0$, at any instant in time it must hold that $u_1 u_2 = 0$. What is important is also that such constraints have also an implication on the values that control variations associated to closed-loop types of correction can assume. More in details, in a condition of acceleration (reference acceleration $\hat{u}_1>0$ and $\hat{u}_2 = 0$) $\de u_1\lesseqgtr 0$ but only $\de u_2 <0$ is allowed, otherwise a brake variation $\de u_2 > 0$ would unphysically help the vehicle to accelerate. Similarly, in a braking condition (reference braking $\hat{u}_2 < 0$ and $\hat{u}_1 = 0$) $\de u_2 \lesseqgtr 0$ but only $\de u_1 > 0$, otherwise a variation of acceleration $\de u_1 < 0$ would unphysically help the vehicle to brake. This brings about the necessity to properly \emph{under-actuate} the system in order account for this behavior. This can be accomplished by introducing the minimal control $\tilde{\bu}=[F_x, \de]^T$ such that full control with mutually exclusive acceleration/braking can be recovered as $\bu = \bH(\tbu) \tbu$ where
+%\begin{align}\label{eq:minimalcontrol}
+%\bH(\tbu) =
+%\begin{bmatrix}
+%\Ipos{F_x} & 0\\
+%\Ineg{F_x} & 0\\
+%       0 & 1
+%\end{bmatrix}, \, \text{with} \quad
+%\Ipos{x} :=
+%\begin{cases}
+%1, & \text{if } x \geq 0 \\
+%0, & \text{if } x < 0
+%\end{cases}, \quad \Ineg{x} :=
+%\begin{cases}
+%0, & \text{if } x \geq 0 \\
+%1, & \text{if } x < 0
+%\end{cases}.
+%\end{align}
+%In~\eqref{eq:minimalcontrol} we introduced the positive- and negative-part indicator functions $\Ipos{x}$ and $\Ineg{x}$, respectively. It is worth observing that the extended control variation $\de \bu = \bH(\tbu) \de \tbu$.
+% These following positions can be made $\bB \bH = \tbB$, $\bH \tbK = \bK$, such that $\bB \bK \de \bx = \tbB \tbK \de \bx$.
+% It is worth observing that in order to account for the mutually exclusive condition in the synthesis of the LQR controller via the Riccati recursion, the state feedback gain matrix $\tbK\in\bbR^{2\times 6}$ must be employed. This allows us to follow the classical recursion by operating on the fully independent $\de \tbu$ and it will result in the calculation of the minimal state-feedback gain matrix $\tbK=\big[ \tbK_{F}^T\, \tbK_{\de}^T\big]^T$ with $\tbK_{F}\in\bbR^{1\times 6}$ and $\tbK_{\de}\in\bbR^{1\times 6}$. Then, in the extended controls it will be possible to recover $\bK$ such that during acceleration $\bK=\big[ \tbK_{F}^T\, \bzero^T\, \tbK_{\de}^T\big]^T$  and, during braking, $\bK=\big[ \bzero^T\, \tbK_{F}^T\, \tbK_{\de}^T\big]^T$.
 
 %To mark the difference with~\eqref{eq:OCPdP}, besides using P,CL to denote closed-loop dynamics, a new symbol $\tbP$ is introduced to the denote the covariance matrix in this case. In continuous time, $\tbP$ evolves according to $\dot{\tbP}(t) = (\bA(t)-\bB(t) \bK(t)) \tbP(t) + \tbP(t) (\bA(t)-\bB(t) \bK(t))^T + \bQ(t)$. To be continued... 

@@ -44,7 +44,7 @@
 \newcommand{\bPhiu}{\boldsymbol{\Phi}_{\bu}}% vector of nonlinear function Jacobian w.r.t. v
 \newcommand{\bPhiz}{\boldsymbol{\Phi}_{\bz}}% vector of nonlinear function Jacobian w.r.t. v
 \newcommand{\bPsi}{\boldsymbol{\Psi}}% vector of ISP
-\newcommand{\bPsimu}{\bPsi^{\mu}}% 
+\newcommand{\bPsimu}{\bPsi^{\mu}}%
 \newcommand{\bPsiP}{\bPsi^{\text{P}}}%
 \newcommand{\bPsiPCL}{\bPsi^{\text{P,CL}}}%
 
@@ -79,6 +79,8 @@
 
 \newcommand{\hbmu}{\hat{\bmu}}
 \newcommand{\hbu}{\hat{\bu}}
+\newcommand{\tbu}{\tilde{\bu}}
+\newcommand{\htbu}{\hat{\tbu}}
 
 \newcommand{\bbmu}{\bar{\bmu}}
 \newcommand{\bbu}{\bar{\bu}}
@@ -87,10 +89,16 @@
 
 \newcommand{\hbA}{\hat{\bA}}
 \newcommand{\hbB}{\hat{\bB}}
+\newcommand{\tbB}{\tilde{\bB}}
+\newcommand{\htbB}{\hat{\tbB}}
+
 \newcommand{\hbK}{\hat{\bK}}
+\newcommand{\tbK}{\tilde{\bK}}
+\newcommand{\htbK}{\hat{\tbK}}
+
 
 \newcommand{\tbP}{\tilde{\bP}}
-\newcommand{\tbA}{\tilde{\bA}} 
+\newcommand{\tbA}{\tilde{\bA}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% Shorthands for bold letters with boldsymbol    %%%%%%%%%%%%%%%%%%%%%
@@ -448,6 +456,12 @@
 \newcommand{\Nnum}[1]{\nonumber \\[#1]}
 
 \newcommand{\ov}[1]{\overline{#1}}
+
+\newcommand{\Ipos}[1]{\mathbb{I}_{\geq 0}(#1)}
+\newcommand{\Ineg}[1]{\mathbb{I}_{< 0}(#1)}
+
+\newcommand{\SIpos}[1]{\mathbb{SI}_{\geq 0}(#1)}
+\newcommand{\SIneg}[1]{\mathbb{SI}_{ < 0}(#1)}
 
 \providecommand{\norm}[1]{\lVert#1\rVert}  % definisce i delimitatori di una norma
 
