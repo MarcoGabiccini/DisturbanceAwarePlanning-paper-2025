@@ -62,7 +62,7 @@ In our formulation, the state vector is defined as $\bx=\big[u\;v\;r\;x_{G}\;y_{
 For convenience, we denote $u_1 = F_x^a \geq 0$ and $u_2 = F_x^b \leq 0$, so that the complementarity condition becomes $u_1 u_2 = 0$. Beyond the modeling constraint itself, this condition also imposes structural implications on admissible control variations, particularly relevant in the closed-loop formulation. 
 Specifically, in a nominal \emph{acceleration} phase ($\hat{u}_1 > 0, \hat{u}_2 = 0$), both \(\delta u_1 \lesseqgtr 0\) are permitted, but only variations $\delta u_2 < 0$ are physically meaningful -- since a positive brake increment ($\delta u_2 > 0$) would unphysically contribute to propulsion. Conversely, in a \emph{braking} phase ($\hat{u}_2 < 0$, $\hat{u}_1 = 0$), $\delta u_2 \lesseqgtr 0$ are admissible, but only $\delta u_1 > 0$ should be allowed, as negative throttle increments ($\delta u_1 < 0$) would again introduce non-physical behavior.
 
-To handle this, we introduce a \emph{minimal control vector} \(\tilde{\bu} = [F_x\;\; \delta]^T \in \mathbb{R}^2\), where \(F_x\) represents the net longitudinal force. The full control vector $\bu$ is then recovered via a state-dependent linear transformation $
+To ensure physical consistency while preserving a tractable control structure, we introduce a \emph{minimal control vector} \(\tilde{\bu} = [F_x\;\; \delta]^T \in \mathbb{R}^2\), where \(F_x\) represents the net longitudinal force. The full control vector $\bu$ is then recovered via a state-dependent linear transformation $
 \bu = \bH(\tilde{\bu}) \tilde{\bu}$ with
 \begin{equation} \label{eq:minimalcontrol}
 \bH(\tilde{\bu}) =
@@ -94,7 +94,7 @@ The extended gain $\bK$ is automatically recovered via $\bK = \bH \tbK$ and, dep
   \item during \emph{acceleration}: \(\bK = \begin{bmatrix} \tilde{\bK}_F^T & \mathbf{0}^T & \tilde{\bK}_\delta^T \end{bmatrix}^T\),
   \item during \emph{braking}: \(\bK = \begin{bmatrix} \mathbf{0}^T & \tilde{\bK}_F^T & \tilde{\bK}_\delta^T \end{bmatrix}^T\).
 \end{itemize}
-This construction ensures consistency with the complementarity constraint, while maintaining a tractable structure for controller synthesis.
+This formulation preserves consistency with the complementarity constraint while retaining a structure amenable to controller synthesis.
 
 A similar consideration applies when solving problem~\eqref{eq:ROCP} in Sec.~\ref{sec:CLrobustified}, where the complementarity structure must again be taken into account. In this case, it is sufficient to treat the elements of $\tbK_k$ as the minimal decision variables and reconstruct the full gain matrix $\bK_k$ via the mapping $\bK_k = \bH_k^{\text{S}} \tbK_k$, where
 \begin{equation} \label{eq:minimalcontrolopt}
