@@ -10,9 +10,9 @@
 
 \subsection{Open loop parameters sensitivity}
 \label{sec:ol_param_sensitivity}
-In this section, we explore the open-loop approach to gain deeper insight into the influence of key parameters on the results. For this analysis, we consider optimizations in which only the stay-on-track constraint is robustified. This choice is motivated by the fact that the effects of the stay-on-track constraint are more visually evident compared to those of the adherence limit constraint, thereby facilitating a more immediate understanding of their impact. 
+In this section, we explore the open-loop approach to gain deeper insight into the influence of key parameters on the results. For this analysis, we consider optimizations in which only the track limit constraint is robustified. This choice is motivated by the fact that the effects of the track limit constraint are more visually evident compared to those of the friction limit constraint, thereby facilitating a more immediate understanding of their impact. 
 
-The first parameter analyzed is the factor $\ga^\textrm{TLC}$, which multiplies the standard deviation of the constraint, $\sigma^\textrm{TLC}$, to determine the total back-off term $\be^\textrm{TLC}$. This parameter directly influences the probability of satisfying the stay-on-track constraint: higher values of $\ga^\textrm{TLC}$ correspond to more conservative (i.e., robust) behavior. Specifically, $\ga^\textrm{TLC} = 0$ yields a satisfaction probability of 50\%, while $\ga^\textrm{TLC} = 3$ corresponds to 99\%. For the purposes of this analysis, we examine the effect of varying $\ga^\textrm{TLC}$ within this range. 
+The first parameter analyzed is the factor $\ga^\textrm{TLC}$, which multiplies the standard deviation of the constraint, $\sigma^\textrm{TLC}$, to determine the total back-off term $\be^\textrm{TLC}$. This parameter directly influences the probability of satisfying the track limit constraint: higher values of $\ga^\textrm{TLC}$ correspond to more conservative (i.e., robust) behavior. Specifically, $\ga^\textrm{TLC} = 0$ yields a satisfaction probability of 50\%, while $\ga^\textrm{TLC} = 3$ corresponds to 99\%. For the purposes of this analysis, we examine the effect of varying $\ga^\textrm{TLC}$ within this range. 
 
 The second parameter examined is the initial value of the covariance matrix, $\bP_0$. In addition to the baseline value $\bar{\bP}_0$, two alternative values are considered: $\bP_0 = 4\bar{\bP}_0$ and $\bP_0 = \frac{1}{4}\bar{\bP}_0$. These correspond, respectively, to doubling and halving the initial uncertainty associated with the state vector.
 
@@ -37,12 +37,12 @@ Figure~\ref{fig:ol_telemetries} presents the variation of four signals with resp
 	\label{fig:ol_telemetries}
 \end{figure}
 
-From the first panel, it can be observed that all configurations maintain a lower mean value of the longitudinal speed compared to the nominal trajectory, resulting in an increased sector time. The two configurations incorporating the robustified stay-on-track constraint exhibit, as expected, a significantly altered CoM trajectory. This behavior explains the higher longitudinal speed observed around $\al = 0.71$, which is followed by a sharp reduction. 
+From the first panel, it can be observed that all configurations maintain a lower mean value of the longitudinal speed compared to the nominal trajectory, resulting in an increased sector time. The two configurations incorporating the robustified track limit constraint exhibit, as expected, a significantly altered CoM trajectory. This behavior explains the higher longitudinal speed observed around $\al = 0.71$, which is followed by a sharp reduction. 
 
-The second and fourth panels clearly show that the configurations with the robustified stay-on-track constraint tend to follow a path closer to the centerline. In particular, for most of the sector, the variation in lateral displacement and the lateral displacement $e$ itself exhibit opposite signs, indicating a corrective behavior of the steering angle $\de$ that pulls the vehicle toward the centerline.
+The second and fourth panels clearly show that the configurations with the robustified track limit constraint tend to follow a path closer to the centerline. In particular, for most of the sector, the variation in lateral displacement and the lateral displacement $e$ itself exhibit opposite signs, indicating a corrective behavior of the steering angle $\de$ that pulls the vehicle toward the centerline.
 
 It can be interesting to notice that, in the third panel, only the configuration with both the constraints robustified needs to reduce the longitudinal force during the high speed turn, in the curvilinear abscissa interval $\al\in\left[0.75, 0.76\right]$, to meet both the constraints. 
-The vehicle constrained by the stay-on-track condition is forced to follow a wider trajectory, which entails greater lateral acceleration and, consequently, a higher lateral force demand---resulting in increased tire utilization. Due to the limitations imposed by the robust adherence constraint, it is necessary to reduce the available accelerating force.
+The vehicle constrained by the track limit condition is forced to follow a wider trajectory, which entails greater lateral acceleration and, consequently, a higher lateral force demand---resulting in increased tire utilization. Due to the limitations imposed by the robust friction limit constraint, it is necessary to reduce the available accelerating force.
 
 \begin{figure}
 	\centering
@@ -52,7 +52,7 @@ The vehicle constrained by the stay-on-track condition is forced to follow a wid
 \end{figure}
 
 \subsection{Simulations with noise realization}
-This analysis aims to provide empirical validation of the robust trajectories obtained using the methods proposed in this work. For conciseness, the comparison is limited to a nominal trajectory and a trajectory computed using the closed-loop method with only the on-track constraint robustified.
+This analysis aims to provide empirical validation of the robust trajectories obtained using the methods proposed in this work. For conciseness, the comparison is limited to a nominal trajectory and a trajectory computed using the closed-loop method with only the track limit constraint robustified.
 An LQR controller, designed according to the procedure outlined in Section~\ref{sec:LQR}, is implemented along the nominal trajectory. In contrast, the robust trajectory is tracked using the controller directly obtained from the optimization process.
 
 \begin{figure}
