@@ -98,7 +98,7 @@ Following the direct collocation approach, both the mean and covariance state tr
 In certain cases~\cite{Gillis:PracticalMethodsApproximate:2015}, positive-definiteness-preserving Lyapunov discretization schemes are used in~\eqref{eq:DOCPdP}. However, for sufficiently fine discretization, we found that integrating only the lower triangular part of $\bP(t)$ in~\eqref{eq:OCPdPIC}  (and reconstructing its strictly upper part accordingly), ensures that $\bP_k$ remain symmetric and positive definite when the initial $\bP_0$ is symmetric and positive definite. In all our tests direct collocation with cubic polynomial state representations and Gauss-Legendre collocation points provided accurate results.
 
 \subsection{Robust friction limit constraint formulation}
-\label{sec:adherence_constraint}
+\label{sec:FLC}
 The model employs a tire formulation that neglects combined slip effects, i.e., it does not account for the simultaneous utilization of longitudinal and lateral tyre forces. As a result, the optimal control problem must include an additional constraint to ensure that the total ground reaction forces remain within the bounds of the tyre's adherence ellipse.
 
 The base version of the constraint for each axle can be expressed as a function of $\bx$ and $\bu$, as follows:
@@ -129,8 +129,8 @@ To better clarify the effect of the back-off term on the constraint we can suppo
 	\label{fig:robust_constraints}
 \end{figure}
 
-\subsection{On-track constraint}
-\label{sec:ontrack_constraint}
+\subsection{Robust track limit constraint formulation}
+\label{sec:TLC}
 An on-track constraint is required to ensure that the vehicle remains within the circuit boundaries. The formulation adopted introduces an algebraic variable $e$, which satisfies the following constraint:
 \begin{equation}
 	\begin{Bmatrix}
@@ -145,7 +145,7 @@ where $\boldsymbol{c}$ indicates the position of the centerline, and $\bn$ is th
 
 In order to take into account for the back-off terms, the maximum and minimum values are modified coherently, so that:
 \begin{equation}
-	e_\textrm{min} + \be^\textrm{OTC} \leq e \leq e_\textrm{max} - \be^\textrm{OTC}\label{eq:ontrack_constraint}
+	e_\textrm{min} + \be^\textrm{TLC} \leq e \leq e_\textrm{max} - \be^\textrm{TLC}\label{eq:TLC}
 \end{equation}
-where $\be^\textrm{OTC}$ is computed by considering that the gradient of the constraint w.r.t. the state vector $\na_{\bx}h^\textrm{OTC}$ depends solely on $\bn$.
+where $\be^\textrm{TLC}$ is computed by considering that the gradient of the constraint w.r.t. the state vector $\na_{\bx}h^\textrm{TLC}$ depends solely on $\bn$.
 %Adding a back-off to this constraint produces the same effect as an increase of the front and rear tracks of the vehicle does. 
