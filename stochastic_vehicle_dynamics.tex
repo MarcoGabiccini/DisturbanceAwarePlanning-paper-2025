@@ -97,18 +97,18 @@ Following the direct collocation approach, both the mean and covariance state tr
 
 In certain cases~\cite{Gillis:PracticalMethodsApproximate:2015}, positive-definiteness-preserving Lyapunov discretization schemes are used in~\eqref{eq:DOCPdP}. However, for sufficiently fine discretization, we found that integrating only the lower triangular part of $\bP(t)$ in~\eqref{eq:OCPdPIC}  (and reconstructing its strictly upper part accordingly), ensures that $\bP_k$ remain symmetric and positive definite when the initial $\bP_0$ is symmetric and positive definite. In all our tests direct collocation with cubic polynomial state representations and Gauss-Legendre collocation points provided accurate results.
 
-\subsection{Robust adherence limit constraint formulation}
+\subsection{Robust friction limit constraint formulation}
 \label{sec:adherence_constraint}
 The model employs a tire formulation that neglects combined slip effects, i.e., it does not account for the simultaneous utilization of longitudinal and lateral tyre forces. As a result, the optimal control problem must include an additional constraint to ensure that the total ground reaction forces remain within the bounds of the tyre's adherence ellipse.
 
 The base version of the constraint for each axle can be expressed as a function of $\bx$ and $\bu$, as follows:
 \begin{equation}
-	h^\textrm{A}_j(\bx,\bu) = \left[ \left( \frac{X_j(\bx,\bu)}{\mu_{x,j}} \right)^2+ \left( \frac{Y_j(\bx,\bu)}{\mu_{y,j}}\right)^2\right]\frac{1}{Z_j^2(\bx,\bu)}-1\leq0\qquad j=1,2.\label{eq:adherence_constraint}
+	h^\textrm{FLC}_j(\bx,\bu) = \left[ \left( \frac{X_j(\bx,\bu)}{\mu_{x,j}} \right)^2+ \left( \frac{Y_j(\bx,\bu)}{\mu_{y,j}}\right)^2\right]\frac{1}{Z_j^2(\bx,\bu)}-1\leq0\qquad j=1,2.\label{eq:adherence_constraint}
 \end{equation}
-where the superscript A denotes adherence, and the subscript $j$ indicates the axle index, with $j=1$ referring to the front axle and $j=2$ to the rear axle. Here, $X_j$ and $Y_j$ denote the longitudinal and lateral components of the in-plane ground forces, respectively, as illustrated in Figure~\ref{fig:vehicle_model}, while $Z_j$ represents the total vertical load acting on the axle.
+where the superscript FLC denotes friction limit constraint, and the subscript $j$ indicates the axle index, with $j=1$ referring to the front axle and $j=2$ to the rear axle. Here, $X_j$ and $Y_j$ denote the longitudinal and lateral components of the in-plane ground forces, respectively, as illustrated in Figure~\ref{fig:vehicle_model}, while $Z_j$ represents the total vertical load acting on the axle.
 As can be seen from~\eqref{eq:adherence_constraint}, the points $\left(X_j,Y_j\right)$ are constrained to lie within an ellipse whose semi-axes are given by $\mu_{x,j}Z_j$ and $\mu_{y,j}Z_j$. The constraint, without the back-off term, is represented in the left panel of Figure~\ref{fig:robust_constraints} by the solid line ellipse in the plane $X_j-Y_j$.
 
-To better clarify the effect of the back-off term on the constraint we can suppose to have a combination of $\bx$, $\bu$, $P$ and $\ga^\textrm{A}_j$ so that $\be^\textrm{A}_j=0.2$. This implies that the semi-axes of the ellipse are reduced by a factor $\sqrt{1-\be^\textrm{A}_j} = \sqrt{0.8}$, as shown in the left panel Figure~\ref{fig:robust_constraints}, where the ellipse in dashed line delimits the available region with the back-off applied. This allows the optimizer to determine the most appropriate trade-off between the longitudinal force $X_j$ and the lateral force $Y_j$ --- often by reducing both components to some extent --- based on the specific requirements of the manoeuvre.
+To better clarify the effect of the back-off term on the constraint we can suppose to have a combination of $\bx$, $\bu$, $P$ and $\ga^\textrm{FLC}_j$ so that $\be^\textrm{FLC}_j=0.2$. This implies that the semi-axes of the ellipse are reduced by a factor $\sqrt{1-\be^\textrm{FLC}_j} = \sqrt{0.8}$, as shown in the left panel Figure~\ref{fig:robust_constraints}, where the ellipse in dashed line delimits the available region with the back-off applied. This allows the optimizer to determine the most appropriate trade-off between the longitudinal force $X_j$ and the lateral force $Y_j$ --- often by reducing both components to some extent --- based on the specific requirements of the manoeuvre.
 
 %The gradient of the constraint w.r.t. the state vector $\bx$, denoted by $\na_{\bx}h^\textrm{A}_j(\bmu)$, is used to evaluate the standard deviation $\sigma^\textrm{A}_j$ associated with the constraint. This gradient can be computed using the chain rule, as follows:
 %\begin{equation}
@@ -124,14 +124,14 @@ To better clarify the effect of the back-off term on the constraint we can suppo
 	\input{Fig/Tikz_Sources/tikz_adherence_constraint.tex}
 	\hfill
 	\input{Fig/Tikz_Sources/tikz_stayontrack_constraint.tex}
-	\caption{Graphical representation of the two constraints analyzed in the section. The left panel shows the adherence constraint in the plane $X_j-Y_j$. The ellipse in solid line, whose semi-axes are given by $\mu_{x,j}Z_j$ and $\mu_{y,j}Z_j$, represents the border of the available region for the base constraint, without back-off. The ellipse in dashed line delimits the available region when a back-off $\be^\textrm{A}_j=0.2$ is present. This ellipse has its semi-axes reduced by a factor $\sqrt{1-\be^\textrm{A}_j}$ w.r.t. the one in solid line.
+	\caption{Graphical representation of the two constraints analyzed in the section. The left panel shows the friction limit constraint in the plane $X_j-Y_j$. The ellipse in solid line, whose semi-axes are given by $\mu_{x,j}Z_j$ and $\mu_{y,j}Z_j$, represents the border of the available region for the base constraint, without back-off. The ellipse in dashed line delimits the available region when a back-off $\be^\textrm{FLC}_j=0.2$ is present. This ellipse has its semi-axes reduced by a factor $\sqrt{1-\be^\textrm{FLC}_j}$ w.r.t. the one in solid line.
 	}
 	\label{fig:robust_constraints}
 \end{figure}
 
-\subsection{Stay-on-track constraint}
-\label{sec:stayontrack_constraint}
-A stay-on-track constraint is required to ensure that the vehicle remains within the circuit boundaries. The formulation adopted introduces an algebraic variable $e$, which satisfies the following constraint:
+\subsection{On-track constraint}
+\label{sec:ontrack_constraint}
+An on-track constraint is required to ensure that the vehicle remains within the circuit boundaries. The formulation adopted introduces an algebraic variable $e$, which satisfies the following constraint:
 \begin{equation}
 	\begin{Bmatrix}
 		x\\y
@@ -145,7 +145,7 @@ where $\boldsymbol{c}$ indicates the position of the centerline, and $\bn$ is th
 
 In order to take into account for the back-off terms, the maximum and minimum values are modified coherently, so that:
 \begin{equation}
-	e_\textrm{min} + \be^\textrm{SOT} \leq e \leq e_\textrm{max} - \be^\textrm{SOT}\label{eq:stayontrack_constraint}
+	e_\textrm{min} + \be^\textrm{OTC} \leq e \leq e_\textrm{max} - \be^\textrm{OTC}\label{eq:ontrack_constraint}
 \end{equation}
-where $\be^\textrm{SOT}$ is computed by considering that the gradient of the constraint w.r.t. the state vector $\na_{\bx}h^\textrm{SOT}$ depends solely on $\bn$.
+where $\be^\textrm{OTC}$ is computed by considering that the gradient of the constraint w.r.t. the state vector $\na_{\bx}h^\textrm{OTC}$ depends solely on $\bn$.
 %Adding a back-off to this constraint produces the same effect as an increase of the front and rear tracks of the vehicle does. 

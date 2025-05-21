@@ -3,23 +3,61 @@
 
 \begin{figure}
 	\centering
-	\includegraphics{Fig/track.eps}
-	\caption{Sector of the Catalunya circuit considered in the analysis, corresponding to the curvilinear abscissa interval $\left[0.70, 0.77\right]$. Checkpoints are indicated by labels and are uniformly spaced by $\Delta\al=0.01$. This sector includes two distinct corners: a low-speed turn from $\al = 0.72$ to $\al = 0.73$, and a high-speed turn from $\al = 0.75$ to $\al = 0.76$, allowing for the evaluation of vehicle behavior across different dynamic scenarios.}
+	\includegraphics{Fig/track.pdf}
+	\caption{Sector of the Catalunya circuit considered in the analysis, corresponding to the curvilinear abscissa interval $\left[0.70, 0.77\right]$. Checkpoints are indicated by labels and are uniformly spaced by $\De\al=0.01$. This sector includes two distinct corners: a low-speed turn from $\al = 0.72$ to $\al = 0.73$, and a high-speed turn from $\al = 0.75$ to $\al = 0.76$, allowing for the evaluation of vehicle behavior across different dynamic scenarios.}
 	\label{fig:track}
 \end{figure}
 
-\subsection{Robustified constraints comparison}
-It is of interest to analyze how a robustified constraint---or a combination of the two described in Sections~\ref{sec:adherence_constraint} and~\ref{sec:stayontrack_constraint}---influences the driving style. This analysis compares the nominal trajectory, obtained without robustified constraints, with those resulting from a robustified stay-on-track constraint (denoted as SoT), a robustified adherence limit constraint (denoted as Adh), and a scenario where both constraints are robustified (denoted as SoT+Adh). All the optimization are obtained with the open-loop method described in Section~\ref{sec:open_loop_planning}, setting $H=4$, and $\ga^\textrm{SoT}=\ga^\textrm{Adh}=1.28$, corresponding to a 90\% probability of meeting both constraints. 
+\subsection{Open loop parameters sensitivity}
+\label{sec:ol_param_sensitivity}
+In this section, we explore the open-loop approach to gain deeper insight into the influence of key parameters on the results. For this analysis, we consider optimizations in which only the stay-on-track constraint is robustified. This choice is motivated by the fact that the effects of the stay-on-track constraint are more visually evident compared to those of the adherence limit constraint, thereby facilitating a more immediate understanding of their impact. 
 
-Figure~\ref{fig:ol_telemetries} presents the variation of four signals with respect to the nominal trajectory, for the three previously mentioned cases. The panels display the longitudinal speed $u$ (first panel), wheel steering angle $\delta$ (second panel), total longitudinal force $F_x$ (third panel), and lateral deviation of the center of mass from the track centerline $e$ (fourth panel). Except for the $u$ panel, each plot includes dashed black lines that indicate the sign of the nominal signal-whether it is positive, negative, or numerically zero. These sign indicators are represented as three distinct levels---high, zero, and low---corresponding to positive, zero, and negative values of the nominal signal, respectively. The levels are scaled appropriately in each plot to ensure clarity of visualization.
+The first parameter analyzed is the factor $\ga^\textrm{OTC}$, which multiplies the standard deviation of the constraint, $\sigma^\textrm{OTC}$, to determine the total back-off term $\be^\textrm{OTC}$. This parameter directly influences the probability of satisfying the stay-on-track constraint: higher values of $\ga^\textrm{OTC}$ correspond to more conservative (i.e., robust) behavior. Specifically, $\ga^\textrm{OTC} = 0$ yields a satisfaction probability of 50\%, while $\ga^\textrm{OTC} = 3$ corresponds to 99\%. For the purposes of this analysis, we examine the effect of varying $\ga^\textrm{OTC}$ within this range. 
+
+The second parameter examined is the initial value of the covariance matrix, $\bP_0$. In addition to the baseline value $\bar{\bP}_0$, two alternative values are considered: $\bP_0 = 4\bar{\bP}_0$ and $\bP_0 = \frac{1}{4}\bar{\bP}_0$. These correspond, respectively, to doubling and halving the initial uncertainty associated with the state vector.
 
 \begin{figure}
 	\centering
-	\includegraphics{Fig/ol_telemetries.eps}
+	\includegraphics{Fig/gamma_sensitivity.pdf}
+	\hfill
+	\includegraphics{Fig/Pzero_sensitivity.pdf}
+	\caption{}
+	\label{fig:ol_sensitivities}
+\end{figure}
+
+\subsection{Robustified constraints comparison}
+It is of interest to analyze how a robustified constraint---or a combination of the two described in Sections~\ref{sec:adherence_constraint} and~\ref{sec:ontrack_constraint}---influences the driving style. This analysis compares the nominal trajectory, obtained without robustified constraints, with those resulting from a robustified stay-on-track constraint (denoted as OTC), a robustified adherence limit constraint (denoted as FLC), and a scenario where both constraints are robustified (denoted as OTC+FLC). All the optimization are obtained with the open-loop method described in Section~\ref{sec:open_loop_planning}, setting $H=4$, and $\ga^\textrm{OTC}=\ga^\textrm{FLC}=1.28$, corresponding to a 90\% probability of meeting both constraints. 
+
+Figure~\ref{fig:ol_telemetries} presents the variation of four signals with respect to the nominal trajectory, for the three previously mentioned cases. The panels display the longitudinal speed $u$ (first panel), wheel steering angle $\de$ (second panel), total longitudinal force $F_x$ (third panel), and lateral deviation of the center of mass from the track centerline $e$ (fourth panel). Except for the $u$ panel, each plot includes dashed black lines that indicate the sign of the nominal signal-whether it is positive, negative, or numerically zero. These sign indicators are represented as three distinct levels---high, zero, and low---corresponding to positive, zero, and negative values of the nominal signal, respectively. The levels are scaled appropriately in each plot to ensure clarity of visualization.
+
+\begin{figure}
+	\centering
+	\includegraphics{Fig/ol_telemetries.pdf}
 	\caption{}
 	\label{fig:ol_telemetries}
 \end{figure}
 
-From the first panel, it can be observed that all configurations maintain a lower mean value of the longitudinal speed compared to the nominal trajectory, resulting in an increased sector time. The two configurations incorporating the robustified stay-on-track constraint exhibit, as expected, a significantly altered CoM trajectory. This behavior explains the higher longitudinal speed observed around $\alpha = 0.71$, which is followed by a sharp reduction.
+From the first panel, it can be observed that all configurations maintain a lower mean value of the longitudinal speed compared to the nominal trajectory, resulting in an increased sector time. The two configurations incorporating the robustified stay-on-track constraint exhibit, as expected, a significantly altered CoM trajectory. This behavior explains the higher longitudinal speed observed around $\al = 0.71$, which is followed by a sharp reduction. 
 
 The second and fourth panels clearly show that the configurations with the robustified stay-on-track constraint tend to follow a path closer to the centerline. In particular, for most of the sector, the variation in lateral displacement and the lateral displacement $e$ itself exhibit opposite signs, indicating a corrective behavior of the steering angle $\de$ that pulls the vehicle toward the centerline.
+
+It can be interesting to notice that, in the third panel, only the configuration with both the constraints robustified needs to reduce the longitudinal force during the high speed turn, in the curvilinear abscissa interval $\al\in\left[0.75, 0.76\right]$, to meet both the constraints. 
+The vehicle constrained by the stay-on-track condition is forced to follow a wider trajectory, which entails greater lateral acceleration and, consequently, a higher lateral force demand---resulting in increased tire utilization. Due to the limitations imposed by the robust adherence constraint, it is necessary to reduce the available accelerating force.
+
+\begin{figure}
+	\centering
+	\includegraphics{Fig/ol_saturation.pdf}
+	\caption{}
+	\label{fig:ol_saturation}
+\end{figure}
+
+\subsection{Simulations with noise realization}
+This analysis aims to provide empirical validation of the robust trajectories obtained using the methods proposed in this work. For conciseness, the comparison is limited to a nominal trajectory and a trajectory computed using the closed-loop method with only the on-track constraint robustified.
+An LQR controller, designed according to the procedure outlined in Section~\ref{sec:LQR}, is implemented along the nominal trajectory. In contrast, the robust trajectory is tracked using the controller directly obtained from the optimization process.
+
+\begin{figure}
+	\centering
+	\includegraphics{Fig/olcl_traj_strings.pdf}
+	\caption{}
+	\label{fig:traj_strings}
+\end{figure}
