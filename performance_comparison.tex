@@ -14,7 +14,19 @@ In this section, we explore the open-loop approach to gain deeper insight into t
 
 The first parameter analyzed is the factor $\ga^\textrm{TLC}$, which multiplies the standard deviation of the constraint, $\sigma^\textrm{TLC}$, to determine the total back-off term $\be^\textrm{TLC}$. This parameter directly influences the probability of satisfying the track limit constraint: higher values of $\ga^\textrm{TLC}$ correspond to more conservative (i.e., robust) behavior. Specifically, $\ga^\textrm{TLC} = 0$ yields a satisfaction probability of 50\%, while $\ga^\textrm{TLC} = 3$ corresponds to 99\%. For the purposes of this analysis, we examine the effect of varying $\ga^\textrm{TLC}$ within this range. 
 
-The second parameter examined is the initial value of the covariance matrix, $\bP_0$. In addition to the baseline value $\bar{\bP}_0$, two alternative values are considered: $\bP_0 = 4\bar{\bP}_0$ and $\bP_0 = \frac{1}{4}\bar{\bP}_0$. These correspond, respectively, to doubling and halving the initial uncertainty associated with the state vector.
+Setting $\ga^\textrm{TLC} = 0$ leads to the nominal solution. In this case, the back-off term $\be^\textrm{TLC}$ becomes zero, meaning that the constraint is not robustified and thus coincides with the original, non-robust formulation. 
+
+Observing the left panel of Figure~\ref{fig:ol_sensitivities}, it is evident that the trajectories corresponding to configurations with lower values of $\ga^\textrm{TLC}$ tend to travel closer to the track boundaries. In contrast, the trajectory associated with $\ga^\textrm{TLC} = 3$---represented by the light green line---remains significantly farther from the edges.
+This behavior is consistent with the increased conservativeness introduced by higher values of $\ga^\textrm{TLC}$, which amplify the back-off term $\be^\textrm{TLC}$ and thereby enforce a larger safety margin from the track limits.
+Chasing a trajectory associated with a larger safety margin leads to higher sector times; spanning $\ga^\textrm{TLC}$ in the range $\left[0,3\right]$ results in sector times that vary from 12.135\,s to 13.162\,s.
+
+The second parameter examined is the initial value of the covariance matrix, $\bP_0$. From this matrix, the standard deviation of each component of the mean state vector can be computed as:
+\begin{equation}
+	\sigma_i = \sqrt{e_i^T \bP_0 e_i},\label{eq:sigma_from_P}
+\end{equation}
+where $e_i$ is the unit vector with a 1 in the $i$-th position and zeros elsewhere. These standard deviations, $\sigma_i$, are used to evaluate the probability of the state vector remaining within a given interval. For example, considering the first element of the state vector, $\mu_1$, the interval $\left[\mu_1 - \sigma_1,\ \mu_1 + \sigma_1\right]$ corresponds to a 68\% probability of containing the true state, while the interval $\left[\mu_1 - 3\sigma_1,\ \mu_1 + 3\sigma_1\right]$ corresponds to approximately 99\%.
+
+In addition to the baseline value $\bar{\bP}_0$, two alternative values are considered: $\bP_0 = 4\bar{\bP}_0$ and $\bP_0 = \frac{1}{4}\bar{\bP}_0$. These correspond, respectively, to doubling and halving the initial uncertainty associated with the state vector, as it's possible to verify from \eqref{eq:sigma_from_P}. 
 
 \begin{figure}
 	\centering
