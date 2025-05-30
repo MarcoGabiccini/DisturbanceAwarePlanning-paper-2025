@@ -27,7 +27,11 @@ The second parameter examined is the initial value of the covariance matrix, $\b
 where $e_i$ is the unit vector with a 1 in the $i$-th position and zeros elsewhere. These standard deviations, $\sigma_i$, are used to evaluate the probability of the state vector remaining within a given interval. For example, considering the first element of the state vector, $\mu_1$, the interval $\left[\mu_1 - \sigma_1,\ \mu_1 + \sigma_1\right]$ corresponds to a 68\% probability of containing the true state, while the interval $\left[\mu_1 - 3\sigma_1,\ \mu_1 + 3\sigma_1\right]$ corresponds to approximately 99\%.
 
 In addition to the baseline value $\bar{\bP}_0$, two alternative values are considered: $\bP_0 = 4\bar{\bP}_0$ and $\bP_0 = \frac{1}{4}\bar{\bP}_0$. These correspond, respectively, to doubling and halving the initial uncertainty associated with the state vector, as it's possible to verify from \eqref{eq:sigma_from_P}. 
+For simplicity, a diagonal $\bar{\bP}_0$ has been chosen for this study. In this case, $\bar{\bP}_0$ is constructed by assigning the standard deviations of the elements of the state vector---collected in the vector $\bar{\boldsymbol{\sigma}}_0$---and placing their squared values along the diagonal. 
+The values of $\bar{\boldsymbol{\sigma}}_0$ has been chosen accordingly to the range of variation of the associated variable. In particular, assuming the state vector is ordered as described in Section~\ref{sec:vehicle_model}, we selected $\bar{\boldsymbol{\sigma}}_0 = \left[0.1\,\textrm{m/s}, 0.01\,\textrm{m/s}, 0.01\,\textrm{rad/s}, 1\,\textrm{m}, 1\,\textrm{m}, 0.0175\,\textrm{rad}\right]^T$.
 
+The results of the analysis conducted on this parameter are shown in the right panel of Figure~\ref{fig:ol_sensitivities} where the black line corresponds to the baseline, obtained setting $\bP_0 = \bar{\bP}_0$, while the red and the blue lines corresponds to configurations with $\bP_0 = \frac{1}{4}\bar{\bP}_0$ and $\bP_0 = 4\bar{\bP}_0$, respectively. 
+Obviously, using a larger initial covariance matrix results in a greater covariance matrix after $H$ steps, which in turn leads to a higher back-off term. This is reflected in the blue line, which travels closer to the centerline w.r.t. the other two lines.
 \begin{figure}
 	\centering
 	\includegraphics{Fig/gamma_sensitivity.pdf}
