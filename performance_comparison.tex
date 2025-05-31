@@ -20,6 +20,15 @@ Observing the left panel of Figure~\ref{fig:ol_sensitivities}, it is evident tha
 This behavior is consistent with the increased conservativeness introduced by higher values of $\ga^\textrm{TLC}$, which amplify the back-off term $\be^\textrm{TLC}$ and thereby enforce a larger safety margin from the track limits.
 Chasing a trajectory associated with a larger safety margin leads to higher sector times; spanning $\ga^\textrm{TLC}$ in the range $\left[0,3\right]$ results in sector times that vary from 12.135\,s to 13.162\,s.
 
+\begin{figure}
+	\centering
+	\includegraphics{Fig/gamma_sensitivity.pdf}
+	\hfill
+	\includegraphics{Fig/Pzero_sensitivity.pdf}
+	\caption{Effect of $\ga^\textrm{TLC}$ (left panel) and $P_0$ (right panel) on optimal trajectory. The parameter $\ga^\textrm{TLC}$ span in the range $\left[0,3\right]$ corresponding to a probability to meet the track limit constraint of 50\% and 99\%, respectively. In the left panel, in addition to the baseline value $\bar{\bP}_0$ (black line), two alternative values are considered: $\bP_0 = 4\bar{\bP}_0$ (blue line) and $\bP_0 = \frac{1}{4}\bar{\bP}_0$ (red line). These correspond, respectively, to doubling and halving the initial uncertainty associated with the state vector.}
+	\label{fig:ol_sensitivities}
+\end{figure}
+
 The second parameter examined is the initial value of the covariance matrix, $\bP_0$. From this matrix, the standard deviation of each component of the mean state vector can be computed as:
 \begin{equation}
 	\sigma_i = \sqrt{e_i^T \bP_0 e_i},\label{eq:sigma_from_P}
@@ -32,32 +41,27 @@ The values of $\bar{\boldsymbol{\sigma}}_0$ has been chosen accordingly to the r
 
 The results of the analysis conducted on this parameter are shown in the right panel of Figure~\ref{fig:ol_sensitivities} where the black line corresponds to the baseline, obtained setting $\bP_0 = \bar{\bP}_0$, while the red and the blue lines corresponds to configurations with $\bP_0 = \frac{1}{4}\bar{\bP}_0$ and $\bP_0 = 4\bar{\bP}_0$, respectively. 
 Obviously, using a larger initial covariance matrix results in a greater covariance matrix after $H$ steps, which in turn leads to a higher back-off term. This is reflected in the blue line, which travels closer to the centerline w.r.t. the other two lines.
-\begin{figure}
-	\centering
-	\includegraphics{Fig/gamma_sensitivity.pdf}
-	\hfill
-	\includegraphics{Fig/Pzero_sensitivity.pdf}
-	\caption{Effect of $\ga^\textrm{TLC}$ (left panel) and $P_0$ (right panel) on optimal trajectory. The parameter $\ga^\textrm{TLC}$ span in the range $\left[0,3\right]$ corresponding to a probability to meet the track limit constraint of 50\% and 99\%, respectively. In the left panel, in addition to the baseline value $\bar{\bP}_0$ (black line), two alternative values are considered: $\bP_0 = 4\bar{\bP}_0$ (blue line) and $\bP_0 = \frac{1}{4}\bar{\bP}_0$ (red line). These correspond, respectively, to doubling and halving the initial uncertainty associated with the state vector.}
-	\label{fig:ol_sensitivities}
-\end{figure}
 
 \subsection{Robustified constraints comparison}
 It is of interest to analyze how a robustified constraint---or a combination of the two described in Sections~\ref{sec:FLC} and~\ref{sec:TLC}---influences the driving style. This analysis compares the not-robust trajectory, obtained without robustified constraints, with those resulting from a robustified track limit constraint (denoted as TLC), a robustified friction limit constraint (denoted as FLC), and a scenario where both constraints are robustified (denoted as TLC+FLC). All the optimization are obtained with the open-loop method described in Section~\ref{sec:open_loop_planning}, setting $H=4$, and $\ga^\textrm{TLC}=\ga^\textrm{FLC}=1.28$, corresponding to a 90\% probability of meeting both constraints. 
 
-Figure~\ref{fig:ol_telemetries} presents the variation of four signals with respect to the nominal trajectory, for the three previously mentioned cases. The panels display the longitudinal speed $u$ (first panel), wheel steering angle $\de$ (second panel), total longitudinal force $F_x$ (third panel), and lateral deviation of the center of mass from the track centerline $e$ (fourth panel). Except for the $u$ panel, each plot includes dashed black lines that indicate the sign of the reference signal-whether it is positive, negative, or numerically zero. These sign indicators are represented as three distinct levels---high, zero, and low---corresponding to positive, zero, and negative values of the reference signal, respectively. The levels are scaled appropriately in each plot to ensure clarity of visualization.
+Figure~\ref{fig:ol_telemetries} presents the variation of four signals with respect to the nominal trajectory, for the three previously mentioned cases. The panels display variations on the longitudinal speed $\De u$ (first panel), wheel steering angle $\De \de$ (second panel), total longitudinal force $\De F_x$ (third panel), and lateral deviation of the center of mass from the track centerline $\De e$ (fourth panel). Except for the $\De u$ panel, each plot includes dashed black lines that indicate the sign of the reference signal-whether it is positive, negative, or numerically zero. These sign indicators are represented as three distinct levels---high, zero, and low---corresponding to positive, zero, and negative values of the reference signal, respectively. The levels are scaled appropriately in each plot to ensure clarity of visualization.
 
 \begin{figure}
 	\centering
 	\includegraphics{Fig/ol_telemetries.pdf}
-	\caption{Evolution of the longitudinal speed u, wheel steering angle $\de$, longitudinal force $F_x$, and lateral deviation $e$ are reported for three robustification scenarios: TLC (Track Limit Constraints), FLC (Friction Limit Constraint), and TLC+FLC (both constraints enforced concurrently). Each profile is shown relative to the baseline (nominal) trajectory to highlight the effect of each constraint-handling strategy. The dashed lines in the last three panels indicate the sign of the reference signal, allowing one to determine whether a positive variation with respect to the baseline corresponds to an increase or a decrease in the absolute value. This distinction is particularly important for quantities that depend on the direction of the turn, such as the wheel steering angle $\de$ and the lateral deviation $e$, while in the case of $F_x$, it indicates whether the vehicle is accelerating or braking.}
+	\caption{Evolution of the longitudinal speed $\De u$, wheel steering angle $\De \de$, longitudinal force $\De F_x$, and lateral deviation $\De e$ are reported for three robustification scenarios: TLC (Track Limit Constraints), FLC (Friction Limit Constraint), and TLC+FLC (both constraints enforced concurrently). Each profile is shown relative to the baseline (nominal) trajectory to highlight the effect of each constraint-handling strategy. The dashed lines in the last three panels indicate the sign of the reference signal, allowing one to determine whether a positive variation with respect to the baseline corresponds to an increase or a decrease in the absolute value. This distinction is particularly important for quantities that depend on the direction of the turn, such as the wheel steering angle $\de$ and the lateral deviation $e$, while in the case of $F_x$, it indicates whether the vehicle is accelerating or braking.}
 	\label{fig:ol_telemetries}
 \end{figure}
 
-From the first panel, it can be observed that all configurations maintain a lower mean value of the longitudinal speed compared to the reference trajectory, resulting in an increased sector time. The two configurations incorporating the robustified track limit constraint exhibit, as expected, a significantly altered CoM trajectory. This behavior explains the higher longitudinal speed observed around $\al = 0.71$, which is followed by a sharp reduction. 
+From the first panel, it can be observed that all configurations maintain a lower mean value of the longitudinal speed compared to the reference trajectory, resulting in an increased sector time. Specifically, the configuration with the robustified TLC increases the sector time by 1.66\%, while the configuration with the robustified FLC and with both TLC and FLC robustified increase the sector time by a 0.79\% and 2.57\%, respectively.
+The two configurations incorporating the robustified track limit constraint (blue and green lines) exhibit, as expected, a significantly altered CoM trajectory. This behavior explains the higher longitudinal speed observed around $\al = 0.71$, which is followed by a sharp reduction. 
 
-The second and fourth panels clearly show that the configurations with the robustified track limit constraint tend to follow a path closer to the centerline. In particular, for most of the sector, the variation in lateral displacement and the lateral displacement $e$ itself exhibit opposite signs, indicating a corrective behavior of the steering angle $\de$ that pulls the vehicle toward the centerline.
+The second and fourth panels clearly show that the configurations with the robustified track limit constraint tend to follow a path closer to the centerline. In particular, for most of the sector, the variation in lateral displacement $\De e$ and the lateral displacement $e$ itself exhibit opposite signs, indicating a corrective behavior of the steering angle $\de$ that pulls the vehicle toward the centerline.
 
-It can be interesting to notice that, in the third panel, only the configuration with both the constraints robustified needs to reduce the longitudinal force during the high speed turn, in the curvilinear abscissa interval $\al\in\left[0.75, 0.76\right]$, to meet both the constraints. 
+The third panel, which shows the variation of the total longitudinal force $\De F_x$, is consistent with the $\De u$ panel. In particular, the configurations with the robustified TLC exhibit a higher longitudinal force while approaching Turn 1, in the curvilinear abscissa interval $\al\in\left[0.707, 0.712\right]$, which results in a higher longitudinal speed. Subsequently, these two configurations apply a lower longitudinal force during braking compared to the nominal case, indicating more intense braking. This behavior explains the sharp reduction in longitudinal speed observed thereafter.
+
+It can be interesting to notice that, in the third panel, only the configuration with both the constraints robustified (blue line) needs to reduce the longitudinal force during the high speed turn, in the curvilinear abscissa interval $\al\in\left[0.75, 0.76\right]$, to meet both the constraints. 
 The vehicle constrained by the track limit condition is forced to follow a wider trajectory, which entails greater lateral acceleration and, consequently, a higher lateral force demand---resulting in increased tire utilization. Due to the limitations imposed by the robust friction limit constraint, it is necessary to reduce the available accelerating force.
 
 \begin{figure}
