@@ -54,7 +54,7 @@ Figure~\ref{fig:ol_telemetries} presents the variation of four signals with resp
 	\label{fig:ol_telemetries}
 \end{figure}
 
-From the first panel, it can be observed that all configurations maintain a lower mean value of the longitudinal speed compared to the reference trajectory, resulting in an increased sector time. Specifically, the configuration with the robustified TLC increases the sector time by 1.66\%, while the configuration with the robustified FLC and with both TLC and FLC robustified increase the sector time by a 0.79\% and 2.57\%, respectively.
+From the first panel, it can be observed that all configurations maintain a lower mean value of the longitudinal speed compared to the reference trajectory, resulting in an increased sector time. Specifically, the configuration with the robustified TLC increases the sector time by 1.66\%, while the configuration with the robustified FLC and with both TLC and FLC robustified increase the sector time by 0.79\% and 2.57\%, respectively.
 The two configurations incorporating the robustified track limit constraint (blue and green lines) exhibit, as expected, a significantly altered CoM trajectory. This behavior explains the higher longitudinal speed observed around $\al = 0.71$, which is followed by a sharp reduction. 
 
 The second and fourth panels clearly show that the configurations with the robustified track limit constraint tend to follow a path closer to the centerline. In particular, for most of the sector, the variation in lateral displacement $\De e$ and the lateral displacement $e$ itself exhibit opposite signs, indicating a corrective behavior of the steering angle $\de$ that pulls the vehicle toward the centerline.
@@ -64,12 +64,17 @@ The third panel, which shows the variation of the total longitudinal force $\De 
 It can be interesting to notice that, in the third panel, only the configuration with both the constraints robustified (blue line) needs to reduce the longitudinal force during the high speed turn, in the curvilinear abscissa interval $\al\in\left[0.75, 0.76\right]$, to meet both the constraints. 
 The vehicle constrained by the track limit condition is forced to follow a wider trajectory, which entails greater lateral acceleration and, consequently, a higher lateral force demand---resulting in increased tire utilization. Due to the limitations imposed by the robust friction limit constraint, it is necessary to reduce the available accelerating force.
 
+After analyzing the variations of four key signals with respect to the nominal solution, we now turn our attention to the evaluation of axle saturation, which provides insight into how close each configuration operates to the tire grip limits.
+Figure~\ref{fig:ol_saturation} presents the quantity $\left[ \left( \frac{X_j(\bx,\bu)}{\mu_{x,j}} \right)^2+ \left( \frac{Y_j(\bx,\bu)}{\mu_{y,j}}\right)^2\right]\frac{1}{Z_j^2(\bx,\bu)}$, where $j=1$ refers to the front axle (first panel) and $j=2$ the rear axle (second panel), plotted for the three previously introduced configurations (color-coded as before) and for the nominal solution (black dashed line). This quantity indicates how close each configuration operates to the friction limit; it equals 1 when the point $\left(X_j, Y_j\right)$ lies exactly on the friction ellipse defined by $Z_j$.
+
 \begin{figure}
 	\centering
 	\includegraphics{Fig/ol_saturation.pdf}
 	\caption{Tire usage for front axle (first panel) and rear axle (second panel) over curvilinear abscissa $\al$. The plotted lines represent the quantity $\left[ \left( \frac{X_j(\bx,\bu)}{\mu_{x,j}} \right)^2+ \left( \frac{Y_j(\bx,\bu)}{\mu_{y,j}}\right)^2\right]\frac{1}{Z_j^2(\bx,\bu)}$, where $j=1$ denotes the front axle and $j=2$ the rear axle. The dashed black line corresponds to the reference (nominal) configuration, while the green, red, and blue lines represent the robust configurations TLC, FLC, and TLC+FLC, respectively.}
 	\label{fig:ol_saturation}
 \end{figure}
+
+As expected, the two configurations with the robustified friction limit constraint (red and blue lines) never reach a value of 1, due to the presence of the back-off term, which enforces a safety margin from the friction limit. 
 
 \subsection{Simulations with noise realization}
 This analysis aims to provide empirical validation of the robust trajectories obtained using the methods proposed in this work. For conciseness, the comparison is limited to a nominal trajectory and a trajectory computed using the closed-loop method with only the track limit constraint robustified.
