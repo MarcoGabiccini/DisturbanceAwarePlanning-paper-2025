@@ -1,6 +1,13 @@
 \section{Performance comparison} 
 \label{sec:performance_comparison}
 
+In this section we present some results obtained using the described robust planning frameworks. All planned trajectories refer to the sector of the Catalunya circuit shown in Figure~\ref{fig:track}. 
+The entire circuit is parametrized by the curvilinear abscissa $\alpha \in [0,1]$, and the selected sector corresponds to the interval $\left[0.70, 0.77\right]$. Checkpoints are indicated by labels and are uniformly spaced by $\De\al=0.01$. This sector includes two distinct corners: a low-speed turn from $\al = 0.72$ to $\al = 0.73$, and a high-speed turn from $\al = 0.75$ to $\al = 0.76$, allowing for the evaluation of vehicle behavior across different dynamic scenarios.
+
+We begin by presenting a selection of results obtained with the open-loop planning approach, which allows for a clearer illustration of the method and its underlying mechanisms. This approach is used as a reference to analyze the influence of key design parameters and of the different types of constraints on the resulting trajectories. A comparison is then carried out between the open-loop and closed-loop strategies. Finally, the planned trajectories are compared against those followed in simulations with noise realizations, providing empirical validation of the proposed framework.
+
+% Contour plot dei LAP time in funzione dei due gamma, lo mettiamo o no? Eventialmente nel comparison open/closed
+
 \begin{figure}
 	\centering
 	\includegraphics{Fig/track.pdf}
@@ -8,13 +15,21 @@
 	\label{fig:track}
 \end{figure}
 
-\subsection{Open loop parameters sensitivity}
+\subsection{Open-loop parameters sensitivity}
 \label{sec:ol_param_sensitivity}
-In this section, we explore the open-loop approach to gain deeper insight into the influence of key parameters on the results. For this analysis, we consider optimizations in which only the track limit constraint is robustified. This choice is motivated by the fact that the effects of the track limit constraint are more visually evident compared to those of the friction limit constraint, thereby facilitating a more immediate understanding of their impact. 
+To gain deeper insight into how key parameters affect the planning outcome, we focus here on the open-loop formulation.
+%In this section, we explore the open-loop approach to gain deeper insight into the influence of key parameters on the results.
+At this stage, only the track limit constraint is robustified. 
+%For this analysis, we consider optimizations in which only the track limit constraint is robustified. 
+This choice is motivated by the fact that its effects are more visually evident than those of the friction limit constraint, thereby facilitating a more immediate understanding of their impact. 
 
-The first parameter analyzed is the factor $\ga^\textrm{TLC}$, which multiplies the standard deviation of the constraint, $\sigma^\textrm{TLC}$, to determine the total back-off term $\be^\textrm{TLC}$. This parameter directly influences the probability of satisfying the track limit constraint: higher values of $\ga^\textrm{TLC}$ correspond to more conservative (i.e., robust) behavior. Specifically, $\ga^\textrm{TLC} = 0$ yields a satisfaction probability of 50\%, while $\ga^\textrm{TLC} = 3$ corresponds to 99\%. For the purposes of this analysis, we examine the effect of varying $\ga^\textrm{TLC}$ within this range. 
+The first parameter considered is the confidence level of constraint satisfaction. 
+We recall that the factor $\ga^\textrm{TLC}$ acts as a tuning knob, multiplying the standard deviation of the constraint, $\sigma^\textrm{TLC}$, to determine the total back-off term $\be^\textrm{TLC}$. 
+This parameter directly influences the probability of satisfying the track limit constraint: higher values of $\ga^\textrm{TLC}$ correspond to more conservative (i.e., robust) behavior. 
+Specifically, $\ga^\textrm{TLC} = 0$ yields a satisfaction probability of 50\% and leads to the nominal solution with no back-off, while $\ga^\textrm{TLC} = 3$ corresponds to a confidence level of 99\%. 
+For the purposes of this analysis, we examine the effect of varying $\ga^\textrm{TLC}$ across this range. 
 
-Setting $\ga^\textrm{TLC} = 0$ leads to the nominal solution. In this case, the back-off term $\be^\textrm{TLC}$ becomes zero, meaning that the constraint is not robustified and thus coincides with the original, non-robust formulation. 
+%Setting $\ga^\textrm{TLC} = 0$ leads to the nominal solution. In this case, the back-off term $\be^\textrm{TLC}$ becomes zero, meaning that the constraint is not robustified and thus coincides with the original, non-robust formulation. 
 
 Observing the left panel of Figure~\ref{fig:ol_sensitivities}, it is evident that the trajectories corresponding to configurations with lower values of $\ga^\textrm{TLC}$ tend to travel closer to the track boundaries. In contrast, the trajectory associated with $\ga^\textrm{TLC} = 3$---represented by the light green line---remains significantly farther from the edges.
 This behavior is consistent with the increased conservativeness introduced by higher values of $\ga^\textrm{TLC}$, which amplify the back-off term $\be^\textrm{TLC}$ and thereby enforce a larger safety margin from the track limits.
@@ -25,7 +40,7 @@ Chasing a trajectory associated with a larger safety margin leads to higher sect
 	\includegraphics{Fig/gamma_sensitivity.pdf}
 	\hfill
 	\includegraphics{Fig/Pzero_sensitivity.pdf}
-	\caption{Effect of $\ga^\textrm{TLC}$ (left panel) and $P_0$ (right panel) on optimal trajectory. The parameter $\ga^\textrm{TLC}$ span in the range $\left[0,3\right]$ corresponding to a probability to meet the track limit constraint of 50\% and 99\%, respectively. In the left panel, in addition to the baseline value $\bar{\bP}_0$ (black line), two alternative values are considered: $\bP_0 = 4\bar{\bP}_0$ (blue line) and $\bP_0 = \frac{1}{4}\bar{\bP}_0$ (red line). These correspond, respectively, to doubling and halving the initial uncertainty associated with the state vector.}
+	\caption{Effect of $\ga^\textrm{TLC}$ (left panel) and $P_0$ (right panel) on optimal trajectory. The parameter $\ga^\textrm{TLC}$ spans in the range $\left[0,3\right]$ corresponding to a probability to meet the track limit constraint ranging from 50\% to 99\%. In the right panel, in addition to the baseline value $\bar{\bP}_0$ (black line), two alternative values are considered: $\bP_0 = 4\bar{\bP}_0$ (blue line) and $\bP_0 = \frac{1}{4}\bar{\bP}_0$ (red line). These correspond, respectively, to doubling and halving the initial uncertainty associated with the state vector.}
 	\label{fig:ol_sensitivities}
 \end{figure}
 
