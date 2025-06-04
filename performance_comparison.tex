@@ -99,7 +99,7 @@ Based on the nominal force sign indicator, this reduction is achieved by partial
 
 %---Axle saturation
 After analyzing the variations of these four key signals with respect to the nominal solution, we now turn our attention to the evaluation of axle saturation, which provides insight into how close each configuration operates to the tire grip limits. 
-In accordance with the FLC formulation introduced in~\ref{eq:adherence_constraint}, we define the \emph{axle saturation ratio} $S_j$ as
+In accordance with the FLC formulation introduced in~\eqref{eq:adherence_constraint}, we define the \emph{axle saturation ratio} $S_j$ as
 \begin{equation}
 	S_j = \frac{ \left( \frac{X_j(\bx,\bu)}{\mu_{x,j}} \right)^2+ \left( \frac{Y_j(\bx,\bu)}{\mu_{y,j}}\right)^2}{Z_j^2(\bx,\bu)}.
 \end{equation}
@@ -118,11 +118,22 @@ Second, we point out how the different trajectories followed by the TLC and TLC+
 This behavior emerges around the sharp turn and becomes even more evident in the high-speed turn. 
 Specifically, in the interval $\alpha \in [0.745, 0.762]$, the TLC and TLC+FLC configurations begin to experience high axle loads approximately 12\,m before the nominal trajectory and sustain them for an additional 4.6\,m (TLC, green line) and 9.2\,m (TLC+FLC, blue line) beyond the nominal reference. 
 
-
 %As already observed, the configurations with the robustified track limit constraint (green and blue lines) follow significantly different paths compared to the nominal solution. This deviation results in distinct ground force demands, clearly visible in the saturation index.
 %From this plot, it can be observed that the configurations with the robustified track limit constraint (green and blue lines) follow significantly different trajectories compared to the nominal solution, resulting in distinct ground force demands. This behavior is noticeable in turn 1 and even more clearly in turn 2. Specifically, these two configurations begin to experience high axle loads approximately 12\,m before the nominal trajectory and sustain them for an additional 4.6\,m (TLC, green line) and 9.2\,m (TLC+FLC, blue line) beyond the nominal reference. 
 
-\subsection{Comparison between open-loop and closed-loop approaches}
+\subsection{Open-loop vs Closed-loop evaluation}
+We now compare the open-loop planning with the closed-loop approach. In particular, we consider open-loop and closed-loop trajectories computed using both the robustified TLC and FLC, with $\ga^\textrm{TLC}=\ga^\textrm{FLC}=1.28$. As before, the open-loop planning is carried out with a prediction horizon of $H=4$ steps. 
+
+For the TLC, the back-off term $\be^{TLC}$ in~\eqref{eq:TLC} admits a clear geometrical interpretation: it corresponds to the amount by which the track boundaries are tightened to meet the probabilistic constraint, or, equivalently, to a virtual extension of the vehicle's width. According to the latter interpretation, Figure~\ref{fig:olcl_traj_bands} shows two highlighted bands---red for the open-loop case and cyan for the closed-loop case---corresponding to the area swept by the back-off-extended-vehicle. Ultimately, the TLC enforces precisely that these bands remain entirely within the actual track limits. The comparison between the two regions illustrates how the additional conservativeness of the open-loop approach stems from larger back-off terms, i.e., a wider band that must stay within the track boundaries. The closed-loop method, on the other hand, benefits from the LQR-based feedback, which allows it to maintain smaller back-off terms and thus a narrower band, requiring a reduced safety margin from the track limits.
+
+
+\begin{figure}
+	\centering
+	\includegraphics{Fig/olcl_traj_bands.pdf}
+	\caption{Lorem ipsum.}
+	\label{fig:olcl_traj_bands}
+\end{figure}
+
 
 \subsection{Simulations with noise realization}
 This analysis aims to provide empirical validation of the robust trajectories obtained using the methods proposed in this work. For conciseness, the comparison is limited to a nominal trajectory and a trajectory computed using the closed-loop method with only the track limit constraint robustified.
