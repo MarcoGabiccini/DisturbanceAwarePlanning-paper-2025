@@ -1,7 +1,7 @@
-\section{Performance comparison} 
+\section{Performance comparison}
 \label{sec:performance_comparison}
 
-In this section we present some results obtained using the described robust planning frameworks. All planned trajectories refer to the sector of the Catalunya circuit shown in Figure~\ref{fig:track}. 
+In this section we present some results obtained using the described robust planning frameworks. All planned trajectories refer to the sector of the Catalunya circuit shown in Figure~\ref{fig:track}.
 The entire circuit is parametrized by the curvilinear abscissa $\alpha \in [0,1]$, and the selected sector corresponds to the interval $\left[0.70, 0.77\right]$. Checkpoints are indicated by labels and are uniformly spaced by $\De\al=0.01$. This sector includes two distinct corners: a low-speed turn from $\al = 0.72$ to $\al = 0.73$, and a high-speed turn from $\al = 0.75$ to $\al = 0.76$, allowing for the evaluation of vehicle behavior across different dynamic scenarios.
 
 We begin by presenting a selection of results obtained with the open-loop planning approach, which allows for a clearer illustration of the method and its underlying mechanisms. This approach is used as a reference to analyze the influence of key design parameters and of the different types of constraints on the resulting trajectories. A comparison is then carried out between the open-loop and closed-loop strategies. Finally, the planned trajectories are compared against those followed in simulations with noise realizations, providing empirical validation of the proposed framework.
@@ -11,27 +11,27 @@ We begin by presenting a selection of results obtained with the open-loop planni
 \begin{figure}
 	\centering
 	\includegraphics{Fig/track.pdf}
-	\caption{Sector of the Catalunya circuit considered in the analysis, corresponding to the curvilinear abscissa interval $\left[0.70, 0.77\right]$. Checkpoints are indicated by labels and are uniformly spaced by $\De\al=0.01$. This sector includes two distinct corners: a low-speed turn from $\al = 0.72$ to $\al = 0.73$, and a high-speed turn from $\al = 0.75$ to $\al = 0.76$, allowing for the evaluation of vehicle behavior across different dynamic scenarios.}
+	\caption{The analyzed Catalunya circuit sector spans $\alpha \in [0.70, 0.77]$, with labeled checkpoints every $\Delta\alpha = 0.01$. It contains two corners -- a low-speed turn ($\alpha = 0.72-0.73$) and a high-speed turn ($\alpha = 0.75-0.76$) -- providing contrasting dynamic conditions for vehicle behavior evaluation.}
 	\label{fig:track}
 \end{figure}
 
-\subsection{Open-loop parameters sensitivity}
+\subsection{Open-loop parameter sensitivity}
 \label{sec:ol_param_sensitivity}
 To gain deeper insight into how key parameters affect the planning outcome, we focus here on the open-loop formulation.
 %In this section, we explore the open-loop approach to gain deeper insight into the influence of key parameters on the results.
-At this stage, only the track limit constraint is robustified. 
-%For this analysis, we consider optimizations in which only the track limit constraint is robustified. 
-This choice is motivated by the fact that its effects are more visually evident than those of the friction limit constraint, thereby facilitating a more immediate understanding of their impact. 
+At this stage, only the track limit constraint is robustified.
+%For this analysis, we consider optimizations in which only the track limit constraint is robustified.
+This choice is motivated by the fact that its effects are more visually evident than those of the friction limit constraint, thereby facilitating a more immediate understanding of their impact.
 
-The first parameter considered is the confidence level of constraint satisfaction. 
-We recall that the factor $\ga^\textrm{TLC}$ acts as a tuning knob, multiplying the standard deviation of the constraint, $\sigma^\textrm{TLC}$, to determine the total back-off term $\be^\textrm{TLC}$. 
-This parameter directly influences the probability of satisfying the track limit constraint: higher values of $\ga^\textrm{TLC}$ correspond to more conservative (i.e., robust) behavior. 
-Specifically, $\ga^\textrm{TLC} = 0$ yields a satisfaction probability of 50\% and leads to the nominal solution with no back-off, while $\ga^\textrm{TLC} = 3$ corresponds to a confidence level of 99\%. 
-For the purposes of this analysis, we examine the effect of varying $\ga^\textrm{TLC}$ across this range. 
+The first parameter considered is the confidence level of constraint satisfaction.
+We recall that the factor $\ga^\textrm{TLC}$ acts as a tuning knob, multiplying the standard deviation of the constraint, $\sigma^\textrm{TLC}$, to determine the total back-off term $\be^\textrm{TLC}$.
+This parameter directly influences the probability of satisfying the track limit constraint: higher values of $\ga^\textrm{TLC}$ correspond to more conservative (i.e., robust) behavior.
+Specifically, $\ga^\textrm{TLC} = 0$ yields a satisfaction probability of 50\% and leads to the nominal solution with no back-off, while $\ga^\textrm{TLC} = 3$ corresponds to a confidence level of 99\%.
+For the purposes of this analysis, we examine the effect of varying $\ga^\textrm{TLC}$ across this range.
 
-%Setting $\ga^\textrm{TLC} = 0$ leads to the nominal solution. In this case, the back-off term $\be^\textrm{TLC}$ becomes zero, meaning that the constraint is not robustified and thus coincides with the original, non-robust formulation. 
+%Setting $\ga^\textrm{TLC} = 0$ leads to the nominal solution. In this case, the back-off term $\be^\textrm{TLC}$ becomes zero, meaning that the constraint is not robustified and thus coincides with the original, non-robust formulation.
 
-Observing the left panel of Figure~\ref{fig:ol_sensitivities}, it is evident that the trajectories corresponding to configurations with lower values of $\ga^\textrm{TLC}$ tend to travel closer to the track boundaries. In contrast, the trajectory associated with $\ga^\textrm{TLC} = 3$---represented by the light green line---remains significantly farther from the edges.
+Observing the left panel of Figure~\ref{fig:ol_sensitivities}, it is evident that the trajectories corresponding to configurations with lower values of $\ga^\textrm{TLC}$ tend to travel closer to the track boundaries. In contrast, the trajectory associated with $\ga^\textrm{TLC} = 3$\,--- represented by the light green line \,--- remains significantly farther from the edges.
 This behavior is consistent with the increased conservativeness introduced by higher values of $\ga^\textrm{TLC}$, which amplify the back-off term $\be^\textrm{TLC}$ and thereby enforce a larger safety margin from the track limits.
 Chasing a trajectory associated with a larger safety margin leads to higher sector times; spanning $\ga^\textrm{TLC}$ in the range $\left[0,3\right]$ results in sector times that vary from 12.135\,s to 13.162\,s.
 
@@ -40,28 +40,34 @@ Chasing a trajectory associated with a larger safety margin leads to higher sect
 	\includegraphics{Fig/gamma_sensitivity.pdf}
 	\hfill
 	\includegraphics{Fig/Pzero_sensitivity.pdf}
-	\caption{Effect of $\ga^\textrm{TLC}$ (left panel) and $P_0$ (right panel) on optimal trajectory. The parameter $\ga^\textrm{TLC}$ spans in the range $\left[0,3\right]$ corresponding to a probability to meet the track limit constraint ranging from 50\% to 99\%. In the right panel, in addition to the baseline value $\bar{\bP}_0$ (black line), two alternative values are considered: $\bP_0 = 4\bar{\bP}_0$ (blue line) and $\bP_0 = \frac{1}{4}\bar{\bP}_0$ (red line). These correspond, respectively, to doubling and halving the initial uncertainty associated with the state vector.}
+\caption{Effect of the TLC penalty coefficient $\gamma^{\mathrm{TLC}}$ (left panel) and the initial covariance $\mathbf P_{0}$ (right panel) on the optimal trajectory.
+Raising $\gamma^{\mathrm{TLC}}$ from 0 to 3 increases the probability of satisfying the track-limit constraints from 50 \% to 99 \%.
+The right panel compares the nominal covariance $\bar{\mathbf P}_{0}$ (black) with $4\bar{\mathbf P}_{0}$ (blue line) and $\tfrac14\,\bar{\mathbf P}_{0}$ (red line), i.e., twice and half the nominal state uncertainty.
+}
+%\caption{Effect of $\ga^\textrm{TLC}$ (left panel) and $\bP_0$ (right panel) on optimal trajectory. The parameter $\ga^\textrm{TLC}$ spans in the range $\left[0,3\right]$ corresponding to a probability to meet the track limit constraint ranging from 50\% to 99\%. In the right panel, in addition to the baseline value $\bar{\bP}_0$ (black line), two alternative values are considered: $\bP_0 = 4\bar{\bP}_0$ (blue line) and $\bP_0 = \frac{1}{4}\bar{\bP}_0$ (red line). These correspond, respectively, to doubling and halving the initial uncertainty associated with the state vector.}
 	\label{fig:ol_sensitivities}
 \end{figure}
 
-The second parameter examined is the initial value of the covariance matrix, $\bP_0$. 
-We recall that at each grid point a new prediction horizon is initialized, and the corresponding matrix $\bP$ at its starting point, i.e., $\bP^0_k$, is set to $\bP_0$. 
-The diagonal elements of $\bP$ are the variances $\text{var}(x_i)$ of each state variables, while the off-diagonal elements encode their covariances $\text{cov}(x_i,x_j)$. Larger diagonal values indicate higher uncertainty in the corresponding states, and nonzero off-diagonal terms imply mutual dependence between them. For simplicity, a diagonal $\bP_0$ is used in this study, that is, for each prediction horizon we assign an initial standard deviation $\sigma_i = \sqrt{\text{var}(x_i)}$ to each state and assume all initial covariances to be zero. 
+The second parameter examined is the initial value of the covariance matrix $\bP_0$.
+We recall that at each grid point a new prediction horizon is initialized, and the corresponding matrix $\bP$ at its starting point, i.e., $\bP^0_k$, is set to $\bP_0$.
+The diagonal elements of $\bP$ are the variances $\Var{x_i}$  of each state variables, while the off-diagonal elements encode their covariances $\Cov{x_i}{x_j}$. Larger diagonal values indicate higher uncertainty in the corresponding states, and nonzero off-diagonal terms imply mutual dependence between them. For simplicity, a diagonal $\bP_0$ is used in this study, that is, for each prediction horizon we assign an initial standard deviation $\sig_{x_i}$ to each state and assume all initial covariances $\Cov{x_i}{x_j}$  to be zero.
 
-To provide a concrete interpretation, consider the first state variable $x_1$ with mean $\mu_1$ and standard deviation $\sigma_1$.
-Under the Gaussian assumption, the true value of $x_1$ lies within the interval $\left[\mu_1 - \sigma_1,\ \mu_1 + \sigma_1\right]$ with approximately 68\% probability, and within the interval $\left[\mu_1 - 3\sigma_1,\ \mu_1 + 3\sigma_1\right]$ with approximately 99\% probability.
-
-We assign a baseline initial covariance matrix $\bP_0 = \bar{\bP}_0$ by selecting standard deviations $\bar{\sigma}_i$ for each state variable. These standard deviations have been chosen based on the typical range of variation of each state.
-Assuming the state vector is ordered as described in Section~\ref{sec:vehicle_model}, the values used are $\bar{\boldsymbol{\sigma}}~=~\left[0.1\,\textrm{m/s}, 0.01\,\textrm{m/s}, 0.01\,\textrm{rad/s}, 1\,\textrm{m}, 1\,\textrm{m}, 0.0175\,\textrm{rad}\right]^T$.
-In addition to the baseline value $\bar{\bP}_0$, two alternative values are considered: $\bP_0 = 4\bar{\bP}_0$ and $\bP_0 = \frac{1}{4}\bar{\bP}_0$. These correspond, respectively, to doubling and halving the initial standard deviations $\sigma_i$ associated with the state vector. 
+ Assuming the state vector is ordered as described in Section~\ref{sec:vehicle_model}, the baseline initial covariance matrix is set to $\bP_0=\diag(\bbsig^2)$, with
+\begin{align}
+\bar{\boldsymbol{\sigma}}~=~\left[0.1\,\textrm{m/s}, 0.01\,\textrm{m/s}, 0.01\,\textrm{rad/s}, 1\,\textrm{m}, 1\,\textrm{m}, 0.0175\,\textrm{rad}\right]^T.
+\end{align}
+These standard deviations have been chosen based on the typical range of variation of each state. To provide a concrete interpretation at the starting condition, the assumption on first state $u \sim \calN(\mu_u,\sig_u^2)$, with $\sig_u=0.1$ m/s, implies that
+$\Pr\{\mu_u-\sig_u \leq u \leq \mu_u+\sig_u\}\approx 68\%$ and $\Pr\{\mu_u-3\sig_u \leq u \leq \mu_u+3\sig_u\}\approx 99\%$.
+ 
+In addition to the baseline value $\bar{\bP}_0$, two alternative values are considered: $\bP_0 = 4\bar{\bP}_0$ and $\bP_0 = \frac{1}{4}\bar{\bP}_0$. These correspond, respectively, to doubling and halving the initial standard deviations $\sig_{x_i}$ associated with each state vector.
 
 A comparison between the trajectories obtained using different values of $\bP_0$ is shown in the right panel of Figure~\ref{fig:ol_sensitivities}.
 The black line corresponds to the baseline case with $\bP_0 = \bar{\bP}_0$, while the red and the blue lines represent the cases with $\bP_0 = \frac{1}{4}\bar{\bP}_0$ and $\bP_0 = 4\bar{\bP}_0$, respectively. As reasonably expected, using a larger initial covariance matrix results in a greater covariance matrix after $H$ steps, which in turn leads to a higher back-off term. This is reflected in the blue line, which travels closer to the centerline with respect to the other two lines.
 
 \subsection{Robustified constraints comparison}
-%It is of interest to analyze how a robustified constraint---or a combination of the two described in Sections~\ref{sec:FLC} and~\ref{sec:TLC}---influences the driving style. 
-We now investigate how the inclusion of different kinds of robustified constraints---individually or in combination, as described in Sections~\ref{sec:FLC} and~\ref{sec:TLC}---influences the driving style. 
-We compare the nominal feed-forward optimal trajectory, obtained without robustified constraints, with those resulting from a robustified track limit constraint (denoted as TLC), a robustified friction limit constraint (denoted as FLC), and a scenario where both constraints are robustified (denoted as TLC+FLC). All the optimization are obtained with the open-loop method described in Section~\ref{sec:open_loop_planning}, setting $H=4$, and $\ga^\textrm{TLC}=\ga^\textrm{FLC}=1.28$, corresponding to a 90\% probability of satisfying both constraints. 
+%It is of interest to analyze how a robustified constraint---or a combination of the two described in Sections~\ref{sec:FLC} and~\ref{sec:TLC}---influences the driving style.
+We now investigate how the inclusion of different kinds of robustified constraints---individually or in combination, as described in Sections~\ref{sec:FLC} and~\ref{sec:TLC}---influences the driving style.
+We compare the nominal feed-forward optimal trajectory, obtained without robustified constraints, with those resulting from a robustified track limit constraint (denoted as TLC), a robustified friction limit constraint (denoted as FLC), and a scenario where both constraints are robustified (denoted as TLC+FLC). All the optimization are obtained with the open-loop method described in Section~\ref{sec:open_loop_planning}, setting $H=4$, and $\ga^\textrm{TLC}=\ga^\textrm{FLC}=1.28$, corresponding to a 90\% probability of satisfying both constraints.
 
 \begin{figure}
 	\centering
@@ -73,8 +79,8 @@ We compare the nominal feed-forward optimal trajectory, obtained without robusti
 %---Delta key signals
 
 The comparison between the nominal case and the three robustified cases is illustrated in Figure~\ref{fig:ol_telemetries}, in terms of the deviation of selected signals from to their nominal counterparts.
-The panels display variations on the longitudinal speed $\De u$ (first panel), wheel steering angle $\De \de$ (second panel), total longitudinal force $\De F_x$ (third panel), and lateral deviation of the center of mass (CoM) from the track centerline $\De e$ (fourth panel). 
-Except for the $\De u$ panel, each plot includes dashed black lines that indicate the sign of the nominal signal. 
+The panels display variations on the longitudinal speed $\De u$ (first panel), wheel steering angle $\De \de$ (second panel), total longitudinal force $\De F_x$ (third panel), and lateral deviation of the center of mass (CoM) from the track centerline $\De e$ (fourth panel).
+Except for the $\De u$ panel, each plot includes dashed black lines that indicate the sign of the nominal signal.
 These indicators are shown at three distinct vertical levels---upper, central, and lower---corresponding respectively to positive, near-zero, and negative values of the nominal signal.
 
 %--------1 Considerazioni generali sul settore
@@ -93,12 +99,12 @@ Subsequently, these two configurations apply a lower longitudinal force during b
 %--------3 High speed turn
 
 Later in the sector, a further deviation in driving style appears during the high-speed turn, specifically around $\alpha \in [0.75, 0.76]$.
-As shown in the $\Delta F_x$ panel, the combined configuration TLC+FLC needs to reduce the longitudinal force within this section to meet both the constraints. 
+As shown in the $\Delta F_x$ panel, the combined configuration TLC+FLC needs to reduce the longitudinal force within this section to meet both the constraints.
 This adaptation is necessary because the TLC forces the vehicle to follow a wider trajectory, which entails greater lateral acceleration and, consequently, higher lateral force demand. To satisfy the FLC under the resulting increase in tire utilization, the available accelerating force must be reduced.
 Based on the nominal force sign indicator, this reduction is achieved by partially lifting the throttle.
 
 %---Axle saturation
-After analyzing the variations of these four key signals with respect to the nominal solution, we now turn our attention to the evaluation of axle saturation, which provides insight into how close each configuration operates to the tire grip limits. 
+After analyzing the variations of these four key signals with respect to the nominal solution, we now turn our attention to the evaluation of axle saturation, which provides insight into how close each configuration operates to the tire grip limits.
 In accordance with the FLC formulation introduced in~\eqref{eq:adherence_constraint}, we define the \emph{axle saturation ratio} $S_j$ as
 \begin{equation}
 	S_j = \frac{ \left( \frac{X_j(\bx,\bu)}{\mu_{x,j}} \right)^2+ \left( \frac{Y_j(\bx,\bu)}{\mu_{y,j}}\right)^2}{Z_j^2(\bx,\bu)}.
@@ -113,16 +119,16 @@ Figure~\ref{fig:ol_saturation} shows the values of $S_j$ for the front axle ($j=
 	\label{fig:ol_saturation}
 \end{figure}
 
-First, we observe that the FLC and TLC+FLC configurations (red and blue lines) never reach full saturation, i.e., $S_j=1$, due to the presence of the back-off term, which enforces a safety margin from the friction limit. 
+First, we observe that the FLC and TLC+FLC configurations (red and blue lines) never reach full saturation, i.e., $S_j=1$, due to the presence of the back-off term, which enforces a safety margin from the friction limit.
 Second, we point out how the different trajectories followed by the TLC and TLC+FLC configurations (green and blue lines), compared to the nominal and FLC cases, entail distinct ground force demands, which are clearly visible here in terms of the $S_j$ ratio.
-This behavior emerges around the sharp turn and becomes even more evident in the high-speed turn. 
-Specifically, in the interval $\alpha \in [0.745, 0.762]$, the TLC and TLC+FLC configurations begin to experience high axle loads approximately 12\,m before the nominal trajectory and sustain them for an additional 4.6\,m (TLC, green line) and 9.2\,m (TLC+FLC, blue line) beyond the nominal reference. 
+This behavior emerges around the sharp turn and becomes even more evident in the high-speed turn.
+Specifically, in the interval $\alpha \in [0.745, 0.762]$, the TLC and TLC+FLC configurations begin to experience high axle loads approximately 12\,m before the nominal trajectory and sustain them for an additional 4.6\,m (TLC, green line) and 9.2\,m (TLC+FLC, blue line) beyond the nominal reference.
 
 %As already observed, the configurations with the robustified track limit constraint (green and blue lines) follow significantly different paths compared to the nominal solution. This deviation results in distinct ground force demands, clearly visible in the saturation index.
-%From this plot, it can be observed that the configurations with the robustified track limit constraint (green and blue lines) follow significantly different trajectories compared to the nominal solution, resulting in distinct ground force demands. This behavior is noticeable in turn 1 and even more clearly in turn 2. Specifically, these two configurations begin to experience high axle loads approximately 12\,m before the nominal trajectory and sustain them for an additional 4.6\,m (TLC, green line) and 9.2\,m (TLC+FLC, blue line) beyond the nominal reference. 
+%From this plot, it can be observed that the configurations with the robustified track limit constraint (green and blue lines) follow significantly different trajectories compared to the nominal solution, resulting in distinct ground force demands. This behavior is noticeable in turn 1 and even more clearly in turn 2. Specifically, these two configurations begin to experience high axle loads approximately 12\,m before the nominal trajectory and sustain them for an additional 4.6\,m (TLC, green line) and 9.2\,m (TLC+FLC, blue line) beyond the nominal reference.
 
 \subsection{Open-loop vs closed-loop robust planning}
-We now compare the open-loop planning with the closed-loop approach. In particular, we consider open-loop and closed-loop trajectories computed using both the robustified TLC and FLC, with $\ga^\textrm{TLC}=\ga^\textrm{FLC}=1.28$. As before, the open-loop planning is carried out with a prediction horizon of $H=4$ steps. 
+We now compare the open-loop planning with the closed-loop approach. In particular, we consider open-loop and closed-loop trajectories computed using both the robustified TLC and FLC, with $\ga^\textrm{TLC}=\ga^\textrm{FLC}=1.28$. As before, the open-loop planning is carried out with a prediction horizon of $H=4$ steps.
 
 For the TLC, the back-off term $\be^{TLC}$ in~\eqref{eq:TLC} admits a clear geometrical interpretation: it corresponds to the amount by which the track boundaries are tightened to meet the probabilistic constraint, or, equivalently, to a virtual extension of the vehicle's width. According to the latter interpretation, Figure~\ref{fig:olcl_traj_bands} shows two highlighted bands---red for the open-loop case and cyan for the closed-loop case---corresponding to the area swept by the back-off-extended-vehicle. Ultimately, the TLC enforces precisely that these bands remain entirely within the actual track limits. The comparison between the two regions illustrates how the additional conservativeness of the open-loop approach stems from larger back-off terms, i.e., a wider band that must stay within the track boundaries. The closed-loop method, on the other hand, benefits from the LQR-based feedback, which allows it to maintain smaller back-off terms and thus a narrower band, requiring a reduced safety margin from the track limits.
 \begin{figure}
@@ -134,7 +140,7 @@ For the TLC, the back-off term $\be^{TLC}$ in~\eqref{eq:TLC} admits a clear geom
 
 
 \subsection{Simulations with noise realization}
-Finally, we provide an empirical validation of the closed-loop robustified planning by simulating the evolution of the controlled vehicle with random initial conditions and including noise realizations. The random values for the initial state and the noise follow Gaussian distributions with covariance matrices $\bP_0$ and $\bQ$, respectively, as introduced in~\eqref{eq:dP}. This analysis cannot be performed for the open-loop approach, as it does not compute a stabilizing controller---resulting in trajectories that would significantly deviate from the track limits beyond the prediction horizon. 
+Finally, we provide an empirical validation of the closed-loop robustified planning by simulating the evolution of the controlled vehicle with random initial conditions and including noise realizations. The random values for the initial state and the noise follow Gaussian distributions with covariance matrices $\bP_0$ and $\bQ$, respectively, as introduced in~\eqref{eq:dP}. This analysis cannot be performed for the open-loop approach, as it does not compute a stabilizing controller---resulting in trajectories that would significantly deviate from the track limits beyond the prediction horizon.
 %For visual clarity, the comparison is limited to trajectories with the robustified TLC, but analogous considerations apply to the robustified FLC as well.
 
 The left panel of Figure~\ref{fig:traj_strings} shows random evolutions (red lines) for an LQR-controlled vehicle stabilized to follow the nominal optimal trajectory (black line). No robust constraints are introduced, and the controller implements the feedback policy from step 2 of Subsection~\ref{sec:LQR}. The right panel, instead, shows the random evolutions (red lines) for the robustified LQR-based controller obtained in the step 3 of the closed-loop approach described in Subsection~\ref{sec:CLrobustified}. The corresponding robustified mean trajectory is shown in black.
@@ -144,7 +150,7 @@ The comparison between the panels shows that the robustified controller is signi
 %ORIGINAL VERSION
 
 %This analysis aims to provide empirical validation of the robust trajectories obtained using the methods proposed in this work. For conciseness, the comparison is limited to a nominal trajectory and a trajectory computed using the closed-loop method with only the track limit constraint robustified.
-%An LQR controller, designed according to the procedure outlined in Section~\ref{sec:LQR}, is implemented to stabilize the nominal trajectory. In contrast, the robust trajectory is tracked using the controller directly obtained from the optimization process. 
+%An LQR controller, designed according to the procedure outlined in Section~\ref{sec:LQR}, is implemented to stabilize the nominal trajectory. In contrast, the robust trajectory is tracked using the controller directly obtained from the optimization process.
 
 \begin{figure}
 	\centering
