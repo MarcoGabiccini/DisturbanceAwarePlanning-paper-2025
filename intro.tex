@@ -1,7 +1,12 @@
 \section{Introduction}
 \label{sec:intro}
 
-As the automotive industry advances towards higher levels of automation, ...
+Minimum lap time optimization is a fundamental tool in the motorsport field, enabling the synthesis of optimal trajectories and control profiles that push performance to its limits. These optimal references are widely used both offline, for vehicle setup and strategy development, and online, as feedforward inputs to advanced driver-assistance and autonomous systems.
+However, despite their optimality under nominal assumptions, trajectories produced by state-of-the-art planners often lie critically close to physical and safety constraints---such as tire friction limits and collision boundaries---rendering them extremely sensitive to disturbances and modeling inaccuracies. Consequently, these ideal references may prove difficult or unsafe to follow, even for expert drivers, limiting their practical usability.
+
+This fragility highlights a critical gap: current minimum lap time formulations rarely embed robustness explicitly. 
+Consequently, resulting trajectories lack reliability under uncertainties arising from mismatches between modeling assumptions and real operating conditions. 
+Addressing this shortcoming is essential to bridge the gap between theoretical optimality and real-world feasibility in high-performance motorsport applications.
 
 \subsection{Related work}
 In recent years, comprehensive analyses have been conducted on minimum-lap-time optimization for motorsport vehicles, covering fixed- and free-trajectory formulations~\cite{Veneri:FreetrajectoryQuasisteadystateOptimalcontrol:2020, Lovato:ThreedimensionalFixedtrajectoryApproaches:2022, Lovato:ThreedimensionalFreetrajectoryQuasisteadystate:2022}, comparing direct and indirect solution techniques~\cite{DalBianco:ComparisonDirectIndirect:2019, Bertolazzi:DirectIndirectApproach:2025}, and contrasting serial and parallel solver frameworks~\cite{Biniewicz:QuasisteadystateMinimumLap:2024, Bartali:SchwarzDecompositionParallel:2024, Bartali:ConsensusbasedAlternatingDirection:2024}.
