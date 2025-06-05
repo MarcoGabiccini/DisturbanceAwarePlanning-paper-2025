@@ -76,6 +76,19 @@
 
 \DeclareMathOperator{\mf}{F_{\text{MF}}}
 
+\DeclareMathOperator{\diag}{diag}
+
+% version 1 (next 4 lines)
+%\DeclareMathOperator{\VarOp}{Var}
+%\DeclareMathOperator{\CovOp}{Cov}
+%\newcommand\Var[1]{\VarOp(#1)}
+%\newcommand\Cov[2]{\CovOp(#1,#2)}
+
+% version 2 (next 2 lines)
+\newcommand\Var[1]{\sigma_{#1}^2}
+\newcommand\Cov[2]{\sigma_{#1\,#2}}
+ 
+
 %\usepackage{hyperref}
 
 %%% Local definitions %%%%%%
