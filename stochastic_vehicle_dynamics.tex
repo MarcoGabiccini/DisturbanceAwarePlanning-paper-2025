@@ -131,11 +131,12 @@ To better clarify the effect of the back-off term on the constraint let us consi
 
 \begin{figure}
 	\centering
-	\input{Fig/Tikz_Sources/tikz_adherence_constraint.tex}
+	\adjustbox{valign=c}{\input{Fig/Tikz_Sources/tikz_adherence_constraint.tex}}
 	\hfill
-	\input{Fig/Tikz_Sources/tikz_stayontrack_constraint.tex}
-	\caption{Graphical representation of the two constraints analyzed in the section. The left panel shows the friction limit constraint in the plane $X_j-Y_j$. The ellipse in solid line, whose semi-axes are given by $\mu_{x,j}Z_j$ and $\mu_{y,j}Z_j$, represents the border of the available region for the base constraint, without back-off. The ellipse in dashed line delimits the available region when a back-off $\be^\textrm{FLC}_j=0.2$ is present. This ellipse has its semi-axes reduced by a factor $\sqrt{1-\be^\textrm{FLC}_j}$ w.r.t. the one in solid line.
-	}
+	\adjustbox{valign=c}{\input{Fig/Tikz_Sources/tikz_stayontrack_constraint.tex}}
+	\caption{Graphical representation of the two constraints analyzed in this section: the friction limit constraint in the $X_j$-$Y_j$ plane (left panel), and the track limit constraint in the $x$-$y$ plane (right panel). In both figures, the filled gray area bounded by a dashed line indicates the accessible region in the presence of a back-off term.
+	} 
+		%Graphical representation of the two constraints analyzed in the section. The left panel shows the friction limit constraint in the plane $X_j-Y_j$. The ellipse in solid line, whose semi-axes are given by $\mu_{x,j}Z_j$ and $\mu_{y,j}Z_j$, represents the border of the available region for the base constraint, without back-off. The ellipse in dashed line delimits the available region when a back-off $\be^\textrm{FLC}_j=0.2$ is present. This ellipse has its semi-axes reduced by a factor $\sqrt{1-\be^\textrm{FLC}_j}$ w.r.t. the one in solid line.}
 	\label{fig:robust_constraints}
 \end{figure}
 
