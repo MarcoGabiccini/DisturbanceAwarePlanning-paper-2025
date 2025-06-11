@@ -1,7 +1,7 @@
 \section{Conclusions}
 \label{sec:conclusions}
 
-This work has proposed and compared two robust planning strategies for minimum-time trajectory optimization in motorsport scenarios under uncertainty. The first approach, based on open-loop horizon-based covariance propagation, relies on a worst-case analysis of disturbance growth over a finite horizon to conservatively back off safety constraints. The second, a closed-loop covariance-aware method, incorporates a time-varying LQR feedback policy into the planning process, yielding a more realistic estimate of uncertainty evolution and tighter constraint enforcement.
+This work proposes and compares two robust planning strategies for minimum-time trajectory optimization in motorsport scenarios under uncertainty. The first approach, based on open-loop horizon-based covariance propagation, relies on a worst-case analysis of disturbance growth over a finite horizon to conservatively back off safety constraints. The second, a closed-loop covariance-aware method, incorporates a time-varying LQR feedback policy into the planning process, yielding a more realistic estimate of uncertainty evolution and tighter constraint enforcement.
 
 Both schemes deliver reference trajectories suitable for human or artificial drivers. In autonomous applications the modelled controller can replicate the on-board implementation, providing highly accurate disturbance predictions; for human driving, fidelity improves with the extent to which the driver's behaviour can be approximated by the assumed time-varying LQR policy.
 

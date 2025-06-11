@@ -1,16 +1,16 @@
 \section{Open-loop planning via H-steps ahead predictions}
 \label{sec:open_loop_planning}
-In this section, we address the problem of planning under uncertainty for a stochastic system. 
+In this section, we address the problem of planning under uncertainty for a stochastic system.
 At each grid point $k$ of the discretized trajectory the covariance matrix is propagated in a feed-forward fashion for a fixed prediction horizon of $H$ steps.
 In the planning problem, we conservatively evaluate the maximum propagation of the covariance, that is, the matrix evolved over $H$ steps, to ensure the tightest possible enforcement of constraints. This maximizes the robustness of the resulting solution, as the constraint back-off is evaluated in the worst-case scenario within the prediction horizon.
 
-To enable this, we associate multiple versions of the covariance matrix with each grid point. Specifically, $H+1$ instances of the matrix $\bP$ are maintained at each step. To this sake we introduce the notation $\bP_k^j$, where $j = 0, \ldots, H$, and $\bP_k^j$ represents the version of the covariance matrix at step $k$ that was initialized $j$ steps earlier. Hence, $\bP_k^0$ originates at node $k$ itself and will be propagated forward and employed in subsequent steps (exactly when evolved as $\bP_{k+H}^H$ ), while $\bP_k^H$ is the instance that originated $H$ steps earlier and is the most propagated one at step $k$. 
+To enable this, we associate multiple versions of the covariance matrix with each grid point. Specifically, $H+1$ instances of the matrix $\bP$ are maintained at each step. To this sake we introduce the notation $\bP_k^j$, where $j = 0, \ldots, H$, and $\bP_k^j$ represents the version of the covariance matrix at step $k$ that was initialized $j$ steps earlier. Hence, $\bP_k^0$ originates at node $k$ itself and will be propagated forward and employed in subsequent steps (exactly when evolved as $\bP_{k+H}^H$ ), while $\bP_k^H$ is the instance that originated $H$ steps earlier and is the most propagated one at step $k$.
 
 The repeated initialization of the covariance matrix at each step is necessary to prevent its unbounded growth, as we assume that the system evolves without feedback control.
 In the absence of feedback, the uncertainty on the position and orientation of the body frame accumulates along the track, leading to a severe and unrealistic degradation of the covariance matrix conditioning.
 For this reason, the propagation horizon in this open-loop setting is a critical design parameter.
 We bound the number of steps $H$ to realistically capture the evolution of disturbances occurring prior to any corrective driver response.
- 
+
 This approach requires modifications to the formulation~\eqref{eq:DOCP} introduced in Section~\ref{sec:discretization}. In particular, Eqs.~\eqref{eq:DOCPdP}, \eqref{eq:DOCPdPIC}, and \eqref{eq:DOCPconstraints} are replaced by Eqs.~\eqref{eq:DOCPdPopenloop}, \eqref{eq:DOCPdPinitopenloop}, and \eqref{eq:DOCPconstraintsopenloop}. Equation~\eqref{eq:DOCPdPopenloop} collects the continuity and collocation equations for all versions of the covariance matrix propagated from previous steps. To support the evolution of $H$ versions, we introduce $H \times d$ matrices $\bSi_k^j = (\bSi_{k,1}^j, \ldots, \bSi_{k,d}^j)$, representing the collocation values of each version $j$ of the covariance matrix within interval $k$.
 
 
@@ -38,7 +38,7 @@ The specific formulation is expressed as follows:
 	& \quad & k = 1,\ldots, N;\; i \in \calI \label{eq:DOCPconstraintsopenloop}
 \end{alignat}
 \end{subequations}
-Equation~\eqref{eq:DOCPdPinitopenloop} defines the initialization of the appropriate covariance matrix version at step $k$, while Eq.~\eqref{eq:DOCPconstraintsopenloop} specifies that the back-off term in the constraints is computed using the most propagated version, $\bP^H_k$. A schematic illustration of the management of the $H+1$ covariance matrix instances is provided in Figure~\ref{fig:DOCPgrid}. The dashed rectangle highlights the $k$-th discretization step, where the constraints are evaluated. At each grid point, two particular versions of the covariance matrix are emphasized: $\bP^0_k$ (red node), representing the instance to be initialized at that step, and $\bP^H_k$ (green node), corresponding to the version that has been propagated over the full horizon of $H$ steps and is used to robustify the constraints in Eq.~\eqref{eq:DOCPconstraintsopenloop}.
+Equation~\eqref{eq:DOCPdPinitopenloop} defines the initialization of the appropriate covariance matrix version at step $k$, while Eq.~\eqref{eq:DOCPconstraintsopenloop} specifies that the back-off term in the constraints is computed using the most propagated version, $\bP^H_k$. A schematic illustration of the management of the $H+1$ covariance matrix instances is provided in Fig.~\ref{fig:DOCPgrid}. The dashed rectangle highlights the $k$-th discretization step, where the constraints are evaluated. At each grid point, two particular versions of the covariance matrix are emphasized: $\bP^0_k$ (red node), representing the instance to be initialized at that step, and $\bP^H_k$ (green node), corresponding to the version that has been propagated over the full horizon of $H$ steps and is used to robustify the constraints in Eq.~\eqref{eq:DOCPconstraintsopenloop}.
 
 
 
