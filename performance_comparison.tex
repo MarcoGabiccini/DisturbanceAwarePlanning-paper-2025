@@ -2,7 +2,10 @@
 \label{sec:performance_comparison}
 
 In this section we present some results obtained using the described robust planning frameworks. All planned trajectories refer to the sector of the Catalunya circuit shown in Figure~\ref{fig:track}.
-The entire circuit is parametrized by the curve parameter $\alpha \in [0,1]$, and the selected sector corresponds to the interval $\left[0.70, 0.77\right]$. Checkpoints are indicated by labels and are uniformly spaced by $\De\al=0.01$. This sector includes two distinct corners: a low-speed turn from $\al = 0.72$ to $\al = 0.73$, and a high-speed turn from $\al = 0.75$ to $\al = 0.76$, allowing for the evaluation of vehicle behavior across different dynamic scenarios.
+The entire circuit is parametrized by the curve parameter $\alpha \in [0,1]$, and the selected sector corresponds to the interval $\left[0.70, 0.77\right]$. Checkpoints are indicated by labels and are uniformly spaced by $\De\al=0.01$. This sector includes two distinct corners: a low-speed turn from $\al = 0.72$ to $\al = 0.73$, and a high-speed turn from $\al = 0.75$ to $\al = 0.76$, allowing for the evaluation of vehicle behavior across different dynamic scenarios. 
+
+The chosen sector has been discretized with 140 intervals, corresponding to one grid point each 0.43\,m. 
+The optimization problems are formulate within the CasADi+MATLAB framework~\cite{Andersson:MPC:2019}, and solved using the interior point method implemented in IPOPT~\cite{Wachter:MP:2006}. 
 
 We begin by presenting a selection of results obtained with the open-loop planning approach, which allows for a clearer illustration of the method and its underlying mechanisms. This approach is used as a reference to analyze the influence of key design parameters and of the different types of constraints on the resulting trajectories. A comparison is then carried out between the open-loop and closed-loop strategies. Finally, the planned trajectories are compared against those followed in simulations with noise realizations, providing empirical validation of the proposed framework.
 
@@ -172,6 +175,9 @@ The open-loop approach yields a wider envelope due to worst-case growth assumpti
 	\label{fig:olcl_traj_bands}
 \end{figure}
 
+% Calculus times 
+We provide here some details on the software implementation and computation times to complement the comparison between the two proposed methods. All optimizations were performed on a machine equipped with an Intel Core i9-13980HX processor and 32\,Gb of RAM. Only the solver time is reported for each configuration, as the problem build time is negligible.
+The nominal problem involves 4200 optimization variables and is solved in 7.5\,s. The open-loop configuration, using a prediction horizon of $H=4$ as adopted in this study, includes 48300 variables and requires 128\,s to solve. The closed-loop method first solves the nominal problem, then performs the Step~2 in 0.5\,s, and finally formulates an additional problem with 14700 variables, which is solved in 33\,s, resulting in a total computation time of 40\,s.
 
 \subsection{Simulations with noise realization}
 To provide an empirical validation of the closed-loop robustified planning we simulated the evolution of the controlled vehicle with 100 random initial conditions and included noise realizations. The random values for the initial state and the noise follow a Gaussian distribution with covariance matrices $\bP_0$ and $\bQ$, in both cases, as introduced in Eq.~\eqref{eq:dP}. This analysis cannot be performed for the open-loop approach, as it does not compute a stabilizing controller---resulting in trajectories that would significantly deviate from the track limits beyond the prediction horizon.
