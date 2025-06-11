@@ -44,7 +44,7 @@ In~\eqref{eq:dP}, $\bP_0$ is the \emph{initial} state covariance and $\bA(t)$ is
 
 As can be readily verified by differentiation~\cite{Gajic:LyapunovMatrixEquation:2010}, the analytical solution of~\eqref{eq:dP} has the form
 \begin{align}\label{eq:P_STM}
-\bP(t) = \bPhi(t,t_0) \bP_0 \bPhi(t,t_0)+\int_{t_0}^{t} \bPhi(t,\tau) \bQ(\tau) \bPhi^T(t,\tau) \dd \tau \quad \bP(0)=\bP_0,
+\bP(t) = \bPhi(t,t_0) \bP_0 \bPhi^T(t,t_0)+\int_{t_0}^{t} \bPhi(t,\tau) \bQ(\tau) \bPhi^T(t,\tau) \dd \tau \quad \bP(0)=\bP_0,
 \end{align}
 where $\bPhi(t,t_0)$ is the \emph{state transition matrix}. This matrix encodes the evolution from $t_0$ to $t$ of a perturbation w.r.t. to the mean trajectory $\bmu(t)$. In symbols, $\barbx(t) = \bPhi(t,t_0) \barbx(t_0)$, with $\barbx(\cdot) =\bx(\cdot) - \bmu(\cdot) $. In turn, the evolution of $\bPhi(t,t_k)$ from a generic $t_k$ to $t$ is driven by the following differential equation
 \begin{align}\label{eq:STM}
@@ -66,7 +66,7 @@ Accordingly, the continuous-time stochastic trajectory planning can be framed as
 	\quad i \in \calI \label{eq:OCPconstraints}
 \end{align}
 \end{subequations}
-The cost function $J$ in~\eqref{eq:OCPcost} depends on the mean $\bmu(t)$, the controls $\bu(t)$ and the state covariance $\bP(t)$. The mean dynamics is expressed by~\eqref{eq:OCPdyn} with~\eqref{eq:OCPdynIC}, and the covariance dynamics is expressed by~\eqref{eq:OCPdP} with~\eqref{eq:OCPdPIC}. In eq.~\eqref{eq:OCPconstraints} the \emph{backoff terms} $\be_i$ account for the disturbances and serve the purpose of obtaining deterministic safety margins directly on $\bmu(t)$. $\calI$ is the set of indices defining the inequality constraints. The backoff terms stem for a linearization around the mean of the original \emph{chance constraint} on $\bx(t)$ expressed by $\Prob \{h_i(\bx) \leq 0\}\geq p$, where $p$ is the confidence level of constraint satisfaction. Explicitly, the backoff terms are given by
+The cost function $J$ in~\eqref{eq:OCPcost} depends on the mean $\bmu(t)$, the controls $\bu(t)$ and the state covariance $\bP(t)$. The mean dynamics is expressed by~\eqref{eq:OCPdyn} with~\eqref{eq:OCPdynIC}, and the covariance dynamics is expressed by~\eqref{eq:OCPdP} with~\eqref{eq:OCPdPIC}. In eq.~\eqref{eq:OCPconstraints} the \emph{back-off terms} $\be_i$ account for the disturbances and serve the purpose of obtaining deterministic safety margins directly on $\bmu(t)$. $\calI$ is the set of indices defining the inequality constraints. The back-off terms stem from a linearization around the mean of the original \emph{chance constraint} on $\bx(t)$ expressed by $\Prob \{h_i(\bx) \leq 0\}\geq p$, where $p$ is the confidence level of constraint satisfaction. Explicitly, the back-off terms are given by
 $\be_i = \gamma \sig_i$. The coefficient $\gamma = \Phi^{-1}(p)$ is the quantile function, where $\Phi(z)=\Prob \{Z\leq z\}$ is the cumulative distribution function (cdf) of a standard normal distribution $Z \sim \calN(0,1)$, and acts as a \emph{tuning knob}: the greater the confidence level $p$ required, the higher the gain $\ga$\footnote{For example, with $p=0.84$ $\ga = 1.0$, with $p=0.97$ $\ga = 2.0$, with $p=0.99$ $\ga = 3.0$}. The term $\sig_i = \big[\na^T_{\bx} h_i(\bmu) \bP(t) \na_{\bx} h_i(\bmu)\big]^{\frac{1}{2}}$ represents the standard deviation of the constraint $h_i(\bx)$ linearized around the mean, i.e. of random variable $h_i(\bmu)+\na^T_{\bx} h_i(\bmu) (\bx - \bmu)$, and follows immediately from the propagation rule of covariance.
 
 \subsection{Discretization via direct collocation}
@@ -142,7 +142,7 @@ To better clarify the effect of the back-off term on the constraint let us consi
 
 \subsection{Robust track limit constraint formulation}
 \label{sec:TLC}
-An track limit constraint is required to ensure that the vehicle remains within the circuit boundaries. The formulation adopted introduces an algebraic variable $e$, which satisfies the following constraint:
+A track limit constraint is required to ensure that the vehicle remains within the circuit boundaries. The formulation adopted introduces an algebraic variable $e$, which satisfies the following constraint:
 \begin{equation}
 	\begin{Bmatrix}
 		x\\y
@@ -154,7 +154,7 @@ An track limit constraint is required to ensure that the vehicle remains within 
 %\end{equation}
 where $\boldsymbol{c}$ indicates the position of the centerline, and $\bn$ is the unit normal vector to the centerline. Equation~\eqref{eq:onplane_constraint} constraints the CoM of the vehicle to lie on the vertical plane defined by the unit normal vector $\bn$. The previously introduced algebraic variable $e$ is further constrained to take values between $e_\textrm{min}$ and $e_\textrm{max}$, which are determined based on the width of the circuit and the vehicle's front and rear tracks.
 
-In order to take into account for the back-off terms, the maximum and minimum values are modified coherently, so that:
+In order to take into account the back-off terms, the maximum and minimum values are modified coherently, so that:
 \begin{equation}
 	e_\textrm{min} + \be^\textrm{TLC} \leq e \leq e_\textrm{max} - \be^\textrm{TLC}\label{eq:TLC}
 \end{equation}
