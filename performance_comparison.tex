@@ -177,9 +177,9 @@ The open-loop approach yields a wider envelope due to worst-case growth assumpti
 
 % Solver times
 Solver times (build time is negligible) were measured on a laptop equipped with an Intel Core i9-13980HX with 32 GB RAM.
-The reference (nominal) plan, described in Sec.~\ref{sec:nominalFF}, contains 4 200 decision variables and is solved in 7.5 s.
-The open-loop robust plan (prediction horizon H = 4) described in Sec.~\ref{sec:open_loop_planning}, expands the model to 48 300 variables, which IPOPT solves in 128 s.
-The closed-loop robust plan described in Sec.~\ref{sec:closed_loop_planning} first finds the nominal plan (4 200 vars, 7.5 s), executes a policy-search step (Step 2, Sec.~\ref{sec:LQR}, 20.5 s), and then solves an additional robust problem with 14 700 variables (Step 3, Sec.~\ref{sec:CLrobustified}, 33 s), giving a total of 41 s.
+The reference (nominal) plan, described in Sec.~\ref{sec:nominalFF}, contains 4\,200 decision variables and is solved in 7.5\,s.
+The open-loop robust plan (prediction horizon H = 4) described in Sec.~\ref{sec:open_loop_planning}, expands the model to 48\,300 variables, which IPOPT solves in 128\,s.
+The closed-loop robust plan described in Sec.~\ref{sec:closed_loop_planning} first finds the nominal plan (4\,200 vars, 7.5\,s), executes a policy-search step (Step 2, Sec.~\ref{sec:LQR}, 0.5\,s), and then solves an additional robust problem with 14\,700 variables (Step 3, Sec.~\ref{sec:CLrobustified}, 33\,s), giving a total of 41\,s.
 
 \subsection{Simulations with noise realization}
 To provide an empirical validation of the closed-loop robustified planning we simulated the evolution of the controlled vehicle with 100 random initial conditions and included noise realizations. The random values for the initial state and the noise follow a Gaussian distribution with covariance matrices $\bP_0$ and $\bQ$, in both cases, as introduced in Eq.~\eqref{eq:dP}. This analysis cannot be performed for the open-loop approach, as it does not compute a stabilizing controller---resulting in trajectories that would significantly deviate from the track limits beyond the prediction horizon.
