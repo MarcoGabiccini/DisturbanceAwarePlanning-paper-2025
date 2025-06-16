@@ -1,6 +1,5 @@
 \section{Open-loop planning via H-steps ahead predictions}
-\label{sec:open_loop_planning}
-In this section, we address the problem of planning under uncertainty for a stochastic system.
+c In this section, we address the problem of planning under uncertainty for a stochastic system.
 At each grid point $k$ of the discretized trajectory the covariance matrix is propagated in a feed-forward fashion for a fixed prediction horizon of $H$ steps.
 In the planning problem, we conservatively evaluate the maximum propagation of the covariance, that is, the matrix evolved over $H$ steps, to ensure the tightest possible enforcement of constraints. This maximizes the robustness of the resulting solution, as the constraint back-off is evaluated in the worst-case scenario within the prediction horizon.
 
@@ -11,7 +10,7 @@ In the absence of feedback, the uncertainty on the position and orientation of t
 For this reason, the propagation horizon in this open-loop setting is a critical design parameter.
 We bound the number of steps $H$ to realistically capture the evolution of disturbances occurring prior to any corrective driver response.
 
-This approach requires modifications to the formulation~\eqref{eq:DOCP} introduced in Section~\ref{sec:discretization}. In particular, Eqs.~\eqref{eq:DOCPdP}, \eqref{eq:DOCPdPIC}, and \eqref{eq:DOCPconstraints} are replaced by Eqs.~\eqref{eq:DOCPdPopenloop}, \eqref{eq:DOCPdPinitopenloop}, and \eqref{eq:DOCPconstraintsopenloop}. Equation~\eqref{eq:DOCPdPopenloop} collects the continuity and collocation equations for all versions of the covariance matrix propagated from previous steps. To support the evolution of $H$ versions, we introduce $H \times d$ matrices $\bSi_k^j = (\bSi_{k,1}^j, \ldots, \bSi_{k,d}^j)$, representing the collocation values of each version $j$ of the covariance matrix within interval $k$.
+This approach requires modifications to the formulation~\eqref{eq:DOCP} introduced in Sec.~\ref{sec:discretization}. In particular, Eqs.~\eqref{eq:DOCPdP}, \eqref{eq:DOCPdPIC}, and \eqref{eq:DOCPconstraints} are replaced by Eqs.~\eqref{eq:DOCPdPopenloop}, \eqref{eq:DOCPdPinitopenloop}, and \eqref{eq:DOCPconstraintsopenloop}. Equation~\eqref{eq:DOCPdPopenloop} collects the continuity and collocation equations for all versions of the covariance matrix propagated from previous steps. To support the evolution of $H$ versions, we introduce $H \times d$ matrices $\bSi_k^j = (\bSi_{k,1}^j, \ldots, \bSi_{k,d}^j)$, representing the collocation values of each version $j$ of the covariance matrix within interval $k$.
 
 
 %The proposed approach requires the presence of $H+1$ versions of the matrix $\bP$ at each grid point of the discretized problem. One of these versions is initialized with $\bar{\bP}_0$, while the others represent the evolution of matrices that were initialized at previous grid points, from 1 to $H$ steps earlier. This ensures that at each step it is possible to find a covariance matrix evolved for $H$ steps and use it to robustify the constraints. The initialization of the covariance matrix is necessary due to its divergent dynamics. In fact, without a feedback control, the error on the position and orientation of the body reference frame can only increase along the track, compromising the conditioning of the matrix.

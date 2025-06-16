@@ -4,14 +4,14 @@
 In this section we present some results obtained using the described robust planning frameworks. All planned trajectories refer to the sector of the Catalunya circuit shown in Fig.~\ref{fig:track}.
 The entire circuit is parameterized by the curvilinear parameter $\alpha \in [0,1]$, and the selected sector corresponds to the interval $\left[0.70, 0.77\right]$. Checkpoints are indicated by labels and are uniformly spaced by $\De\al=0.01$. This sector includes two distinct corners: a low-speed turn from $\al = 0.72$ to $\al = 0.73$, and a high-speed turn from $\al = 0.75$ to $\al = 0.76$, allowing for the evaluation of vehicle behavior across different dynamic scenarios.
 
-First we present selected results from the open-loop planning, which helps illustrate the method and its underlying mechanism. 
-%We begin by presenting a selection of results obtained with the open-loop planning approach, which allows for a clearer illustration of the method and its underlying mechanisms. 
+First we present selected results from the open-loop planning, which helps illustrate the method and its underlying mechanism.
+%We begin by presenting a selection of results obtained with the open-loop planning approach, which allows for a clearer illustration of the method and its underlying mechanisms.
 This serves as a reference to assess the impact of key design parameters and constraint types on planned trajectories.
 We then compare open- and closed-loop strategies, and finally validate the framework by comparing planned trajectories and simulations with noise realization.
 %A comparison is then carried out between the open-loop and closed-loop strategies. Finally, the planned trajectories are compared against those followed in simulations with noise realizations, providing empirical validation of the proposed framework.
 
 The chosen sector was discretized into 140 spatial intervals ($\De s$ = 0.43 m). Both the open- and closed-loop disturbance-aware planning problems were transcribed on this grid in the CasADi-MATLAB environment~\cite{Andersson:MPC:2019}, and the resulting nonlinear programs were solved with IPOPT's interior-point algorithm~\cite{Wachter:MP:2006}.
-  
+
 
 % Contour plot dei LAP time in funzione dei due gamma, lo mettiamo o no? Eventialmente nel comparison open/closed
 
@@ -55,7 +55,7 @@ The second parameter examined is the initial value of the covariance matrix $\bP
 We recall that at each grid point a new prediction horizon is initialized, and the corresponding matrix $\bP$ at its starting point, i.e., $\bP^0_k$, is set to $\bP_0$.
 The diagonal elements of $\bP$ are the variances $\Var{x_i}$  of each state variable, while the off-diagonal elements encode their covariances $\Cov{x_i}{x_j}$. Larger diagonal values indicate higher uncertainty in the corresponding states, and nonzero off-diagonal terms imply mutual dependence between them. For simplicity, a diagonal $\bP_0$ is used in this study, that is, for each prediction horizon we assign an initial standard deviation $\sig_{x_i}$ to each state and assume all initial covariances $\Cov{x_i}{x_j}$  to be zero.
 
- Assuming the state vector is ordered as described in Section~\ref{sec:vehicle_model}, the baseline initial covariance matrix is set to $\bP_0=\diag(\bbsig^2)$, with
+ Assuming the state vector is ordered as described in Sec.~\ref{sec:vehicle_model}, the baseline initial covariance matrix is set to $\bP_0=\diag(\bbsig^2)$, with
 \begin{align}
 \bar{\boldsymbol{\sigma}}~=~\left[0.1\,\textrm{m/s}, 0.01\,\textrm{m/s}, 0.01\,\textrm{rad/s}, 1\,\textrm{m}, 1\,\textrm{m}, 0.0175\,\textrm{rad}\right]^T.
 \end{align}
@@ -89,10 +89,10 @@ The black line corresponds to the baseline case with $\bP_0 = \bar{\bP}_0$, whil
 \end{figure}
 
 %It is of interest to analyze how a robustified constraint---or a combination of the two described in Sections~\ref{sec:FLC} and~\ref{sec:TLC}---influences the driving style.
-We now investigate how the inclusion of different kinds of robustified constraints --- individually or in combination, as described in Sections~\ref{sec:FLC} and~\ref{sec:TLC} --- influences the driving style.
+We now investigate how the inclusion of different kinds of robustified constraints --- individually or in combination, as described in Sec.~\ref{sec:FLC} and~\ref{sec:TLC} --- influences the driving style.
 We compare the nominal feed-forward optimal trajectory, obtained without robustified constraints, with those resulting from a robustified track limit constraint (denoted as TLC), a robustified friction limit constraint (denoted as FLC), and a scenario where both constraints are robustified (denoted as TLC+FLC).
 
-First we show results obtained with the open-loop method described in Section~\ref{sec:open_loop_planning}, setting $H=4$, and $\ga^\textrm{TLC}=\ga^\textrm{FLC}=1.28$, corresponding to a 90\% probability of satisfying both constraints.
+First we show results obtained with the open-loop method described in Sec.~\ref{sec:open_loop_planning}, setting $H=4$, and $\ga^\textrm{TLC}=\ga^\textrm{FLC}=1.28$, corresponding to a 90\% probability of satisfying both constraints.
 %All the optimization are obtained with the open-loop method described in Section~\ref{sec:open_loop_planning}, setting $H=4$, and $\ga^\textrm{TLC}=\ga^\textrm{FLC}=1.28$, corresponding to a 90\% probability of satisfying both constraints.
 %---Delta key signals
 The comparison between the nominal case and the three robustified cases is illustrated in Fig.~\ref{fig:ol_telemetries}, in terms of the deviation of selected signals from to their nominal counterparts.
@@ -151,7 +151,7 @@ Specifically, in the interval $\al \in [0.745, 0.762]$, the TLC and TLC+FLC conf
 	\label{fig:cl_saturation}
 \end{figure}
 
-An analogous analysis has been conducted using the closed-loop approach described in Section~\ref{sec:closed_loop_planning}, setting $\ga^\textrm{TLC}=\ga^\textrm{FLC}=1.28$.
+An analogous analysis has been conducted using the closed-loop approach described in Sec.~\ref{sec:closed_loop_planning}, setting $\ga^\textrm{TLC}=\ga^\textrm{FLC}=1.28$.
 The same key signals displayed for the previous case are shown in Fig.~\ref{fig:cl_telemetries}, while the axle saturation ratios $S_j$ are illustrated in Fig.~\ref{fig:cl_saturation}.
 From one side, the results appear very similar to those obtained with the open-loop method. While the closed-loop method offers a more rigorous framework by enabling seamless covariance propagation over the entire lap, the observed agreement indicates that open-loop planning remains a valid and effective strategy, as long as the prediction horizon is appropriately selected.
 
