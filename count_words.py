@@ -4,7 +4,7 @@ from collections import Counter
 from nltk.corpus import stopwords
 
 import nltk
-nltk.download('stopwords')git 
+nltk.download('stopwords')
 
 # === Settings ===
 PDF_PATH = 'MAIN.pdf'   # <-- metti qui il nome del tuo file PDF
