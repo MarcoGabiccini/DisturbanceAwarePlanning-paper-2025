@@ -1,0 +1,471 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Shorthands for greek letters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% capital greek letters
+\newcommand{\Ga}{\Gamma}
+\newcommand{\De}{\Delta}
+\newcommand{\Th}{\Tetha}
+\newcommand{\La}{\Lambda}
+\newcommand{\Si}{\Sigma}
+\newcommand{\Ups}{\Upsilon}
+\newcommand{\Om}{\Omega}
+\newcommand{\vPhi}{\varPhi}
+
+% lowercase greek letters
+\newcommand{\al}{\alpha}
+\newcommand{\be}{\beta}
+\newcommand{\beCL}{\be^{\text{CL}}}
+\newcommand{\ga}{\gamma}
+\newcommand{\de}{\delta}
+\newcommand{\ep}{\varepsilon}
+\renewcommand{\th}{\theta}  % In Times il comando \th produce una strana trombetta verticale. \newcommand{\vth}{\vartheta}
+\newcommand{\ka}{\kappa}
+\newcommand{\la}{\lambda}
+\newcommand{\sig}{\sigma}
+\newcommand{\vphi}{\varphi}
+\newcommand{\om}{\omega}
+
+% boldface greek letters
+\newcommand{\bsig}{\boldsymbol{\sig}}  % \newcommand{\bga}{\boldsymbol{\ga}}
+\newcommand{\bSi}{\boldsymbol{\Si}}
+%
+\newcommand{\bOm}{\boldsymbol{\Om}}  % vettore vel. angolare
+\newcommand{\bom}{\boldsymbol{\om}}  % vettore quasi-coordinate
+\newcommand{\bxi}{\boldsymbol{\xi}}  % twist in boldface
+\newcommand{\bmu}{\boldsymbol{\mu}}
+\newcommand{\bth}{\boldsymbol{\th}}  % vector of joint functions
+\newcommand{\bPhi}{\boldsymbol{\Phi}}% vector of nonlinear functions
+\newcommand{\dbPhi}{\dot{\bPhi}}
+
+\newcommand{\bPhiq}{\boldsymbol{\Phi}_{\bq}}% vector of nonlinear function Jacobian w.r.t. q
+\newcommand{\bPhiy}{\boldsymbol{\Phi}_{\by}}% vector of nonlinear function Jacobian w.r.t. y
+\newcommand{\bPhiv}{\boldsymbol{\Phi}_{\bv}}% vector of nonlinear function Jacobian w.r.t. v
+\newcommand{\bPhiu}{\boldsymbol{\Phi}_{\bu}}% vector of nonlinear function Jacobian w.r.t. v
+\newcommand{\bPhiz}{\boldsymbol{\Phi}_{\bz}}% vector of nonlinear function Jacobian w.r.t. v
+\newcommand{\bPsi}{\boldsymbol{\Psi}}% vector of ISP
+\newcommand{\bPsimu}{\bPsi^{\mu}}%
+\newcommand{\bPsiP}{\bPsi^{\text{P}}}%
+\newcommand{\bPsiPCL}{\bPsi^{\text{P,CL}}}%
+
+\newcommand{\bPsiw}{\boldsymbol{\Psi}_{\bw}}% vector of ISP
+ 
+% dotted greek letters         
+\newcommand{\dal}{\dot{\al}}
+\newcommand{\dde}{\dot{\de}}
+\newcommand{\dpsi}{\dot{\psi}}
+\newcommand{\dth}{\dot{\th}}
+\newcommand{\dphi}{\dot{\phi}}
+\newcommand{\dvphi}{\dot{\vphi}}
+
+\newcommand{\ddpsi}{\ddot{\psi}}
+\newcommand{\ddth}{\ddot{\th}}
+\newcommand{\ddphi}{\ddot{\phi}}
+
+\newcommand{\dbmu}{\dot{\bmu}}
+
+% hatted greek letters
+\newcommand{\hxi}{\widehat{\xi}}
+\newcommand{\home}{\widehat{\om}}
+
+% hatted bold greek letters
+\newcommand{\hbsi}{\hat{\bsi}}
+\newcommand{\hbxi}{\hat{\bxi}}
+
+\newcommand{\hbmu}{\hat{\bmu}}
+\newcommand{\hbu}{\hat{\bu}}
+\newcommand{\tbu}{\tilde{\bu}}
+\newcommand{\htbu}{\hat{\tbu}}
+
+\newcommand{\bbmu}{\bar{\bmu}}
+\newcommand{\bbu}{\bar{\bu}}
+\newcommand{\bbsig}{\bar{\bsig}}
+
+\newcommand{\hbz}{\hat{\bz}}
+
+\newcommand{\hbA}{\hat{\bA}}
+\newcommand{\hbB}{\hat{\bB}}
+\newcommand{\tbB}{\tilde{\bB}}
+\newcommand{\htbB}{\hat{\tbB}}
+
+\newcommand{\hbK}{\hat{\bK}}
+\newcommand{\tbK}{\tilde{\bK}}
+\newcommand{\htbK}{\hat{\tbK}}
+
+
+\newcommand{\tbP}{\tilde{\bP}}
+\newcommand{\tbA}{\tilde{\bA}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Shorthands for bold letters with boldsymbol    %%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ********** WARNING  ************
+% Use either this file boldsymbol.tex or file mathbf.tex, BUT NOT BOTH!!!
+
+% Latin lowercase letters
+\newcommand{\ba}{\boldsymbol{a}}
+\newcommand{\bb}{\boldsymbol{b}}
+\newcommand{\bc}{\boldsymbol{c}}
+\newcommand{\bd}{\boldsymbol{d}}
+\newcommand{\bes}{\boldsymbol{e}}     % special
+\newcommand{\bef}{\boldsymbol{f}}     % special
+\newcommand{\bg}{\boldsymbol{g}}
+\newcommand{\bh}{\boldsymbol{h}}
+
+\newcommand{\boldi}{\boldsymbol{i}}     % versori
+\newcommand{\boldj}{\boldsymbol{j}}
+\newcommand{\boldk}{\boldsymbol{k}}
+
+\newcommand{\bl}{\boldsymbol{l}}
+\newcommand{\bmm}{\boldsymbol{m}}      %
+\newcommand{\bn}{\boldsymbol{n}}      % versore normale
+
+\newcommand{\bp}{\boldsymbol{p}}
+%\newcommand{\bp}{\mathbf{p}}
+\newcommand{\bq}{\boldsymbol{q}}      % coord. di Lagrange
+\newcommand{\br}{\boldsymbol{r}}
+\newcommand{\bs}{\boldsymbol{s}}
+\newcommand{\bt}{\boldsymbol{t}}
+\newcommand{\bu}{\boldsymbol{u}}
+\newcommand{\bv}{\boldsymbol{v}}
+\newcommand{\bw}{\boldsymbol{w}}
+\newcommand{\bx}{\boldsymbol{x}}     %%% Vettori
+\newcommand{\by}{\boldsymbol{y}}
+\newcommand{\bz}{\boldsymbol{z}}
+
+% Uppercase letters
+\newcommand{\bA}{\boldsymbol{A}}     %%% Matrici
+\newcommand{\bB}{\boldsymbol{B}}
+\newcommand{\bC}{\boldsymbol{C}}
+\newcommand{\bD}{\boldsymbol{D}}
+\newcommand{\bE}{\boldsymbol{E}}
+\newcommand{\bF}{\boldsymbol{F}}      %
+\newcommand{\bG}{\boldsymbol{G}}
+\newcommand{\bH}{\boldsymbol{H}}
+\newcommand{\bI}{\boldsymbol{I}}
+\newcommand{\bJ}{\boldsymbol{J}}
+\newcommand{\bK}{\boldsymbol{K}}
+\newcommand{\bL}{\boldsymbol{L}}
+\newcommand{\bM}{\boldsymbol{M}}
+\newcommand{\bN}{\boldsymbol{N}}
+
+\newcommand{\bP}{\boldsymbol{P}}
+\newcommand{\bQ}{\boldsymbol{Q}}
+\newcommand{\bR}{\boldsymbol{R}}
+\newcommand{\bS}{\boldsymbol{S}}
+\newcommand{\bT}{\boldsymbol{T}}
+\newcommand{\bU}{\boldsymbol{U}}
+\newcommand{\bV}{\boldsymbol{V}}      %  velocita'
+\newcommand{\bW}{\boldsymbol{W}}
+\newcommand{\bX}{\boldsymbol{X}}
+\newcommand{\bY}{\boldsymbol{Y}}
+\newcommand{\bZ}{\boldsymbol{Z}}
+
+% Zero
+\newcommand{\bzero}{\boldsymbol{0}}
+
+\newcommand{\bvp}{\boldsymbol{\varpi}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Shorthands for bold letters with boldmath    %%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% ********** WARNING  ************
+%% Use either this file boldmath.tex or file mathbf.tex, BUT NOT BOTH!!!
+%
+%% Latin lowercase letters
+%\newcommand{\ba}{\boldmath{a}}
+%\newcommand{\bb}{\boldmath{b}}
+%\newcommand{\bc}{\boldmath{c}}
+%\newcommand{\bd}{\boldmath{d}}
+%\newcommand{\bes}{\boldmath{e}}     % special
+%\newcommand{\bef}{\boldmath{f}}     % special
+%\newcommand{\bg}{\boldmath{g}}
+%\newcommand{\bh}{\boldmath{h}}
+%
+%\newcommand{\bi}{\boldmath{i}}     % versori
+%\newcommand{\bj}{\boldmath{j}}
+%\newcommand{\bk}{\boldmath{k}}
+%
+%\newcommand{\bl}{\boldmath{l}}
+%\newcommand{\bm}{\boldmath{m}}      %
+%\newcommand{\bn}{\boldmath{n}}      % versore normale
+%
+%\newcommand{\bp}{\boldmath{p}}
+%\newcommand{\bq}{\boldmath{q}}      % coord. di Lagrange
+%\newcommand{\br}{\boldmath{r}}
+%\newcommand{\bs}{\boldmath{s}}
+%\newcommand{\bt}{\boldmath{t}}
+%\newcommand{\bu}{\boldmath{u}}
+%\newcommand{\bv}{\boldmath{v}}
+%\newcommand{\bw}{\boldmath{w}}
+%\newcommand{\bx}{\boldmath{x}}     %%% Vettori
+%\newcommand{\by}{\boldmath{y}}
+%\newcommand{\bz}{\boldmath{z}}
+%
+%% Uppercase letters
+%\newcommand{\bA}{\boldmath{A}}     %%% Matrici
+%\newcommand{\bB}{\boldmath{B}}
+%\newcommand{\bC}{\boldmath{C}}
+%\newcommand{\bD}{\boldmath{D}}
+%\newcommand{\bE}{\boldmath{E}}
+%\newcommand{\bF}{\boldmath{F}}      %
+%\newcommand{\bG}{\boldmath{G}}
+%\newcommand{\bH}{\boldmath{H}}
+%\newcommand{\bI}{\boldmath{I}}
+%\newcommand{\bJ}{\boldmath{J}}
+%\newcommand{\bK}{\boldmath{K}}
+%\newcommand{\bL}{\boldmath{L}}
+%\newcommand{\bM}{\boldmath{M}}
+%\newcommand{\bN}{\boldmath{N}}
+%
+%\newcommand{\bP}{\boldmath{P}}
+%\newcommand{\bQ}{\boldmath{Q}}
+%\newcommand{\bR}{\boldmath{R}}
+%\newcommand{\bS}{\boldmath{S}}
+%\newcommand{\bT}{\boldmath{T}}
+%\newcommand{\bU}{\boldmath{U}}
+%\newcommand{\bV}{\boldmath{V}}      %  velocita'
+%\newcommand{\bW}{\boldmath{W}}
+%\newcommand{\bX}{\boldmath{X}}
+%\newcommand{\bY}{\boldmath{Y}}
+%\newcommand{\bZ}{\boldmath{Z}}
+%
+%% Zero
+%\newcommand{\bzero}{\boldmath{0}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Shorthands for dotted letters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Dotted letters
+
+\newcommand{\dbq}{\dot{\bq}}
+\newcommand{\dbw}{\dot{\bw}}
+\newcommand{\dbx}{\dot{\bx}}     %%% derivate temporali
+
+\newcommand{\dbP}{\dot{\bP}}
+
+\newcommand{\ddbq}{\ddot{\bq}}
+\newcommand{\ddbw}{\ddot{\bw}}
+%%\newcommand{\dbx}{\mathbf{\dot{x}}}  % NON sono uguali
+\newcommand{\ddbx}{\ddot{\bx}}
+
+
+\newcommand{\dep}{\dot{p}}
+\newcommand{\dq}{\dot{q}}
+\newcommand{\ded}{\dot{d}}
+\newcommand{\dg}{\dot{g}}
+\newcommand{\dr}{\dot{r}}
+\newcommand{\ds}{\dot{s}}
+\newcommand{\du}{\dot{u}}
+\newcommand{\dv}{\dot{v}}
+\newcommand{\dw}{\dot{w}}
+\newcommand{\dx}{\dot{x}}
+\newcommand{\dy}{\dot{y}}
+\newcommand{\dz}{\dot{z}}
+
+\newcommand{\dR}{\dot{R}}
+\newcommand{\dX}{\dot{X}}
+
+\newcommand{\ddx}{\ddot{x}}
+\newcommand{\ddy}{\ddot{y}}
+\newcommand{\ddz}{\ddot{z}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Shorthands for hatted letters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% lowercase letters
+\newcommand{\hd}{\widehat{d}}
+\newcommand{\hp}{\widehat{p}}
+
+% capital letters
+\newcommand{\hV}{\widehat{V}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Shorthands for bar letters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% lowercase letters
+\newcommand{\barp}{{\bar{p}}}
+\newcommand{\barv}{{\bar{v}}}
+\newcommand{\barn}{{\bar{n}}}
+\newcommand{\bara}{{\bar{a}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Shorthands for dotted bar letters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\dbarp}{\dot{\barp}}
+\newcommand{\dbarv}{\dot{\barv}}
+\newcommand{\dbarn}{\dot{\barn}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Shorthands for bold bar letters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\barbq}{\bar{\bq}}
+\newcommand{\barbu}{\bar{\bu}}
+\newcommand{\barbv}{\bar{\bv}}
+\newcommand{\barby}{\bar{\by}}
+
+\newcommand{\barbx}{\bar{\bx}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Shorthands for check letters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% lowercase letters
+\newcommand{\chu}{{\check{u}}}
+\newcommand{\chv}{{\check{v}}}
+\newcommand{\chvphi}{{\check{\vphi}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Shorthands for tilde letters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% lowercase letters
+\newcommand{\tq}{{\tilde{q}}}
+\newcommand{\ta}{{\tilde{a}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Shorthands for sanserif letters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% San serif lowercase letters
+\newcommand{\sfa}{\mathsf{a}}
+\newcommand{\sfb}{\mathsf{b}}
+\newcommand{\sfc}{\mathsf{c}}
+\newcommand{\sfd}{\mathsf{d}}
+\newcommand{\sfe}{\mathsf{e}}
+\newcommand{\sff}{\mathbf{f}}
+\newcommand{\sfg}{\mathsf{g}}
+\newcommand{\sfh}{\mathsf{h}}
+\newcommand{\sfi}{\mathsf{i}}
+\newcommand{\sfj}{\mathsf{j}}
+\newcommand{\sfk}{\mathsf{k}}
+\newcommand{\sfl}{\mathsf{l}}
+\newcommand{\sfm}{\mathsf{m}}
+\newcommand{\sfn}{\mathsf{n}}
+
+\newcommand{\sfp}{\mathsf{p}}
+\newcommand{\sfq}{\mathsf{q}}
+\newcommand{\sfr}{\mathsf{r}}
+\newcommand{\sfs}{\mathsf{s}}
+\newcommand{\sft}{\mathsf{t}}
+\newcommand{\sfu}{\mathsf{u}}
+\newcommand{\sfv}{\mathsf{v}}
+\newcommand{\sfw}{\mathsf{w}}
+\newcommand{\sfx}{\mathsf{x}}
+\newcommand{\sfy}{\mathsf{y}}
+\newcommand{\sfz}{\mathsf{z}}
+
+% Sans serif uppercase letters
+\newcommand{\sfA}{\mathsf{A}}
+\newcommand{\sfB}{\mathsf{B}}
+\newcommand{\sfC}{\mathsf{C}}
+\newcommand{\sfF}{\mathsf{F}}
+\newcommand{\sfG}{\mathsf{G}}
+\newcommand{\sfN}{\mathsf{N}}
+\newcommand{\sfR}{\mathsf{R}}
+\newcommand{\sfS}{\mathsf{S}}
+\newcommand{\sfT}{\mathsf{T}}
+\newcommand{\sfY}{\mathsf{Y}}
+\newcommand{\sfZ}{\mathsf{Z}}
+
+% Zero
+\newcommand{\sfzero}{\mathsf{0}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Shorthands for outlined bold letters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\bbR}{\mathbb{R}}    % Insieme dei numeri reali
+\newcommand{\bbC}{\mathbb{C}}
+\newcommand{\bbE}{\mathbb{E}}
+\newcommand{\bbN}{\mathbb{N}}
+\newcommand{\bbZ}{\mathbb{Z}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Shorthands for calligraphic letters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\calG}{\mathcal{G}}    % Insieme delle funzioni continue
+\newcommand{\calL}{\mathcal{L}}    % Insieme delle funzioni integrabili in dominio illimitato
+\newcommand{\calU}{\mathcal{U}}
+\newcommand{\calY}{\mathcal{Y}}
+\newcommand{\calV}{\mathcal{V}}
+\newcommand{\calB}{\mathcal{B}}    % rigid body B
+\newcommand{\calQ}{\mathcal{Q}}
+\newcommand{\calE}{\mathcal{E}}
+\newcommand{\calEb}{\bar{\mathcal{E}}}
+\newcommand{\calM}{\mathcal{M}}
+\newcommand{\calN}{\mathcal{N}}
+\newcommand{\calS}{\mathcal{S}}
+\newcommand{\calI}{\mathcal{I}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Shorthands for fraktur letters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\frakg}{\mathfrak{g}}    % Esempio di Lie algebra
+\newcommand{\frakh}{\mathfrak{h}}    % Esempio di un'altra Lie algebra
+\newcommand{\frakso}{\mathfrak{so}}  % Lie algebra di SO
+\newcommand{\frakse}{\mathfrak{se}}  % Lie algebra di SE
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Shorthands for mathematical operators %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\DeclareMathOperator{\Ad}{Ad}
+\DeclareMathOperator{\ad}{ad}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\rotX}{rot_X}
+\DeclareMathOperator{\Prob}{Pr}
+
+\renewcommand{\dim}{\operatorname{dim}}
+\renewcommand{\Re}{\operatorname{Re}}  % Parte reale, Reynolds
+\renewcommand{\Im}{\operatorname{Im}}  % Parte immaginaria
+\newcommand{\Ma}{\operatorname{Ma}}    % Mach
+
+\newcommand{\tr}{\operatorname{tr}}  %% traccia
+
+\newcommand{\dd}{\text{{\sl d}}}        %% differenziale
+
+\newcommand{\na}{\nabla}
+\newcommand{\grad}{\operatorname{grad}} %% gradiente
+\newcommand{\rot}{\operatorname{rot}}   %% rotore
+\renewcommand{\div}{\operatorname{div}} %% divergenza
+
+\newcommand{\inv}{\operatorname{inv}}   %% involute
+\newcommand{\Cos}{\operatorname{c}}      %% abbreviazione Cos
+\newcommand{\Sin}{\operatorname{s}}      %% abbreviazione Sin
+
+\newcommand{\ST}{\scriptstyle}
+\newcommand{\D}{\displaystyle}
+
+\newcommand{\ti}{\tilde}      % accento matematico in breve
+
+\def\pd{\partial}
+\def\at{\bigg|}      % serve per dire dove va valutata una derivata.
+
+\newcommand{\rT}{\text{T}}   % T di trasposta
+
+\newcommand{\nnum}{\nonumber \\}
+\newcommand{\Nnum}[1]{\nonumber \\[#1]}
+
+\newcommand{\ov}[1]{\overline{#1}}
+
+\newcommand{\Ipos}[1]{\mathbb{I}_{\geq 0}(#1)}
+\newcommand{\Ineg}[1]{\mathbb{I}_{< 0}(#1)}
+
+\newcommand{\SIpos}[1]{\mathbb{SI}_{\geq 0}(#1)}
+\newcommand{\SIneg}[1]{\mathbb{SI}_{ < 0}(#1)}
+
+\providecommand{\norm}[1]{\lVert#1\rVert}  % definisce i delimitatori di una norma
+
+\newcommand{\p}{^{\!\cdot\!}}  % punto STRETTO in alto nei numeri lunghi: 1\p000
+\newcommand{\pp}{^{\mspace{-1.0mu}\cdot\mspace{-1.0mu}}}
+%\makeatletter
+%\newcommand{\pp}{^{@!\cdot@!}}  % punto in alto nei numeri lunghi: 2\pp000
+%\makeatother
+
+%% [MM] Commands
+\newcommand{\sref}[1]{\left\{#1\right\}}

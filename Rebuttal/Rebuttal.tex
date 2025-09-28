@@ -1,0 +1,223 @@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Thin Formal Letter
+% LaTeX Template
+% Version 1.11 (8/12/12)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% WikiBooks (http://en.wikibooks.org/wiki/LaTeX/Letters)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{letter}
+
+\newcommand\setItemnumber[1]{\setcounter{enumi}{\numexpr#1-1\relax}}
+
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{mathrsfs}
+\usepackage{color,soul}
+\usepackage{hyperref}
+
+\setulcolor{red}
+\sethlcolor{yellow}
+\renewcommand\ul[1]{#1} % <<<< uncomment to remove 'underlined text'
+\renewcommand\hl[1]{#1} % <<<< uncomment to remove 'highlighted text'
+
+%\usepackage{caption}
+%\usepackage{float}
+
+\input{mymacros}
+
+\DeclareMathOperator{\diag}{diag}
+
+% Adjust margins for aesthetics
+\addtolength{\voffset}{-0.5in}
+\addtolength{\hoffset}{-0.3in}
+\addtolength{\textheight}{2cm}
+
+%\longindentation=0pt % Un-commenting this line will push the closing "Sincerely," to the left of the page
+
+%----------------------------------------------------------------------------------------
+%	YOUR NAME & ADDRESS SECTION
+%----------------------------------------------------------------------------------------
+
+\signature{Martino Gulisano, Matteo Masoni, Marco Gabiccini and Massimo Guiggiani} % Your name for the signature at the bottom
+
+\address{Martino Gulisano$^{1}$, Matteo Masoni$^{1}$, Marco Gabiccini$^{1,2}$, Massimo Guiggiani \\[1em]
+1. Dipartimento di Ingegneria Civile e Industriale, Universit\`{a} di Pisa, Pisa, Italy\\
+2. Centro di Ricerca ``E. Piaggio'', Universit\`{a} di Pisa, Pisa, Italy}
+ % Your address and phone number
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+%----------------------------------------------------------------------------------------
+%	ADDRESSEE SECTION
+%----------------------------------------------------------------------------------------
+
+\begin{letter}{Professor Manfred Ploechl\\
+Co-Editor\\
+Vehicle System Dynamics} % Name/title of the addressee
+
+%----------------------------------------------------------------------------------------
+%	LETTER CONTENT SECTION
+%----------------------------------------------------------------------------------------
+
+\textbf{Paper - Disturbance-aware minimum-time planning strategies for motorsport vehicles with probabilistic safety certificates}
+
+\opening{Dear Professor Ploechl,}
+
+thank you very much for the kind response. We appreciate the opportunity to revise our paper entitled ``Disturbance-aware minimum-time planning strategies for motorsport vehicles with probabilistic safety certificates'' for the Vehicle System Dynamics Journal: please find the revised version accompanying this letter.
+
+Observations and suggestions made by the reviewers have been carefully analysed and corrections to the paper have been made consistently. In the following, answers to the reviewers' comments are listed.
+
+For the reviewers' convenience we included to the rebuttal (as a separate PDF file) also a version of the paper where the modifications and amendments are highlighted in \textcolor{red}{red colored text} and new text is highlighted in \textcolor{blue}{blue colored text}.
+%The amended version of the paper (in black colored text) is provided separately through the website as well.
+The amended version of the paper is provided separately through the website.
+
+\textbf{Reviewer 1}
+
+\begin{enumerate}
+
+\item
+\textit{Thanks for the interesting contribution.
+The paper is well written and the proposed method is very interesting, especially considering that there are just few contributions applying robust optimal control concepts to vehicle dynamics problems.
+Nothing to suggest: I believe the paper is ready to be published.}
+
+\vspace{2mm}
+
+\textbf{Answer:} We are grateful for the reviewer's positive comments and recommendation for publication. Although no changes were requested, we have made some changes as requested by the second reviewer and performed a final proofreading pass to ensure clarity and consistency throughout the manuscript.
+
+\hrulefill
+\end{enumerate}
+
+\textbf{Reviewer 2}
+
+The paper presents a novel disturbance-aware framework for minimum-time planning of road vehicles.
+The manuscript is generally well written, and its contribution to the topic is valuable.
+This reviewer suggests that the paper be accepted for publication after addressing the following minor concerns.
+
+\begin{enumerate}
+
+\item
+\textit{Sec. 2.1, page 4: the framework is demostrated using a single-track model. Although relatively simple (e.g. 6 states), this reviewer acknowledges that the model is typically sufficient to capture the essential dynamics of cars and can therefore be used effectively to illustrate the approach. However, in minimum-lap-time of motorsport vehicles, more complex models (including e.g. out-of-plane dynamics etc.) are often employed. The concern of this reviewer is whether the proposed framework is scalable to more complex vehicle model. With a single-track model (6 states), the resulting stochastic OCP has 26 states. For instance, how does the OCP given in Eq. (7) scale when the vehicle model is made more complex?
+}
+
+\vspace{2mm}
+
+\textbf{Answer:}
+
+We thank the reviewer ...
+
+\hrulefill
+
+\item
+\textit{Sec. 2.1, page 4: the vehicle model employs a magic formula to calculate lateral forces, while the longitudinal forces are treated as inputs. However, the force coupling is introduced using a standard friction ellipse. To this reviewer, such an approach appears mixed: typically, the magic formula is applied to both lateral and longitudinal directions (e.g. with longitudinal slip as an input). without relying on the friction ellipse as a constraint, since the tyre coupling is implicitly accounted for in the magic formula. Some comments on this point would be appreciated.}
+
+\vspace{2mm}
+
+\textbf{Answer:}
+
+We thank the reviewer ...
+
+\hrulefill
+
+\item
+\textit{Sec. 2.3, page 7: as stated by the authors, the positive-definiteness of the covariance matrix P is ensured through a sufficiently fine discretization. The authors should provide some guidelines on how to tune the mesh or collocation points to guarantee this property.
+}
+
+\vspace{2mm}
+
+\textbf{Answer:}
+
+We thank the reviewer ...
+
+\hrulefill
+
+\item
+\textit{Sec. 2.4, page 7: as shown by the authors, considering the robustness of the friction limit is relatively straightforward when using the friction-ellipse constraint. How can this aspect be addressed when tyre coupling is implicitly captured by the magic formula (i.e. when no explicit friction-ellipse constraint is imposed)?}
+
+\vspace{2mm}
+
+\textbf{Answer:}
+
+We sincerely thank the reviewer ...
+
+\hrulefill
+
+\item
+\textit{Sec. 2.5, page 8: eq. (11) introduces an algebraic variable e, representing the lateral position of the vehicle with respect to the centreline. Why not use e as a vehicle state instead of x, y, thereby avoiding algebraic varibles?}
+
+\vspace{2mm}
+
+\textbf{Answer:}
+
+We thank ...
+
+\hrulefill
+
+\item
+\textit{Sec. 4.4, page 13: eq (20) introduces smoothed approaximation functions to ensure differentiatibility, which depend on a sharpness parameter $\chi$. Which are the typical values used in the authours' implementation?}
+
+\vspace{2mm}
+
+\textbf{Answer:}
+
+We appreciate the reviewer's request \ul{for more details on these technical aspects.} 
+
+\hrulefill
+
+\item
+\textit{Sec. 5.1, page 16: in the equation $P_0=\diag(\sigma^2)$ (just before eq. (21)) the operation $\sigma^2$ should be interpreted pointwise. This reviewer suggests that this clarification should be explicitly stated in the manuscript.}
+
+\vspace{2mm}
+
+\textbf{Answer:}
+
+As correctly pointed out, ...
+
+
+
+\hrulefill
+
+\item
+\textit{The paper is interesting and generally well written. In the related work section maybe a brief comment on https://doi.org/10.1177/0954407013516102 and its relation with the proposed approaches could be interesting, being one of the earliest example of investigation of robustness of lap time solution nominal solutions.}
+
+\vspace{2mm}
+
+\textbf{Answer:}
+
+ As correctly pointed out, ... 
+
+\hrulefill
+ 
+\end{enumerate}
+
+We hope we have appropriately clarified all the issues raised and modified the paper accordingly. Thank you for your time and consideration.
+
+%Comunque il revisore 2 è un demente spocchioso ed il 3 braccia rubate all'agricoltura.
+
+\vspace{2\parskip} % Extra whitespace for aesthetics
+\closing{Sincerely,}
+\vspace{2\parskip} % Extra whitespace for aesthetics
+
+%\ps{P.S. You can find additional information attached to this letter.} % Postscript text, comment this line to remove it
+
+%\encl{Copyright permission form} % Enclosures with the letter, comment this line to remove it
+
+%----------------------------------------------------------------------------------------
+\end{letter}
+\end{document} 

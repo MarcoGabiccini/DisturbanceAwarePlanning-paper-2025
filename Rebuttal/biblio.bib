@@ -1,0 +1,24 @@
+@article{Gabiccini:ComputationalFrameworkEnvironmentAware:2018,
+  title = {A {{Computational Framework}} for {{Environment-Aware Robotic Manipulation Planning}}},
+  author = {Gabiccini, M. and Artoni, A. and Pannocchia, G. and Gillis, J.},
+  year = {2018},
+  journal = {Springer Proceedings in Advanced Robotics},
+  volume = {3},
+  pages = {363--385},
+  doi = {10.1007/978-3-319-60916-4_21},
+  abstract = {In this paper, we present a computational framework for direct trajectory optimization of general manipulation systems with unspecified contact sequences, exploiting environmental constraints as a key tool to accomplish a task. Two approaches are presented to describe the dynamics of systems with contacts, which are based on a penalty formulation and on a velocity-based time-stepping scheme, respectively. In both cases, object and environment contact forces are included among the free optimization variables, and they are rendered consistent via suitably devised sets of complementarity conditions. To maximize computational efficiency, we exploit sparsity patterns in the linear algebra expressions generated during the solution of the optimization problem and leverage Algorithmic Differentiation to calculate derivatives. The benefits of the proposed methods are evaluated in three simulated planar manipulation tasks, where essential interactions with environmental constraints are automatically synthesized and opportunistically exploited. {\copyright} 2018, Springer International Publishing AG.},
+  keywords = {Alternating Direction Method Of Multipliers (ADMM),Complementarity Condition,Manipulation Planning,Manipulation Tasks,Penalty-based Approach}
+}
+
+@article{Marcucci:TwoStageTrajectoryOptimization:2017,
+  title = {A {{Two-Stage Trajectory Optimization Strategy}} for {{Articulated Bodies}} with {{Unscheduled Contact Sequences}}},
+  author = {Marcucci, T. and Gabiccini, M. and Artoni, A.},
+  year = {2017},
+  journal = {IEEE Robotics and Automation Letters},
+  volume = {2},
+  number = {1},
+  pages = {104--111},
+  doi = {10.1109/LRA.2016.2547024},
+  abstract = {In this letter, we propose a two-stage strategy for optimal control problems of robotic mechanical systems that proves to be more robust, and yet more efficient, than straightforward solution strategies. Specifically, we focus on a simplified humanoid model, represented as a two-dimensional articulated serial chain of rigid bodies, in the tasks of getting up (sitting down) from (to) the supine and prone postures. Interactions with the environment are integral parts of these motions, and a priori unscheduled contact sequences are discovered by the solver itself, opportunistically making or breaking contacts with the ground through feet, knees, hips, elbows, and hands. The present investigation analyzes the effects on the computational performance of: 1) the explicit introduction of contact forces among the optimization variables, 2) the substitution of undesired contact forces with geometric constraints that prevent interpenetrations, and 3) the splitting of the planning problem into two consecutive phases of increasing complexity. To the best of our knowledge, these tests represent the only quantitative analysis of the performances achievable with different solution strategies for optimization-based, whole-body dynamic motion planning in the presence of contacts. {\copyright} 2016 IEEE.},
+  keywords = {Humanoid Robots,Motion and Path Planning,Optimization and Optimal Control}
+}
