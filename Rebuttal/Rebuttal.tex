@@ -113,14 +113,20 @@ This reviewer suggests that the paper be accepted for publication after addressi
 \begin{enumerate}
 
 \item
-\textit{Sec. 2.1, page 4: the framework is demostrated using a single-track model. Although relatively simple (e.g. 6 states), this reviewer acknowledges that the model is typically sufficient to capture the essential dynamics of cars and can therefore be used effectively to illustrate the approach. However, in minimum-lap-time of motorsport vehicles, more complex models (including e.g. out-of-plane dynamics etc.) are often employed. The concern of this reviewer is whether the proposed framework is scalable to more complex vehicle model. With a single-track model (6 states), the resulting stochastic OCP has 26 states. For instance, how does the OCP given in Eq. (7) scale when the vehicle model is made more complex?
+\textit{Sec. 2.1, page 4: the framework is demonstrated using a single-track model. Although relatively simple (e.g. 6 states), this reviewer acknowledges that the model is typically sufficient to capture the essential dynamics of cars and can therefore be used effectively to illustrate the approach. However, in minimum-lap-time of motorsport vehicles, more complex models (including e.g. out-of-plane dynamics etc.) are often employed. The concern of this reviewer is whether the proposed framework is scalable to more complex vehicle model. With a single-track model (6 states), the resulting stochastic OCP has 26 states. For instance, how does the OCP given in Eq. (7) scale when the vehicle model is made more complex?
 }
 
 \vspace{2mm}
 
 \textbf{Answer:}
 
-We thank the reviewer ...
+We thank the reviewer for raising this interesting point of discussion. The scalability of the problem when dealing with more complex vehicle models is a challenging aspect of the procedure: in fact, considering a $n$-states vehicle model, the resulting stochastic OCP system has $n+\frac{n(n+1)}{2}$ states.
+
+The simplified model used in the current implementation fits well to the serial approach of the OCP, since computational times and total number of decision variables are still sufficiently small.
+
+In further works we are actually planning to adopt more complex models and to parallelize the problem solution on multiple cores. This approach has been explored by our research group in previous works [...], where the nominal minumim lap-time problem was solved for a 14-DoF's multibody model. 
+
+Finally, since the reviewer has pointed out this specific feature, we would like to remark that, although the out-of-plane dynamics is neglected in our model, we took into account longitudinal load transfers. 
 
 \hrulefill
 
@@ -130,8 +136,11 @@ We thank the reviewer ...
 \vspace{2mm}
 
 \textbf{Answer:}
+(INCOMPLETE)
+We thank the reviewer for the valuable suggestion. 
 
-We thank the reviewer ...
+To introduce the framework, we chose to adopt a simplified model with the longitudinal force $F_x$ as one of the inputs and to constraint the lateral forces 
+Typically, single track models use longitudinal speed $u$ and steering wheel angle $\delta$ as inputs [Guigg.]. Since we included the longitudinal dynamics.
 
 \hrulefill
 
@@ -143,7 +152,7 @@ We thank the reviewer ...
 
 \textbf{Answer:}
 
-We thank the reviewer ...
+We thank the reviewer for giving the opportunity to clarify this point. Drawing on the experience from our previous works, we found that a discretization grid for the track of one point per meter is sufficient to obtain accurate results while keeping the computational time within reasonable limits. We observed that the same grid size also preserved the positive-definiteness of the covariance matrix $\bP$.
 
 \hrulefill
 
@@ -176,7 +185,7 @@ We thank ...
 
 \textbf{Answer:}
 
-We appreciate the reviewer's request \ul{for more details on these technical aspects.} 
+We appreciate the reviewer's request \ul{for more details on these technical aspects.} In this context, we chose a value of $\chi=10$ as the sharpness parameter, and we now explicitly state it in the paper. This value proved to be a good trade-off between a steep transition and the smoothness required by the solver to achieve convergence. In general, $\chi$ must be tuned according to the range of the corresponding variable. In this case, the longitudinal force $F_x$ is on the order of $10^4$\,N.
 
 \hrulefill
 
@@ -187,11 +196,15 @@ We appreciate the reviewer's request \ul{for more details on these technical asp
 
 \textbf{Answer:}
 
-As correctly pointed out, ...
-
-
+As correctly pointed out, our notation in this equation was not sufficiently clear. We have now chosen to use $P_0=\diag(\sigma)^2$, since matrix powers are defined for square matrices. The result remains the same even if the operator is interpreted elementwise, because the matrix is diagonal.
 
 \hrulefill
+
+\end{enumerate}
+
+\textbf{Reviewer 3}
+
+\begin{enumerate}
 
 \item
 \textit{The paper is interesting and generally well written. In the related work section maybe a brief comment on https://doi.org/10.1177/0954407013516102 and its relation with the proposed approaches could be interesting, being one of the earliest example of investigation of robustness of lap time solution nominal solutions.}
