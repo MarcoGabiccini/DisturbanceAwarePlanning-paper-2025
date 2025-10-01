@@ -16,7 +16,6 @@ The state vector $\bx$ has six components and includes the three kinematic quant
 \begin{figure}
 	\centering
 	\input{Fig/Tikz_Sources/tikz_vehicle_model.tex}
-	%\caption{Single Track model. The ground force acting on each axle is decomposed into longitudinal and lateral components, indicated by red arrows. The longitudinal components are part of the input vector $\bu$, encompassing both acceleration and braking forces, while the lateral components are computed using Pacejka's Magic Formula based on the vertical load and slip angle at each axle. The figure also depicts the fixed reference frame and the body reference frame, with the origin located at the vehicle's center of mass (CoM). The state variables $u$ and $v$ represent the longitudinal and lateral velocities of the CoM w.r.t. the body frame, while $r$ denotes the yaw rate. The angle $\psi$ is used to describe the orientation of the body frame w.r.t. the fixed frame.}
 	\caption{Single Track model.}
 	\label{fig:vehicle_model}
 \end{figure}
@@ -60,7 +59,6 @@ Accordingly, the continuous-time stochastic trajectory planning can be framed as
 	\phantom{\text{s.t.} \quad} \bmu(0)  &= \bmu_0 \label{eq:OCPdynIC} \\
 	\phantom{\text{s.t.} \quad} \dbP(t) &= \bA(t) \bP(t) + \bP(t) \bA^T(t) + \bQ(t) \label{eq:OCPdP} \\
 	\phantom{\text{s.t.} \quad} \bP(0)  &= \bP_0 \succeq 0 \label{eq:OCPdPIC} \\ %& \phantom{\text{s.t.} \qquad} 0       \geq h_i(\bmu(t), \bu(t))
-	%+ \overbrace{\gamma \bigg[\underbrace{\na^T_{\bx} h_i \bP(t) \na_{\bx} h_i}_{\text{variance of $h_i(\bx)$}}\bigg]^{\frac{1}{2}}}^{\text{safety margin}},
 	\phantom{\text{s.t.} \qquad} 0&       \geq h_i(\bmu(t), \bu(t))
 	+ \be_i(\bmu(t), \bu(t), \bP(t)),
 	\quad i \in \calI \label{eq:OCPconstraints}
@@ -68,6 +66,8 @@ Accordingly, the continuous-time stochastic trajectory planning can be framed as
 \end{subequations}
 The cost function $J$ in~\eqref{eq:OCPcost} depends on the mean $\bmu(t)$, the controls $\bu(t)$ and the state covariance $\bP(t)$. The mean dynamics is expressed by~\eqref{eq:OCPdyn} with~\eqref{eq:OCPdynIC}, and the covariance dynamics is expressed by~\eqref{eq:OCPdP} with~\eqref{eq:OCPdPIC}. In eq.~\eqref{eq:OCPconstraints} the \emph{back-off terms} $\be_i$ account for the disturbances and serve the purpose of obtaining deterministic safety margins directly on $\bmu(t)$. $\calI$ is the set of indices defining the inequality constraints. The back-off terms stem from a linearization around the mean of the original \emph{chance constraint} on $\bx(t)$ expressed by $\Prob \{h_i(\bx) \leq 0\}\geq p$, where $p$ is the confidence level of constraint satisfaction. Explicitly, the back-off terms are given by
 $\be_i = \gamma \sig_i$. The coefficient $\gamma = \Phi^{-1}(p)$ is the quantile function, where $\Phi(z)=\Prob \{Z\leq z\}$ is the cumulative distribution function (cdf) of a standard normal distribution $Z \sim \calN(0,1)$, and acts as a \emph{tuning knob}: the greater the confidence level $p$ required, the higher the gain $\ga$\footnote{For example, with $p=0.84$ $\ga = 1.0$, with $p=0.97$ $\ga = 2.0$, with $p=0.99$ $\ga = 3.0$}. The term $\sig_i = \big[\na^T_{\bx} h_i(\bmu) \bP(t) \na_{\bx} h_i(\bmu)\big]^{\frac{1}{2}}$ represents the standard deviation of the constraint $h_i(\bx)$ linearized around the mean, i.e. of random variable $h_i(\bmu)+\na^T_{\bx} h_i(\bmu) (\bx - \bmu)$, and follows immediately from the propagation rule of covariance.
+
+It is worth noting that scaling to more complex vehicle models increases the number of decision variables, which grows roughly quadratically with the vehicle state dimension due to the covariance matrix $\bP$. Parallelization may therefore be needed to keep computational times tractable.
 
 \subsection{Discretization via direct collocation}
 \label{sec:discretization}
@@ -97,7 +97,7 @@ The $\bz_k$'s are introduced as direct handles for physically meaningful quantit
 Following the direct collocation approach, both the mean and covariance state trajectories are approximated, in the $k$-th interval, with polynomials $\pi_k(\tau)$, defined on the unit interval $\tau\in[0,1]$, and then scaled to match the width $\nu_k$ of the corresponding time step. On the unit interval, we select $d$ collocation points $\tau_1, \ldots, \tau_d$, associated with as many collocation states. Accordingly, we define $\bxi_k$ and $\bSi_k$ as the mean states and covariance matrices at the $d$ collocation points within each interval $[\al_k, \al_{k+1}]$, respectively. Therefore, $\bxi_k =
 (\bxi_{k,1}, \ldots, \bxi_{k,d})$, and similarly $\bSi_k=(\bSi_{k,1}, \ldots, \bSi_{k,d})$. Equations~\eqref{eq:DOCPdyn} and~\eqref{eq:DOCPdP} represent the collocation and continuity equations for mean and covariance, respectively, with initial conditions represented by~\eqref{eq:DOCPdynIC} and~\eqref{eq:DOCPdPIC}. Eqs.~\eqref{eq:DOCPpath} are path equality constraints and~\eqref{eq:DOCPconstraints} are the robustified inequality constraints.
 
-In certain cases~\cite{Gillis:PracticalMethodsApproximate:2015}, positive-definiteness-preserving Lyapunov discretization schemes are used in~\eqref{eq:DOCPdP}. However, for sufficiently fine discretization, we found that integrating only the lower triangular part of $\bP(t)$ in~\eqref{eq:OCPdPIC}  (and reconstructing its strictly upper part accordingly), ensures that $\bP_k$ remain symmetric and positive definite when the initial $\bP_0$ is symmetric and positive definite. In all our tests direct collocation with cubic polynomial state representations and Gauss-Legendre collocation points provided accurate results.
+In certain cases~\cite{Gillis:PracticalMethodsApproximate:2015}, positive-definiteness-preserving Lyapunov discretization schemes are used in~\eqref{eq:DOCPdP}. However, for sufficiently fine discretization (one point per meter of track), we found that integrating only the lower triangular part of $\bP(t)$ in~\eqref{eq:OCPdPIC}  (and reconstructing its strictly upper part accordingly), ensures that $\bP_k$ remain symmetric and positive definite when the initial $\bP_0$ is symmetric and positive definite. In all our tests direct collocation with cubic polynomial state representations and Gauss-Legendre collocation points provided accurate results.
 
 \subsection{Robust friction limit constraint formulation}
 \label{sec:FLC}
@@ -118,16 +118,8 @@ In~\eqref{eq:adherence_with_axle_saturation}, the superscript FLC denotes fricti
 From~\eqref{eq:axle_saturation} it is evident that $S_j(\bx,\bu)\in [0,1]$ indicates how close each configuration operates to the friction limit: $S_j=0$ when the overall grip demand is zero, while $S_j = 1$ when the point $\left(X_j, Y_j\right)$ lies exactly on the friction ellipse, i.e., under full saturation.
 The points $\left(X_j,Y_j\right)$ are constrained to lie within an ellipse whose semi-axes are given by $\mu_{x,j}Z_j$ and $\mu_{y,j}Z_j$. The constraint, without the back-off term, is represented in the left panel of Fig.~\ref{fig:robust_constraints} by the solid line ellipse in the $X_jY_j$-plane.
 
-To better clarify the effect of the back-off term on the constraint let us consider a combination of $\bx$, $\bu$, $P$ and $\ga^\textrm{FLC}_j$ so that $\be^\textrm{FLC}_j=0.2$. This implies that the semi-axes of the ellipse are reduced by a factor $\sqrt{1-\be^\textrm{FLC}_j} = \sqrt{0.8}$, as shown in the left panel of Fig.~\ref{fig:robust_constraints}, where the ellipse in dashed line delimits the available region with the back-off applied. This allows the optimizer to determine the most appropriate trade-off between the longitudinal force $X_j$ and the lateral force $Y_j$ --- often by reducing both components to some extent --- based on the specific requirements of the manoeuvre.
+To better clarify the effect of the back-off term on the constraint let us consider a combination of $\bx$, $\bu$, $\bP$ and $\ga^\textrm{FLC}_j$ so that $\be^\textrm{FLC}_j=0.2$. This implies that the semi-axes of the ellipse are reduced by a factor $\sqrt{1-\be^\textrm{FLC}_j} = \sqrt{0.8}$, as shown in the left panel of Fig.~\ref{fig:robust_constraints}, where the ellipse in dashed line delimits the available region with the back-off applied. This allows the optimizer to determine the most appropriate trade-off between the longitudinal force $X_j$ and the lateral force $Y_j$ --- often by reducing both components to some extent --- based on the specific requirements of the manoeuvre.
 
-%The gradient of the constraint w.r.t. the state vector $\bx$, denoted by $\na_{\bx}h^\textrm{A}_j(\bmu)$, is used to evaluate the standard deviation $\sigma^\textrm{A}_j$ associated with the constraint. This gradient can be computed using the chain rule, as follows:
-%\begin{equation}
-%	\na_{\bx}h^\textrm{A}_j(\bmu,\bu) =
-%	\frac{\pd h^\textrm{A}_j}{\pd X_j}\at_{\bmu,\bu}\na_{\bx}X_j(\bmu,\bu) +
-%	\frac{\pd h^\textrm{A}_j}{\pd Y_j}\at_{\bmu,\bu}\na_{\bx}Y_j(\bmu,\bu) +
-%	\frac{\pd h^\textrm{A}_j}{\pd Z_j}\at_{\bmu,\bu}\na_{\bx}Z_j(\bmu,\bu)
-%\end{equation}
-%where the first element is zero because $X_j$ is a function of the input vector $\bu$ only.
 
 \begin{figure}
 	\centering
@@ -136,7 +128,6 @@ To better clarify the effect of the back-off term on the constraint let us consi
 	\adjustbox{valign=c}{\input{Fig/Tikz_Sources/tikz_stayontrack_constraint.tex}}
 	\caption{Graphical representation of the two constraints analyzed in this section: the friction limit constraint in the $X_jY_j$ plane (left panel), and the track limit constraint in the $xy$ plane (right panel). In both figures, the filled gray area bounded by a dashed line indicates the accessible region in the presence of a back-off term.
 	}
-		%Graphical representation of the two constraints analyzed in the section. The left panel shows the friction limit constraint in the plane $X_j-Y_j$. The ellipse in solid line, whose semi-axes are given by $\mu_{x,j}Z_j$ and $\mu_{y,j}Z_j$, represents the border of the available region for the base constraint, without back-off. The ellipse in dashed line delimits the available region when a back-off $\be^\textrm{FLC}_j=0.2$ is present. This ellipse has its semi-axes reduced by a factor $\sqrt{1-\be^\textrm{FLC}_j}$ w.r.t. the one in solid line.}
 	\label{fig:robust_constraints}
 \end{figure}
 
@@ -149,9 +140,6 @@ A track limit constraint is required to ensure that the vehicle remains within t
 	\end{Bmatrix}
 	-\boldsymbol{c} - e\bn=\boldsymbol{0} \label{eq:onplane_constraint}
 \end{equation}
-%\begin{equation}
-%	\bp-\boldsymbol{c}_k - e_k\bn_k=\boldsymbol{0} \label{eq:onplane_constraint}
-%\end{equation}
 where $\boldsymbol{c}$ indicates the position of the centerline, and $\bn$ is the unit normal vector to the centerline. Equation~\eqref{eq:onplane_constraint} constraints the CoM of the vehicle to lie on the vertical plane defined by the unit normal vector $\bn$. The previously introduced algebraic variable $e$ is further constrained to take values between $e_\textrm{min}$ and $e_\textrm{max}$, which are determined based on the width of the circuit and the vehicle's front and rear tracks.
 
 In order to take into account the back-off terms, the maximum and minimum values are modified coherently, so that:
@@ -159,4 +147,3 @@ In order to take into account the back-off terms, the maximum and minimum values
 	e_\textrm{min} + \be^\textrm{TLC} \leq e \leq e_\textrm{max} - \be^\textrm{TLC}\label{eq:TLC}
 \end{equation}
 where $\be^\textrm{TLC}$ is computed by considering that the gradient of the constraint w.r.t. the state vector $\na_{\bx}h^\textrm{TLC}$ depends solely on $\bn$.
-%Adding a back-off to this constraint produces the same effect as an increase of the front and rear tracks of the vehicle does. 
