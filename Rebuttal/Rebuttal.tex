@@ -124,9 +124,16 @@ We thank the reviewer for raising this interesting point of discussion. The scal
 
 The simplified model used in the current implementation fits well to the serial approach of the OCP, since computational times and total number of decision variables are still sufficiently small.
 
-In further works we are actually planning to adopt more complex models and to parallelize the problem solution on multiple cores. This approach has been explored by our research group in previous works [...], where the nominal minumim lap-time problem was solved for a 14-DoF's multibody model.
+In further works we are actually planning to adopt more complex models and to parallelize the problem solution on multiple cores. This approach has been explored by our research group in these previous works:
 
-Finally, since the reviewer has pointed out this specific feature, we would like to remark that, although the out-of-plane dynamics is neglected in our model, we took into account longitudinal load transfers.
+\begin{itemize}
+  \item https://doi.org/10.1007/s11044-023-09932-6
+  \item https://doi.org/10.1080/00423114.2024.2407175,
+\end{itemize}
+ 
+where the nominal minimum lap-time problem was solved for a 14-DoF multibody model.
+
+Finally, since the reviewer has pointed out this specific feature, we would like to remark that, although the out-of-plane dynamics is neglected in our model, we took at least into account the (steady-state) longitudinal load transfers.
 
 \hrulefill
 
@@ -163,8 +170,36 @@ We thank the reviewer for giving the opportunity to clarify this point. Drawing 
 
 \textbf{Answer:}
 
-We sincerely thank the reviewer ...
+We sincerely thank the reviewer for the stimulating question. When tyre coupling is modeled implicitly via the Magic Formula (MF) in combined slip, the friction boundary is not an explicit ellipse but a nonlinear frontier emerging from
+\begin{equation}
+F_x = G_{xa}(\alpha,\kappa,\ldots)\,F_{x0}(\kappa),
+\;
+F_y = G_{yk}(\alpha,\kappa,\ldots)\,F_{y0}(\alpha) + SV_{yk}(\alpha,\kappa,\ldots),
+\label{eq:MF-combined}
+\end{equation}
+where $F_{x0},F_{y0}$ are the pure‐slip curves (with peak factors $D_x,D_y$ depending on $F_z,\gamma,\ldots$), $G_{xa},G_{yk}$ are the normalized “hill–shaped” coupling weights (equal to $1$ in pure slip), and $SV_{yk}$ is the shift induced by ply–steer/conicity effects/rolling resistance shift, see e.g. [Pacejka 2012, 3rd edition, p.166].
+To retain the same \emph{robustness to friction variations} that is straightforward with an explicit friction ellipse, we could introduce a \emph{control-level} constraint built from the instantaneous MF capacities (a sort of \emph{breathing ellipse}).
 
+\vspace{4pt} 
+Given force references $(F_x^{\mathrm{ref}},F_y^{\mathrm{ref}})$ produced at the generic iteration of the NLP solver, we could define the instantaneous directional limits from the MF model at the current $(\alpha,\kappa)$:
+\begin{equation}
+F_{x,\lim} \;=\; D_x\,G_{xa}(\alpha,\kappa,\ldots),
+\qquad
+F_{y,\lim} \;=\; D_y\,G_{yk}(\alpha,\kappa,\ldots).
+\label{eq:limits}
+\end{equation}
+Of course, since $SV_{yk}$ is an offset, we could work with the lateral \emph{effective} command $F_{y,\mathrm{eff}}^{\mathrm{ref}} := F_y^{\mathrm{ref}} - SV_{yk}$.
+Then the new \emph{axle saturation ratio} $S$ would read
+\begin{equation}
+S=
+\left(\frac{F_x^{\mathrm{ref}}}{F_{x,\lim}}\right)^2
++
+\left(\frac{F_{y,\mathrm{eff}}^{\mathrm{ref}}}{F_{y,\lim}}\right)^2,
+\label{eq:util}
+\end{equation}
+and robustness to friction uncertainty would be enforced by the same considerations that have been proposed in Sec. 2.4 of the paper.
+It is worth observing that this \emph{breathing ellipse} would not add additional physics: the MF already encodes tyre coupling. It would just provide a control–level robustness margin in analogy to the classical friction‐ellipse constraint, but \emph{coherent} with the instantaneous MF capacities $D\,G$ (and with $SV_{yk}$ excluded from the lateral capacity).
+ 
 \hrulefill
 
 \item
@@ -174,7 +209,9 @@ We sincerely thank the reviewer ...
 
 \textbf{Answer:}
 
-We thank ...
+We thank the reviewer for the insightful question. The main motivation for our current formulation is that the vehicle dynamics are not embedded in the track frame. In earlier work we did adopt a track-embedded type formulation (see A reduced-order Lie-group–based race car model for systematic trajectory optimization on 3D tracks, Meccanica 58:1869–1883, 2023, doi:10.1007/s11012-023-01708-8.) where $e$ ($q_2$ in the mentioned paper) would emerge naturally as a parametrization coordinate.
+
+Within a direct-collocation + IPOPT pipeline, keeping $(x,y)$ as states and also adding $e$ as algebraic variable, yields Jacobians that are sparser and typically less involved algebraically: the track geometry (centerline curvature/banking and their derivatives) enters only the algebraic relation for $e$, rather than propagating through the full state dynamics at every collocation point. By contrast, promoting $e$ to a state in a track-embedded (Frenet-Serret type) model couples the dynamics to space-varying geometry terms, which tends to densify the KKT system and degrade conditioning. A further practical advantage is that many constraints and features (e.g., global track limits, obstacles, multi-vehicle interactions) are naturally expressed in inertial coordinates and remain simpler when $(x,y)$ are states.
 
 \hrulefill
 
@@ -185,7 +222,7 @@ We thank ...
 
 \textbf{Answer:}
 
-We appreciate the reviewer's request \ul{for more details on these technical aspects.} In this context, we chose a value of $\chi=10$ as the sharpness parameter, and we now explicitly state it in the paper. This value proved to be a good trade-off between a steep transition and the smoothness required by the solver to achieve convergence. In general, $\chi$ must be tuned according to the range of the corresponding variable. In this case, the longitudinal force $F_x$ is on the order of $10^4$\,N.
+We appreciate the reviewer's request \ul{for more details on these technical aspects.} In this context, we chose a value of $\chi=10$ as the sharpness parameter, and we have explicitly stated it in the paper. This value proved to be a good trade-off between a steep transition and the smoothness required by the solver to enhance convergence. In general, $\chi$ must be tuned according to the range of the corresponding variable. In this case, the longitudinal force $F_x$ is on the order of $10^4$\,N.
 
 \hrulefill
 
